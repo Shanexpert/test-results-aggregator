@@ -73,8 +73,8 @@ public class Reporter {
 		for (DataDTO data : dataJob) {
 			if (!Strings.isNullOrEmpty(data.getGroupName())) {
 				foundAtLeastOneGroupName = true;
-				listDataJobDTO.addAll(data.getJobs());
 			}
+			listDataJobDTO.addAll(data.getJobs());
 		}
 		// Order List per Group Name
 		if (foundAtLeastOneGroupName) {
