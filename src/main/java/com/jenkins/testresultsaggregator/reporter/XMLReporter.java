@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
+import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.data.DataJobDTO;
 import com.jenkins.testresultsaggregator.data.JobStatus;
 import com.jenkins.testresultsaggregator.data.ResultsDTO;
@@ -31,30 +32,33 @@ public class XMLReporter {
 			String fileName = directory.getAbsolutePath() + System.getProperty("file.separator") + REPORT_FILE_JUNIT;
 			PrintWriter writer = new PrintWriter(fileName, "UTF-8");
 			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			writer.println("<testsuite name=\"com.jenkins.results.test\" time=\"0\" tests=\"" + total + "\" errors=\"" + 0 + "\" skipped=\"" + skipped + "\" failures=\"" + failed + "\">");
+			writer.println("<testsuite name=\"jenkins.results.aggregator\" time=\"0\" tests=\"" + total + "\" errors=\"" + 0 + "\" skipped=\"" + skipped + "\" failures=\"" + failed + "\">");
 			writer.println("<properties></properties>");
 			for (DataJobDTO temp : listDataJobDTO) {
-				ResultsDTO resultsDTO = temp.getResultsDTO();
-				if (resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.SUCCESS.name()) || resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.FIXED.name())) {
-					writer.println("<testcase name=\"" + temp.getJobName() + "\" classname=\"com.jenkins.results.test\" time=\"0\">");
-					writer.println("</testcase>");
-				} else if (resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.FAILURE.name()) || resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.STILL_FAILING.name())) {
-					writer.println("<testcase name=\"" + temp.getJobName() + "\" classname=\"com.jenkins.results.test\" time=\"0\">");
-					writer.println("<failure type=\"java.lang.AssertionError:\">");
-					writer.println("</failure>");
-					writer.println("</testcase>");
-				} else if (resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.ABORTED.name()) || resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.STILL_UNSTABLE.name())
-						|| resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.UNSTABLE.name()) || resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.DISABLED.name())
-						|| resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.NOT_FOUND.name())) {
-					writer.println("<testcase name=\"" + temp.getJobName() + "\" classname=\"com.jenkins.results.test\" time=\"0\">");
-					writer.println("<skipped></skipped>");
-					writer.println("</testcase>");
+				if (!Strings.isNullOrEmpty(temp.getJobName())) {
+					ResultsDTO resultsDTO = temp.getResultsDTO();
+					if (resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.SUCCESS.name()) || resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.FIXED.name())) {
+						writer.println("<testcase name=\"" + temp.getJobName() + "\" classname=\"jenkins.results.aggregator\" time=\"0\">");
+						writer.println("</testcase>");
+					} else if (resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.FAILURE.name()) || resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.STILL_FAILING.name())) {
+						writer.println("<testcase name=\"" + temp.getJobName() + "\" classname=\"jenkins.results.aggregator\" time=\"0\">");
+						writer.println("<failure type=\"java.lang.AssertionError:\">");
+						writer.println("</failure>");
+						writer.println("</testcase>");
+					} else if (resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.ABORTED.name()) || resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.STILL_UNSTABLE.name())
+							|| resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.UNSTABLE.name()) || resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.DISABLED.name())
+							|| resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.NOT_FOUND.name())) {
+						writer.println("<testcase name=\"" + temp.getJobName() + "\" classname=\"jenkins.results.aggregator\" time=\"0\">");
+						writer.println("<skipped></skipped>");
+						writer.println("</testcase>");
+					}
 				}
 			}
 			writer.println("</testsuite>");
 			writer.close();
-			listener.getLogger().println("Finished XML Report");
+			listener.getLogger().println("...Finished XML Report");
 		} catch (IOException e) {
+			listener.getLogger().println("");
 			listener.getLogger().printf("Error Occurred : %s ", e);
 		}
 	}

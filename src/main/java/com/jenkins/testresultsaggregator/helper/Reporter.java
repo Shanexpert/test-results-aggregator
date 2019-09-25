@@ -96,7 +96,7 @@ public class Reporter {
 				}
 			});
 		}
-		String body = table(foundAtLeastOneGroupName);
+		String content = table(foundAtLeastOneGroupName);
 		List<String> bgColor = new ArrayList<String>(Arrays.asList("#EEEEEE", "#DFDEDE"));
 		int colorSelected = 0;
 		int countJobFailures = 0;
@@ -118,30 +118,30 @@ public class Reporter {
 				totalResultsPerGroup.setPass(totalResultsPerGroup.getPass() + job.getResultsDTO().getPass());
 				totalResultsPerGroup.setSkip(totalResultsPerGroup.getSkip() + job.getResultsDTO().getSkip());
 				totalResultsPerGroup.setTotal(totalResultsPerGroup.getTotal() + job.getResultsDTO().getTotal());
-				body += "<tr bgcolor='" + bgColor.get(colorSelected) + "'>" + LINE;
+				content += "<tr bgcolor='" + bgColor.get(colorSelected) + "'>" + LINE;
 				if (!groupAdded && foundAtLeastOneGroupName) {
-					body += "<th rowspan=\"" + data.getJobs().size() + "\">" + data.getGroupName() + "</th>" + LINE;
-					body += "<th rowspan=\"" + data.getJobs().size() + "\">" + REPLACE_ICON + LINE + "</th>" + LINE;
+					content += "<th rowspan=\"" + data.getJobs().size() + "\">" + data.getGroupName() + "</th>" + LINE;
+					content += "<th rowspan=\"" + data.getJobs().size() + "\">" + REPLACE_ICON + LINE + "</th>" + LINE;
 					groupAdded = true;
 				}
 				if (job.getJobFriendlyName() != null && !job.getJobFriendlyName().isEmpty()) {
-					body += "<td>" + job.getJobFriendlyName() + "</td>" + LINE;
+					content += "<td>" + job.getJobFriendlyName() + "</td>" + LINE;
 				} else {
-					body += "<td>" + job.getJobName() + "</td>" + LINE;
+					content += "<td>" + job.getJobName() + "</td>" + LINE;
 				}
-				body += "<td style='text-align: center;'>" + colorizeResultStatus(result) + "</td> " + LINE;
-				body += "<td style='text-align: center;'>" + job.getResultsDTO().getTotal() + singInteger(job.getResultsDTO().getTotalDif()) + "</td>" + LINE;
-				body += "<td style='text-align: center;'>" + job.getResultsDTO().getPass() + singInteger(job.getResultsDTO().getPassDif()) + "</td>" + LINE;
-				body += "<td style='text-align: center;'>" + colorizeFailResult(job.getResultsDTO().getFail()) + singInteger(job.getResultsDTO().getFailDif()) + "</td>" + LINE;
-				body += "<td style='text-align: center;'>" + job.getResultsDTO().getSkip() + singInteger(job.getResultsDTO().getSkipDif()) + "</td>" + LINE;
+				content += "<td style='text-align: center;'>" + colorizeResultStatus(result) + "</td> " + LINE;
+				content += "<td style='text-align: center;'>" + job.getResultsDTO().getTotal() + singInteger(job.getResultsDTO().getTotalDif()) + "</td>" + LINE;
+				content += "<td style='text-align: center;'>" + job.getResultsDTO().getPass() + singInteger(job.getResultsDTO().getPassDif()) + "</td>" + LINE;
+				content += "<td style='text-align: center;'>" + colorizeFailResult(job.getResultsDTO().getFail()) + singInteger(job.getResultsDTO().getFailDif()) + "</td>" + LINE;
+				content += "<td style='text-align: center;'>" + job.getResultsDTO().getSkip() + singInteger(job.getResultsDTO().getSkipDif()) + "</td>" + LINE;
 				if (Strings.isNullOrEmpty(outOfDateResults)) {
-					body += "<td style='text-align: center;'>" + getTimeStamp(job.getResultsDTO().getTimestamp()) + "</td> " + LINE;
+					content += "<td style='text-align: center;'>" + getTimeStamp(job.getResultsDTO().getTimestamp()) + "</td> " + LINE;
 				} else {
-					body += "<td style='text-align: center;'>" + getTimeStamp(outOfDateResults, job.getResultsDTO().getTimestamp()) + "</td> " + LINE;
+					content += "<td style='text-align: center;'>" + getTimeStamp(outOfDateResults, job.getResultsDTO().getTimestamp()) + "</td> " + LINE;
 				}
-				body += "<td style='text-align: center;'>" + urlNumberofChanges(job.getResultsDTO().getChangesUrl(), getNumber(job.getResultsDTO().getNumberOfChanges())) + LINE;
-				body += "<td style='text-align: center;'><a href='" + job.getResultsDTO().getReportUrl() + "'>link</a></td>" + LINE;
-				body += "</tr>" + LINE;
+				content += "<td style='text-align: center;'>" + urlNumberofChanges(job.getResultsDTO().getChangesUrl(), getNumber(job.getResultsDTO().getNumberOfChanges())) + LINE;
+				content += "<td style='text-align: center;'><a href='" + job.getResultsDTO().getReportUrl() + "'>link</a></td>" + LINE;
+				content += "</tr>" + LINE;
 				if (JobStatus.SUCCESS.name().equals(result) || JobStatus.FIXED.name().equals(result)) {
 					countJobSuccess++;
 				} else if (JobStatus.FAILURE.name().equals(result) || JobStatus.STILL_FAILING.name().equals(result)) {
@@ -159,21 +159,21 @@ public class Reporter {
 				totalResults.sub(job.getResultsDTO());
 			}
 			if (foundFailure) {
-				body = body.replace(REPLACE_ICON, FAIL_ICON + "<br>" + countPercentage(totalResultsPerGroup));
+				content = content.replace(REPLACE_ICON, FAIL_ICON + "<br>" + countPercentage(totalResultsPerGroup));
 			} else if (foundSkip) {
-				body = body.replace(REPLACE_ICON, SKIP_ICON + "<br>" + countPercentage(totalResultsPerGroup));
+				content = content.replace(REPLACE_ICON, SKIP_ICON + "<br>" + countPercentage(totalResultsPerGroup));
 			} else {
-				body = body.replace(REPLACE_ICON, PASS_ICON + "<br>" + countPercentage(totalResultsPerGroup));
+				content = content.replace(REPLACE_ICON, PASS_ICON + "<br>" + countPercentage(totalResultsPerGroup));
 			}
 		}
 		
-		body += "<tr bgcolor='#e0e0eb'>" + LINE +
+		content += "<tr bgcolor='#e0e0eb'>" + LINE +
 				"<td style='text-align: center;'>SUMMARY</td>" + LINE;
 		if (foundAtLeastOneGroupName) {
-			body += "<td></td>" + LINE +
+			content += "<td></td>" + LINE +
 					"<td></td> " + LINE;
 		}
-		body += "<td></td>" + LINE +
+		content += "<td></td>" + LINE +
 				"<td style='text-align: center;'>" + totalResults.getTotal() + singInteger(totalResults.getTotalDif()) + "</td>" + LINE +
 				"<td style='text-align: center;'>" + totalResults.getPass() + singInteger(totalResults.getPassDif()) + "</td>" + LINE +
 				"<td style='text-align: center;'>" + colorizeFailResult(totalResults.getFail()) + singInteger(totalResults.getFailDif()) + "</td>" + LINE +
@@ -182,33 +182,35 @@ public class Reporter {
 				"<td></td>" + LINE +
 				"<td></td>" + LINE +
 				"</tr>" + LINE;
-		body += "</table>";
+		content += "</table>";
 		// Calculate total
 		
 		// Generate HTML report
-		new HTMLReporter(listener, workspace).createOverview(body);
+		new HTMLReporter(listener, workspace).createOverview(content);
 		// Generate XML report
 		new XMLReporter(listener, workspace).junit(listDataJobDTO, countJobSuccess, countJobFailures, countJobUnstable);
-		if (!Strings.isNullOrEmpty(recipientsList)) {
-			// Generate Mail Subject
-			String subject = "Test Results ";
-			if (countJobRunning > 0) {
-				subject += " Running : " + countJobRunning;
-			}
-			if (countJobSuccess > 0) {
-				subject += " Success : " + countJobSuccess;
-			}
-			if (countJobFailures > 0) {
-				subject += " Failed : " + countJobFailures;
-			}
-			if (countJobUnstable > 0) {
-				subject += " Unstable : " + countJobUnstable;
-			}
-			if (countJobAborted > 0) {
-				subject += " Aborted : " + countJobAborted;
-			}
-			new MailNotification(listener, dataJob).send(recipientsList, mailNotificationFrom, subject, body, mailhost);
+		// Generate Mail Subject
+		new MailNotification(listener, dataJob).send(recipientsList, mailNotificationFrom, generateMailSubject(countJobRunning, countJobSuccess, countJobFailures, countJobUnstable, countJobAborted), content, mailhost);
+	}
+	
+	private String generateMailSubject(int countJobRunning, int countJobSuccess, int countJobFailures, int countJobUnstable, int countJobAborted) {
+		String subject = "Test Results ";
+		if (countJobRunning > 0) {
+			subject += " Running : " + countJobRunning;
 		}
+		if (countJobSuccess > 0) {
+			subject += " Success : " + countJobSuccess;
+		}
+		if (countJobFailures > 0) {
+			subject += " Failed : " + countJobFailures;
+		}
+		if (countJobUnstable > 0) {
+			subject += " Unstable : " + countJobUnstable;
+		}
+		if (countJobAborted > 0) {
+			subject += " Aborted : " + countJobAborted;
+		}
+		return subject;
 	}
 	
 	private String colorizeResultStatus(String result) {

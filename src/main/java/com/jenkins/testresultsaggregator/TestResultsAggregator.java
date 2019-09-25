@@ -1,5 +1,6 @@
 package com.jenkins.testresultsaggregator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -8,6 +9,7 @@ import org.kohsuke.stapler.StaplerRequest;
 
 import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.data.DataDTO;
+import com.jenkins.testresultsaggregator.data.DataJobDTO;
 import com.jenkins.testresultsaggregator.helper.Collector;
 import com.jenkins.testresultsaggregator.helper.Reporter;
 import com.jenkins.testresultsaggregator.helper.Validate;
@@ -44,8 +46,9 @@ public class TestResultsAggregator extends Notifier {
 	public boolean perform(final AbstractBuild build, final Launcher launcher, final BuildListener listener) {
 		try {
 			listener.getLogger().println("Starting Aggregate Test Results Action");
-			new Collector(listener, getDescriptor().getUsername(), getDescriptor().getPassword(), getDescriptor().getJenkinsUrl()).collectResults(getDataJob());
-			new Reporter(listener, build.getProject().getSomeWorkspace(), getDescriptor().getMailhost(), getDescriptor().getMailNotificationFrom()).publishResuts(getRecipientsList(), getOutOfDateResults(), getDataJob());
+			List<DataDTO> validateData = validateData(getDataJob());
+			new Collector(listener, getDescriptor().getUsername(), getDescriptor().getPassword(), getDescriptor().getJenkinsUrl()).collectResults(validateData);
+			new Reporter(listener, build.getProject().getSomeWorkspace(), getDescriptor().getMailhost(), getDescriptor().getMailNotificationFrom()).publishResuts(getRecipientsList(), getOutOfDateResults(), validateData);
 		} catch (Exception e) {
 			listener.getLogger().printf("Error Occurred : %s ", e);
 		}
@@ -141,6 +144,15 @@ public class TestResultsAggregator extends Notifier {
 			}
 		}
 		
+		public FormValidation doGroupName(@QueryParameter String jobName) {
+			if (Strings.isNullOrEmpty(jobName)) {
+				return FormValidation.error("Please enter a Jenkins Job name.");
+			} else {
+				// No OutOfDate
+				return FormValidation.ok();
+			}
+		}
+		
 		public FormValidation doTestApiConnection(@QueryParameter String jenkinsUrl, @QueryParameter String username, @QueryParameter String password) {
 			try {
 				new Collector(null, username, password, jenkinsUrl).getAPIConnection();
@@ -159,6 +171,24 @@ public class TestResultsAggregator extends Notifier {
 			}
 		}
 		
+	}
+	
+	private List<DataDTO> validateData(List<DataDTO> data) {
+		List<DataDTO> validateData = new ArrayList<DataDTO>();
+		for (DataDTO tempDataDTO : data) {
+			if (tempDataDTO.getJobs() != null && !tempDataDTO.getJobs().isEmpty()) {
+				boolean allJobsareEmpty = true;
+				for (DataJobDTO temp : tempDataDTO.getJobs()) {
+					if (!Strings.isNullOrEmpty(temp.getJobName())) {
+						allJobsareEmpty = false;
+					}
+				}
+				if (!allJobsareEmpty) {
+					validateData.add(tempDataDTO);
+				}
+			}
+		}
+		return validateData;
 	}
 	
 	public BuildStepMonitor getRequiredMonitorService() {

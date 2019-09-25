@@ -10,6 +10,7 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.data.DataDTO;
 import com.jenkins.testresultsaggregator.data.DataJobDTO;
 import com.jenkins.testresultsaggregator.data.JobStatus;
@@ -40,9 +41,13 @@ public class MailNotification {
 	}
 	
 	public void send(String mailTo, String mailFrom, String subject, String body, String host) {
-		listener.getLogger().println("Generate email Report");
+		listener.getLogger().print("Generate email Report");
 		if (validateResults()) {
-			listener.getLogger().println("No mail will be Send since all Jobs are having status NOT_FOUND");
+			listener.getLogger().println("...No mail will be Send since all Jobs are having status 'NOT_FOUND'.");
+		} else if (Strings.isNullOrEmpty(mailTo)) {
+			listener.getLogger().println("...No mail will be Send since the Recipients List is empty.");
+		} else if (Strings.isNullOrEmpty(host)) {
+			listener.getLogger().println("...No mail will be Send since SMTP host in Global configuration is empty.");
 		} else {
 			String[] to = mailTo.split(",");
 			Properties properties = System.getProperties();
@@ -57,8 +62,10 @@ public class MailNotification {
 				message.setSubject(subject);
 				message.setContent(body, "text/html");
 				Transport.send(message);
-				listener.getLogger().println("Sent message successfully....to : " + mailTo);
+				listener.getLogger().println("...Sent message successfully to : ");
+				listener.getLogger().println("" + mailTo);
 			} catch (MessagingException ex) {
+				listener.getLogger().println("");
 				listener.getLogger().printf("Error Occurred : %s ", ex);
 			}
 		}
