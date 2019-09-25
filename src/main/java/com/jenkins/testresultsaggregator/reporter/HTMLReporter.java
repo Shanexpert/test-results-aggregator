@@ -31,11 +31,13 @@ public class HTMLReporter {
 			writer.println(text);
 			writer.println("</body></html>");
 			writer.close();
-			listener.getLogger().println("Finished HTML Report");
+			listener.getLogger().println("...Finished HTML Report");
 			return file;
 		} catch (FileNotFoundException e) {
+			listener.getLogger().println("");
 			listener.getLogger().printf("Error Occurred : %s ", e);
 		} catch (UnsupportedEncodingException e) {
+			listener.getLogger().println("");
 			listener.getLogger().printf("Error Occurred : %s ", e);
 		}
 		return null;
@@ -48,6 +50,7 @@ public class HTMLReporter {
 			try {
 				theDir.mkdir();
 			} catch (SecurityException se) {
+				listener.getLogger().println("");
 				listener.getLogger().printf("Error Occurred : %s ", se);
 			}
 		}

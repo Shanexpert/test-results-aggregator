@@ -49,7 +49,9 @@ public class Collector {
 	public void collectResults(List<DataDTO> dataJob) {
 		List<DataJobDTO> allDataJobDTO = new ArrayList<>();
 		for (DataDTO temp : dataJob) {
-			allDataJobDTO.addAll(temp.getJobs());
+			if (temp.getJobs() != null && !temp.getJobs().isEmpty()) {
+				allDataJobDTO.addAll(temp.getJobs());
+			}
 		}
 		for (DataJobDTO tempDataJobDTO : allDataJobDTO) {
 			listener.getLogger().print("Collecting Data from Jenkins Job named '" + tempDataJobDTO.getJobName() + "'");

@@ -74,7 +74,9 @@ public class Reporter {
 			if (!Strings.isNullOrEmpty(data.getGroupName())) {
 				foundAtLeastOneGroupName = true;
 			}
-			listDataJobDTO.addAll(data.getJobs());
+			if (data.getJobs() != null && !data.getJobs().isEmpty()) {
+				listDataJobDTO.addAll(data.getJobs());
+			}
 		}
 		// Order List per Group Name
 		if (foundAtLeastOneGroupName) {
