@@ -1,0 +1,12 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+   	<f:section title="Test Result Aggregator">
+    		<f:entry title="${%JenkinsBaseURL}" field="jenkinsUrl"><f:textbox /></f:entry>
+		    <f:entry title="${%APIAccountUsername}" field="username"><f:textbox /></f:entry>
+	   		<f:entry title="${%APIAccountPassword}" field="password"><f:password /></f:entry>
+    		<f:validateButton title="${%TestAPIConnection}" progress="${%Testing...}"  method="testApiConnection" with="jenkinsUrl,username,password" />
+    		<f:entry title="${%SMTPserver}" field="mailhost"><f:textbox /></f:entry>
+		    <f:validateButton title="${%TestSMTPConnection}" progress="${%Testing...}"  method="testSMTPConnection" with="mailhost" />
+	    <f:entry title="${%MailNotificationFrom}" field="mailNotificationFrom"><f:textbox default="${descriptor.defaultMailNotificationFrom()}"/></f:entry>
+  	</f:section>
+</j:jelly>
