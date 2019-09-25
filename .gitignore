@@ -3,3 +3,6 @@
 .settings/
 target/
 work/
+.DS_Store
+.idea
+*.iml
