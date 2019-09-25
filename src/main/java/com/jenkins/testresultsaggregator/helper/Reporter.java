@@ -17,6 +17,7 @@ import com.jenkins.testresultsaggregator.data.JobStatus;
 import com.jenkins.testresultsaggregator.data.ResultsDTO;
 import com.jenkins.testresultsaggregator.reporter.HTMLReporter;
 import com.jenkins.testresultsaggregator.reporter.MailNotification;
+import com.jenkins.testresultsaggregator.reporter.XMLReporter;
 
 import hudson.FilePath;
 import hudson.model.BuildListener;
@@ -67,11 +68,12 @@ public class Reporter {
 		final String FAIL_ICON = "<br><font color='red'>FAIL</font>";
 		final String SKIP_ICON = "<br><font color='orange'>UNSTABLE</font>";
 		// Check if Groups/Names are used
+		List<DataJobDTO> listDataJobDTO = new ArrayList<>();
 		boolean foundAtLeastOneGroupName = false;
 		for (DataDTO data : dataJob) {
 			if (!Strings.isNullOrEmpty(data.getGroupName())) {
 				foundAtLeastOneGroupName = true;
-				break;
+				listDataJobDTO.addAll(data.getJobs());
 			}
 		}
 		// Order List per Group Name
@@ -178,13 +180,13 @@ public class Reporter {
 				"<td></td>" + LINE +
 				"<td></td>" + LINE +
 				"</tr>" + LINE;
-		
 		body += "</table>";
-		// Generate HTML report
-		String htmlFile = new HTMLReporter(listener, workspace).createOverview(body);
-		// Publish report
-		// HtmlPublisher htmlPublisher = new HtmlPublisher();
+		// Calculate total
 		
+		// Generate HTML report
+		new HTMLReporter(listener, workspace).createOverview(body);
+		// Generate XML report
+		new XMLReporter(listener, workspace).junit(listDataJobDTO, countJobSuccess, countJobFailures, countJobUnstable);
 		if (!Strings.isNullOrEmpty(recipientsList)) {
 			// Generate Mail Subject
 			String subject = "Test Results ";
@@ -203,7 +205,6 @@ public class Reporter {
 			if (countJobAborted > 0) {
 				subject += " Aborted : " + countJobAborted;
 			}
-			
 			new MailNotification(listener, dataJob).send(recipientsList, mailNotificationFrom, subject, body, mailhost);
 		}
 	}

@@ -26,7 +26,7 @@ public class HTMLReporter {
 		PrintWriter writer;
 		try {
 			writer = new PrintWriter(file, "UTF-8");
-			listener.getLogger().println("Generate HTML Report");
+			listener.getLogger().print("Generate HTML Report");
 			writer.println("<!DOCTYPE html><html><body>");
 			writer.println(text);
 			writer.println("</body></html>");
