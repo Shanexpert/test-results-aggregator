@@ -36,23 +36,25 @@ public class Reporter {
 	}
 	
 	private String table(boolean foundAtLeastOneGroupName) {
-		final String LINE = "\n";
+		String LINE = "\n";
+		String fontColor = "<font color='white'>REPLACEME</font>";
+		
 		String body = LINE +
-				"<table style='width:100%';'>" + LINE +
+				"<table width=\"100%\">" + LINE +
 				"<tr bgcolor='black'>" + LINE;
 		if (foundAtLeastOneGroupName) {
-			body += "<th style='text-align: center;color: white;'>GROUP/TEAM</th>" + LINE;
-			body += "<th style='text-align: center;color: white;'>STATUS & PASS RATE</th>" + LINE;
+			body += "<th style='text-align: center'>" + fontColor.replace("REPLACEME", "GROUP/TEAM") + "</th>" + LINE;
+			body += "<th style='text-align: center'>" + fontColor.replace("REPLACEME", "STATUS & PASS RATE") + "</th>" + LINE;
 		}
-		body += "<th style='text-align: center;color: white;'>JOB</th>" + LINE +
-				"<th style='text-align: center;color: white;'>JOB STATUS</th> " + LINE +
-				"<th style='text-align: center;color: white;'>TESTS</th>" + LINE +
-				"<th style='text-align: center;color: white;'>PASS</th>" + LINE +
-				"<th style='text-align: center;color: white;'>FAIL</th>" + LINE +
-				"<th style='text-align: center;color: white;'>SKIP</th>" + LINE +
-				"<th style='text-align: center;color: white;'>LAST RUN</th>" + LINE +
-				"<th style='text-align: center;color: white;'>COMMITS</th>" + LINE +
-				"<th style='text-align: center;color: white;'>REPORT</th>" + LINE +
+		body += "<th style='text-align: center;'>" + fontColor.replace("REPLACEME", "JOB") + "</th>" + LINE +
+				"<th style='text-align: center;'>" + fontColor.replace("REPLACEME", "JOB STATUS") + "</th> " + LINE +
+				"<th style='text-align: center;'>" + fontColor.replace("REPLACEME", "TESTS") + "</th>" + LINE +
+				"<th style='text-align: center;'>" + fontColor.replace("REPLACEME", "PASS") + "</th>" + LINE +
+				"<th style='text-align: center;'>" + fontColor.replace("REPLACEME", "FAIL") + "</th>" + LINE +
+				"<th style='text-align: center;'>" + fontColor.replace("REPLACEME", "SKIP") + "</th>" + LINE +
+				"<th style='text-align: center;'>" + fontColor.replace("REPLACEME", "LAST RUN") + "</th>" + LINE +
+				"<th style='text-align: center;'>" + fontColor.replace("REPLACEME", "COMMITS") + "</th>" + LINE +
+				"<th style='text-align: center;'>" + fontColor.replace("REPLACEME", "REPORT") + "</th>" + LINE +
 				"</tr>" + LINE;
 		
 		return body;
@@ -178,7 +180,10 @@ public class Reporter {
 				"</tr>" + LINE;
 		
 		body += "</table>";
+		// Generate HTML report
 		String htmlFile = new HTMLReporter(listener, workspace).createOverview(body);
+		// Publish report
+		// HtmlPublisher htmlPublisher = new HtmlPublisher();
 		
 		if (!Strings.isNullOrEmpty(recipientsList)) {
 			// Generate Mail Subject

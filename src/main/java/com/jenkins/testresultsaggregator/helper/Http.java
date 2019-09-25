@@ -39,7 +39,9 @@ public class Http {
 			con.setRequestMethod("GET");
 			con.setReadTimeout(2000);
 			con.setConnectTimeout(2000);
-			con.setRequestProperty("Authorization", "Basic " + authentication);
+			if (authentication != null) {
+				con.setRequestProperty("Authorization", "Basic " + authentication);
+			}
 			int responseCode = con.getResponseCode();
 			con.disconnect();
 			return responseCode;

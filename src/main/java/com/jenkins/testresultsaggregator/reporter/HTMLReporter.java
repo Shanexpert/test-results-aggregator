@@ -10,7 +10,7 @@ import hudson.model.BuildListener;
 
 public class HTMLReporter {
 	
-	private static final String OVERVIEW_FILE = "overview.html";
+	private static final String OVERVIEW_FILE = "index.html";
 	private static final String FOLDER = "/html";
 	private BuildListener listener;
 	private FilePath workspace;
