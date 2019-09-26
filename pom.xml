@@ -8,6 +8,7 @@
 		<version>2.37</version>
 		<relativePath />
 	</parent>
+	<groupId>io.jenkins.plugins</groupId>
 	<artifactId>test-results-aggregator</artifactId>
 	<packaging>hpi</packaging>
 	<version>1.0.1-SNAPSHOT</version>
