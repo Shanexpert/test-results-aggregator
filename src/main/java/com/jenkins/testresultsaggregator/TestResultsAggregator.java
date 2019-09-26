@@ -126,7 +126,7 @@ public class TestResultsAggregator extends Notifier {
 			return super.configure(req, jsonObject);
 		}
 		
-		public FormValidation doCheckOutOfDateResults(@QueryParameter String outOfDateResults) {
+		public FormValidation doCheckOutOfDateResults(@QueryParameter final String outOfDateResults) {
 			if (!Strings.isNullOrEmpty(outOfDateResults)) {
 				try {
 					int hours = Integer.parseInt(outOfDateResults);
@@ -144,16 +144,7 @@ public class TestResultsAggregator extends Notifier {
 			}
 		}
 		
-		public FormValidation doJobName(@QueryParameter String jobName) {
-			if (Strings.isNullOrEmpty(jobName)) {
-				return FormValidation.error("Please enter a Jenkins Job name.");
-			} else {
-				// No OutOfDate
-				return FormValidation.ok();
-			}
-		}
-		
-		public FormValidation doTestApiConnection(@QueryParameter String jenkinsUrl, @QueryParameter String username, @QueryParameter String password) {
+		public FormValidation doTestApiConnection(@QueryParameter final String jenkinsUrl, @QueryParameter final String username, @QueryParameter final String password) {
 			try {
 				new Collector(null, username, password, jenkinsUrl).getAPIConnection();
 				return FormValidation.ok("Success");
@@ -162,7 +153,7 @@ public class TestResultsAggregator extends Notifier {
 			}
 		}
 		
-		public FormValidation doTestSMTPConnection(@QueryParameter String mailhost) {
+		public FormValidation doTestSMTPConnection(@QueryParameter final String mailhost) {
 			try {
 				Validate.confirmSMTP(mailhost, -1, null, null, false, "TLS");
 				return FormValidation.ok("Success");
