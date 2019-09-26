@@ -144,7 +144,7 @@ public class TestResultsAggregator extends Notifier {
 			}
 		}
 		
-		public FormValidation doGroupName(@QueryParameter String jobName) {
+		public FormValidation doJobName(@QueryParameter String jobName) {
 			if (Strings.isNullOrEmpty(jobName)) {
 				return FormValidation.error("Please enter a Jenkins Job name.");
 			} else {
