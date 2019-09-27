@@ -51,15 +51,9 @@ public class Reporter {
 		String htmlReport = new HTMLReporter(listener, workspace).createOverview(aggregated, columns);
 		// Generate XML report
 		// new XMLReporter(listener, workspace).junit(listDataJobDTO, countJobSuccess, countJobFailures, countJobUnstable);
-		// Generate Mail Subject
-		int countJobRunning = 0;
-		int countJobSuccess = 0;
-		int countJobFailures = 0;
-		int countJobUnstable = 0;
-		int countJobAborted = 0;
-		String subject = generateMailSubject(countJobRunning, countJobSuccess, countJobFailures, countJobUnstable, countJobAborted);
+		// Generate Mail Body
 		String content = generateMailBody(htmlReport);
-		new MailNotification(listener, dataJob).send(recipientsList, mailNotificationFrom, subject, content, mailhost);
+		new MailNotification(listener, dataJob).send(recipientsList, mailNotificationFrom, generateMailSubject(aggregated), content, mailhost);
 	}
 	
 	private String generateMailBody(String htmlReport) throws Exception {
@@ -74,22 +68,22 @@ public class Reporter {
 		return sb.toString();
 	}
 	
-	private String generateMailSubject(int countJobRunning, int countJobSuccess, int countJobFailures, int countJobUnstable, int countJobAborted) {
+	private String generateMailSubject(AggregatedDTO aggregated) {
 		String subject = "Test Results ";
-		if (countJobRunning > 0) {
-			subject += " Running : " + countJobRunning;
+		if (aggregated.getCountJobRunning() > 0) {
+			subject += " Running : " + aggregated.getCountJobRunning();
 		}
-		if (countJobSuccess > 0) {
-			subject += " Success : " + countJobSuccess;
+		if (aggregated.getCountJobSuccess() > 0) {
+			subject += " Success : " + aggregated.getCountJobSuccess();
 		}
-		if (countJobFailures > 0) {
-			subject += " Failed : " + countJobFailures;
+		if (aggregated.getCountJobFailures() > 0) {
+			subject += " Failed : " + aggregated.getCountJobFailures();
 		}
-		if (countJobUnstable > 0) {
-			subject += " Unstable : " + countJobUnstable;
+		if (aggregated.getCountJobUnstable() > 0) {
+			subject += " Unstable : " + aggregated.getCountJobUnstable();
 		}
-		if (countJobAborted > 0) {
-			subject += " Aborted : " + countJobAborted;
+		if (aggregated.getCountJobAborted() > 0) {
+			subject += " Aborted : " + aggregated.getCountJobAborted();
 		}
 		return subject;
 	}
