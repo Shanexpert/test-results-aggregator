@@ -11,6 +11,7 @@ public class DataDTO extends AbstractDescribableImpl<DataDTO> {
 	
 	private String groupName;
 	private List<DataJobDTO> jobs;
+	private AggregatedGroupDTO aggregatedGroup;
 	
 	@DataBoundConstructor
 	public DataDTO(String groupName, List<DataJobDTO> jobs) {
@@ -37,6 +38,14 @@ public class DataDTO extends AbstractDescribableImpl<DataDTO> {
 	@DataBoundSetter
 	public void setJobs(List<DataJobDTO> jobs) {
 		this.jobs = jobs;
+	}
+	
+	public AggregatedGroupDTO getAggregatedGroup() {
+		return aggregatedGroup;
+	}
+	
+	public void setAggregatedGroup(AggregatedGroupDTO aggregatedGroup) {
+		this.aggregatedGroup = aggregatedGroup;
 	}
 	
 }

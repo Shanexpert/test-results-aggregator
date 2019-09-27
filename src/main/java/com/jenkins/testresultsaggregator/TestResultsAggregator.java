@@ -8,8 +8,10 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
 import com.google.common.base.Strings;
+import com.jenkins.testresultsaggregator.data.AggregatedDTO;
 import com.jenkins.testresultsaggregator.data.DataDTO;
 import com.jenkins.testresultsaggregator.data.DataJobDTO;
+import com.jenkins.testresultsaggregator.helper.Analyzer;
 import com.jenkins.testresultsaggregator.helper.Collector;
 import com.jenkins.testresultsaggregator.helper.Reporter;
 import com.jenkins.testresultsaggregator.helper.Validate;
@@ -46,9 +48,10 @@ public class TestResultsAggregator extends Notifier {
 	public boolean perform(final AbstractBuild build, final Launcher launcher, final BuildListener listener) {
 		try {
 			listener.getLogger().println("Starting Aggregate Test Results Action");
-			List<DataDTO> validateData = validateData(getDataJob());
-			new Collector(listener, getDescriptor().getUsername(), getDescriptor().getPassword(), getDescriptor().getJenkinsUrl()).collectResults(validateData);
-			new Reporter(listener, build.getProject().getSomeWorkspace(), getDescriptor().getMailhost(), getDescriptor().getMailNotificationFrom()).publishResuts(getRecipientsList(), getOutOfDateResults(), validateData);
+			List<DataDTO> validatedData = validateInputData(getDataJob());
+			new Collector(listener, getDescriptor().getUsername(), getDescriptor().getPassword(), getDescriptor().getJenkinsUrl()).collectResults(validatedData);
+			AggregatedDTO aggregated = new Analyzer(listener).analyze(validatedData, outOfDateResults);
+			new Reporter(listener, build.getProject().getSomeWorkspace(), getDescriptor().getMailhost(), getDescriptor().getMailNotificationFrom()).publishResuts(getRecipientsList(), getOutOfDateResults(), aggregated);
 		} catch (Exception e) {
 			listener.getLogger().printf("Error Occurred : %s ", e);
 		}
@@ -164,7 +167,7 @@ public class TestResultsAggregator extends Notifier {
 		
 	}
 	
-	private List<DataDTO> validateData(List<DataDTO> data) {
+	private List<DataDTO> validateInputData(List<DataDTO> data) {
 		List<DataDTO> validateData = new ArrayList<DataDTO>();
 		for (DataDTO tempDataDTO : data) {
 			if (tempDataDTO.getJobs() != null && !tempDataDTO.getJobs().isEmpty()) {

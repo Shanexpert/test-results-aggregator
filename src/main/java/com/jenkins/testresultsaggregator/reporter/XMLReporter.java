@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.data.DataJobDTO;
-import com.jenkins.testresultsaggregator.data.JobStatus;
 import com.jenkins.testresultsaggregator.data.ResultsDTO;
 
 import hudson.FilePath;
@@ -29,33 +28,51 @@ public class XMLReporter {
 		listener.getLogger().print("Generate XML Report");
 		try {
 			File directory = createFolder(workspace + System.getProperty("file.separator") + FOLDER);
-			String fileName = directory.getAbsolutePath() + System.getProperty("file.separator") + REPORT_FILE_JUNIT;
-			PrintWriter writer = new PrintWriter(fileName, "UTF-8");
-			writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			writer.println("<testsuite name=\"jenkins.results.aggregator\" time=\"0\" tests=\"" + total + "\" errors=\"" + 0 + "\" skipped=\"" + skipped + "\" failures=\"" + failed + "\">");
-			writer.println("<properties></properties>");
 			for (DataJobDTO temp : listDataJobDTO) {
 				if (!Strings.isNullOrEmpty(temp.getJobName())) {
 					ResultsDTO resultsDTO = temp.getResultsDTO();
+					String jobName = temp.getJobName();
+					String fileName = directory.getAbsolutePath() + System.getProperty("file.separator") + jobName + "_" + REPORT_FILE_JUNIT;
+					PrintWriter writer = new PrintWriter(fileName, "UTF-8");
+					writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+					writer.println("<testsuite name=\"" + jobName + "\" time=\"0\" tests=\"" + resultsDTO.getTotal() + "\" errors=\"" + 0 + "\" skipped=\"" + resultsDTO.getSkip() + "\" failures=\"" + resultsDTO.getFail()
+							+ "\">");
+					writer.println("<properties></properties>");
+					for (int i = 1; i <= resultsDTO.getFail(); i++) {
+						writer.println("<testcase name=\"" + jobName + "\" classname=\"" + jobName + "\" time=\"0\">");
+						writer.println("<failure type=\"java.lang.AssertionError:\">");
+						writer.println("</failure>");
+						writer.println("</testcase>");
+					}
+					for (int i = 1; i <= resultsDTO.getSkip(); i++) {
+						writer.println("<testcase name=\"" + jobName + "\" classname=\"" + jobName + "\" time=\"0\">");
+						writer.println("<skipped></skipped>");
+						writer.println("</testcase>");
+					}
+					for (int i = 1; i <= resultsDTO.getPass(); i++) {
+						writer.println("<testcase name=\"" + jobName + "\" classname=\"" + jobName + "\" time=\"0\">");
+						writer.println("</testcase>");
+					}
+					/*
 					if (resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.SUCCESS.name()) || resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.FIXED.name())) {
-						writer.println("<testcase name=\"" + temp.getJobName() + "\" classname=\"jenkins.results.aggregator\" time=\"0\">");
+						writer.println("<testcase name=\"" + jobName + "\" classname=\"jenkins.results.aggregator\" time=\"0\">");
 						writer.println("</testcase>");
 					} else if (resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.FAILURE.name()) || resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.STILL_FAILING.name())) {
-						writer.println("<testcase name=\"" + temp.getJobName() + "\" classname=\"jenkins.results.aggregator\" time=\"0\">");
+						writer.println("<testcase name=\"" + jobName + "\" classname=\"jenkins.results.aggregator\" time=\"0\">");
 						writer.println("<failure type=\"java.lang.AssertionError:\">");
 						writer.println("</failure>");
 						writer.println("</testcase>");
 					} else if (resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.ABORTED.name()) || resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.STILL_UNSTABLE.name())
 							|| resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.UNSTABLE.name()) || resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.DISABLED.name())
 							|| resultsDTO.getCurrentResult().equalsIgnoreCase(JobStatus.NOT_FOUND.name())) {
-						writer.println("<testcase name=\"" + temp.getJobName() + "\" classname=\"jenkins.results.aggregator\" time=\"0\">");
+						writer.println("<testcase name=\"" + jobName + "\" classname=\"jenkins.results.aggregator\" time=\"0\">");
 						writer.println("<skipped></skipped>");
 						writer.println("</testcase>");
-					}
+					}*/
+					writer.println("</testsuite>");
+					writer.close();
 				}
 			}
-			writer.println("</testsuite>");
-			writer.close();
 			listener.getLogger().println("...Finished XML Report");
 		} catch (IOException e) {
 			listener.getLogger().println("");

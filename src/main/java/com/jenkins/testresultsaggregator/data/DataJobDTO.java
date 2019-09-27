@@ -13,6 +13,7 @@ public class DataJobDTO extends AbstractDescribableImpl<DataJobDTO> {
 	private JenkinsJobDTO jenkinsJob;
 	private JenkinsBuildDTO JenkinsBuild;
 	private ResultsDTO resultsDTO;
+	private AggregateJobDTO aggregate;
 	
 	@DataBoundConstructor
 	public DataJobDTO(String jobName, String jobFriendlyName) {
@@ -73,5 +74,13 @@ public class DataJobDTO extends AbstractDescribableImpl<DataJobDTO> {
 			return jobName;
 		}
 		return jobFriendlyName;
+	}
+	
+	public AggregateJobDTO getAggregate() {
+		return aggregate;
+	}
+	
+	public void setAggregate(AggregateJobDTO aggregate) {
+		this.aggregate = aggregate;
 	}
 }

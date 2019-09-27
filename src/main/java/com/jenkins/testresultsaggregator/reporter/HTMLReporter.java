@@ -1,9 +1,15 @@
 package com.jenkins.testresultsaggregator.reporter;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.util.List;
+
+import org.apache.commons.jelly.JellyContext;
+import org.apache.commons.jelly.XMLOutput;
+
+import com.jenkins.testresultsaggregator.data.AggregatedDTO;
 
 import hudson.FilePath;
 import hudson.model.BuildListener;
@@ -12,6 +18,7 @@ public class HTMLReporter {
 	
 	private static final String OVERVIEW_FILE = "index.html";
 	private static final String FOLDER = "/html";
+	private static final String REPORT = "htmlreport.jelly";
 	private BuildListener listener;
 	private FilePath workspace;
 	
@@ -20,25 +27,27 @@ public class HTMLReporter {
 		this.workspace = workspace;
 	}
 	
-	public String createOverview(String text) {
-		File directory = createFolder(workspace + System.getProperty("file.separator") + FOLDER);
-		String file = directory.getAbsolutePath() + System.getProperty("file.separator") + OVERVIEW_FILE;
-		PrintWriter writer;
+	public String createOverview(AggregatedDTO aggregated, List<String> columns) {
 		try {
-			writer = new PrintWriter(file, "UTF-8");
 			listener.getLogger().print("Generate HTML Report");
-			writer.println("<!DOCTYPE html><html><body>");
-			writer.println(text);
-			writer.println("</body></html>");
-			writer.close();
+			File directory = createFolder(workspace + System.getProperty("file.separator") + FOLDER);
+			String file = directory + System.getProperty("file.separator") + OVERVIEW_FILE;
+			OutputStream output = new FileOutputStream(file);
+			JellyContext context = new JellyContext();
+			context.setVariable("name", "Test Result Aggregator");
+			context.setVariable("columns", columns);
+			context.setVariable("aggregated", aggregated);
+			XMLOutput xmlOutput = XMLOutput.createXMLOutput(output);
+			URL template = HTMLReporter.class.getResource("/" + REPORT);
+			context.runScript(template, xmlOutput);
+			xmlOutput.endDocument();
+			xmlOutput.flush();
+			output.close();
+			xmlOutput.close();
 			listener.getLogger().println("...Finished HTML Report");
 			return file;
-		} catch (FileNotFoundException e) {
-			listener.getLogger().println("");
-			listener.getLogger().printf("Error Occurred : %s ", e);
-		} catch (UnsupportedEncodingException e) {
-			listener.getLogger().println("");
-			listener.getLogger().printf("Error Occurred : %s ", e);
+		} catch (Exception e) {
+			listener.getLogger().printf("Error Occurred : %s ", e.getMessage());
 		}
 		return null;
 	}

@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+   <j:jelly trim="false" xmlns:j="jelly:core" xmlns:x="jelly:xml" xmlns:html="jelly:html">
+     <html>
+       <head>
+         <title>${name}</title>
+       </head>
+       <body>
+       	<table width='100%'>
+			<tr bgcolor='black'>
+				<j:forEach items="${columns}" var="column">
+					<th style='text-align: center'><font color='white'>${column}</font></th>
+				</j:forEach>
+			</tr>
+			<j:set var="index" value="1"/>
+			<j:forEach items="${aggregated.getData()}" var="dataJob">
+				<j:set var="groupadded" value="false"/>
+				<j:set var="bgcolor" value="#DFDEDE"/>
+					<j:if test="${index % 2 == 0}">
+						<j:set var="bgcolor" value="#EEEEEE"/>
+					</j:if>
+				<j:set var="index" value="${index+1}"/>
+				<j:forEach items="${dataJob.getJobs()}" var="job">
+					<tr bgcolor='${bgcolor}'>
+					<j:if test="${groupadded == false}">
+						<j:if test="${columns.size() == 11}">
+							<th rowspan='${dataJob.getJobs().size()}'>${dataJob.getGroupName()}</th>
+							<th rowspan='${dataJob.getJobs().size()}'>${dataJob.getAggregatedGroup().getCalculatedGroupStatusWithColor()}<br>${dataJob.getAggregatedGroup().getCalculatedGroupPercentage()}</br></th>
+						</j:if>
+						<j:set var="groupadded" value="true"/>
+					</j:if>
+					<td>${job.getJobNameFromFriendlyName()}</td>
+					<td style="text-align: center">${job.getAggregate().getCalculatedJobStatusWithColor()}</td>
+					<td style="text-align: center">${job.getAggregate().getCalculatedTotal()}</td>
+					<td style="text-align: center">${job.getAggregate().getCalculatedPass()}</td>
+					<td style="text-align: center">${job.getAggregate().getCalculatedFailed()}</td>
+					<td style="text-align: center">${job.getAggregate().getCalculatedSkipped()}</td>
+					<td style="text-align: center">${job.getAggregate().getCalculatedTimestamp()}</td>
+					<td style="text-align: center">${job.getAggregate().getCalculatedChanges()}</td>
+					<td style="text-align: center">${job.getAggregate().getCalculatedReport()}</td>
+					</tr>
+				</j:forEach>
+			</j:forEach>
+			<tr bgcolor='black'>
+				<j:if test="${columns.size() == 9}">
+					<th style='text-align: center' colspan='2'><font color='white'>Summary</font></th>
+				</j:if>
+				<j:if test="${columns.size() == 11}">
+					<th style='text-align: center' colspan='4'><font color='white'>Summary</font></th>
+				</j:if>
+				<th style='text-align: center'><font color='white'>${aggregated.getResults().getCalculatedTotal()}</font></th>
+				<th style='text-align: center'><font color='white'>${aggregated.getResults().getCalculatedPass()}</font></th>
+				<th style='text-align: center'><font color='white'>${aggregated.getResults().getCalculatedFail()}</font></th>
+				<th style='text-align: center'><font color='white'>${aggregated.getResults().getCalculatedSkip()}</font></th>
+				<th colspan='3'></th>
+			</tr>
+		</table>
+       </body>
+     </html>
+   </j:jelly>

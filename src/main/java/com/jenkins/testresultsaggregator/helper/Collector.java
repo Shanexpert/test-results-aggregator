@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.google.common.base.Strings;
+import com.jenkins.testresultsaggregator.data.ChangeSetDTO;
 import com.jenkins.testresultsaggregator.data.DataDTO;
 import com.jenkins.testresultsaggregator.data.DataJobDTO;
 import com.jenkins.testresultsaggregator.data.JenkinsBuildDTO;
@@ -43,7 +44,6 @@ public class Collector {
 		this.password = password;
 		this.jenkinsUrl = jenkinsUrl;
 		this.listener = listener;
-		
 	}
 	
 	public void collectResults(List<DataDTO> dataJob) {
@@ -122,20 +122,6 @@ public class Collector {
 			ResultsDTO resultsDTO = new ResultsDTO();
 			// Set Building status
 			resultsDTO.setBuilding(dataJobDTO.getJenkinsBuild().getBuilding());
-			// Find Revision
-			try {
-				for (HashMap<Object, Object> temp : dataJobDTO.getJenkinsBuild().getActions()) {
-					if (temp.containsKey("lastBuiltRevision")) {
-						String lastBuiltRevision = temp.get("lastBuiltRevision").toString();
-						lastBuiltRevision = lastBuiltRevision.substring(lastBuiltRevision.indexOf("name="), lastBuiltRevision.length()).replaceAll("]", "").replaceAll("}", "").replace("name=", "").trim();
-						lastBuiltRevision = lastBuiltRevision.substring(lastBuiltRevision.lastIndexOf("/") + 1, lastBuiltRevision.length());
-						resultsDTO.setRevision(lastBuiltRevision);
-						break;
-					}
-				}
-			} catch (Exception ex) {
-				
-			}
 			// Set Current Result
 			resultsDTO.setCurrentResult(dataJobDTO.getJenkinsBuild().getResult());
 			// Set Description
@@ -156,13 +142,11 @@ public class Collector {
 			}
 			// Set Change Set
 			if (dataJobDTO.getJenkinsBuild().getChangeSets() != null) {
-				if (dataJobDTO.getJenkinsBuild().getChangeSets().size() > 0) {
-					// More than One Change set
-					// TODO : Sub them
-					resultsDTO.setNumberOfChanges(dataJobDTO.getJenkinsBuild().getChangeSets().get(0).getItems().size());
-				} else {
-					resultsDTO.setNumberOfChanges(dataJobDTO.getJenkinsBuild().getChangeSets().size());
+				int changes = 0;
+				for (ChangeSetDTO tempI : dataJobDTO.getJenkinsBuild().getChangeSets()) {
+					changes += tempI.getItems().size();
 				}
+				resultsDTO.setNumberOfChanges(changes);
 			} else {
 				resultsDTO.setNumberOfChanges(0);
 			}

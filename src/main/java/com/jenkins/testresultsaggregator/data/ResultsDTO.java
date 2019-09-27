@@ -1,18 +1,24 @@
 package com.jenkins.testresultsaggregator.data;
 
+import com.jenkins.testresultsaggregator.helper.Helper;
+
 public class ResultsDTO {
 	
 	private String name;
 	
+	private String calculatedPass;
 	private int pass;
 	private int passDif;
 	
+	private String calculatedFail;
 	private int fail;
 	private int failDif;
 	
+	private String calculatedSkip;
 	private int skip;
 	private int skipDif;
 	
+	private String calculatedTotal;
 	private int total;
 	private int totalDif;
 	
@@ -30,7 +36,6 @@ public class ResultsDTO {
 	private int numberOfChanges;
 	private String changesUrl;
 	private String timestamp;
-	private String revision;
 	
 	public ResultsDTO() {
 		setPass(0);
@@ -230,20 +235,44 @@ public class ResultsDTO {
 		this.timestamp = timestamp;
 	}
 	
-	public String getRevision() {
-		return revision;
-	}
-	
-	public void setRevision(String revision) {
-		this.revision = revision;
-	}
-	
 	public String getName() {
 		return name;
 	}
 	
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String getCalculatedPass() {
+		return getPass() + Helper.singInteger(getPassDif());
+	}
+	
+	public void setCalculatedPass(String calculatedPass) {
+		this.calculatedPass = calculatedPass;
+	}
+	
+	public String getCalculatedTotal() {
+		return getTotal() + Helper.singInteger(getTotalDif());
+	}
+	
+	public void setCalculatedTotal(String calculatedTotal) {
+		this.calculatedTotal = calculatedTotal;
+	}
+	
+	public String getCalculatedSkip() {
+		return getSkip() + Helper.singInteger(getSkipDif());
+	}
+	
+	public void setCalculatedSkip(String calculatedSkip) {
+		this.calculatedSkip = calculatedSkip;
+	}
+	
+	public String getCalculatedFail() {
+		return Helper.colorizeFailResult(getFail()) + Helper.singInteger(getFailDif());
+	}
+	
+	public void setCalculatedFail(String calculatedFail) {
+		this.calculatedFail = calculatedFail;
 	}
 	
 }
