@@ -30,9 +30,9 @@
 		</repository>
 	</repositories>
 	<scm>
-		<connection>scm:git:git://github.com/jenkinsci/</connection>
-		<developerConnection>scm:git:git@github.com:jenkinsci/</developerConnection>
-		<url>https://github.com/jenkinsci/</url>
+		<connection>https://github.com/sdrss/test-results-aggregator.git</connection>
+		<developerConnection>https://github.com/sdrss/test-results-aggregator.git</developerConnection>
+		<url>https://github.com/sdrss/test-results-aggregator</url>
 		<tag>HEAD</tag>
 	</scm>
 	<pluginRepositories>
