@@ -29,6 +29,7 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
+import hudson.util.Secret;
 import net.sf.json.JSONObject;
 
 public class TestResultsAggregator extends Notifier {
@@ -80,16 +81,16 @@ public class TestResultsAggregator extends Notifier {
 		 * Global configuration information variables. If you don't want fields to be persisted, use <tt>transient</tt>.
 		 */
 		private String jenkinsUrl;
-		private String username;
-		private String password;
+		private Secret username;
+		private Secret password;
 		private String mailhost;
 		private String mailNotificationFrom;
 		
-		public String getUsername() {
+		public Secret getUsername() {
 			return username;
 		}
 		
-		public String getPassword() {
+		public Secret getPassword() {
 			return password;
 		}
 		
@@ -129,8 +130,8 @@ public class TestResultsAggregator extends Notifier {
 		
 		@Override
 		public boolean configure(StaplerRequest req, JSONObject jsonObject) throws FormException {
-			username = jsonObject.getString("username");
-			password = jsonObject.getString("password");
+			username = Secret.fromString((String) jsonObject.get("username"));
+			password = Secret.fromString((String) jsonObject.get("password"));
 			mailhost = jsonObject.getString("mailhost");
 			jenkinsUrl = jsonObject.getString("jenkinsUrl");
 			mailNotificationFrom = jsonObject.getString("mailNotificationFrom");
@@ -156,7 +157,7 @@ public class TestResultsAggregator extends Notifier {
 			}
 		}
 		
-		public FormValidation doTestApiConnection(@QueryParameter final String jenkinsUrl, @QueryParameter final String username, @QueryParameter final String password) {
+		public FormValidation doTestApiConnection(@QueryParameter final String jenkinsUrl, @QueryParameter final Secret username, @QueryParameter final Secret password) {
 			try {
 				new Collector(null, username, password, jenkinsUrl).getAPIConnection();
 				return FormValidation.ok(LocalMessages.SUCCESS.toString());

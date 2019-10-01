@@ -20,6 +20,8 @@ import com.jenkins.testresultsaggregator.data.JenkinsJobDTO;
 import com.jenkins.testresultsaggregator.data.JobStatus;
 import com.jenkins.testresultsaggregator.data.ResultsDTO;
 
+import hudson.util.Secret;
+
 public class Collector {
 	
 	public static final String JOB = "job";
@@ -33,12 +35,12 @@ public class Collector {
 	public static final String TESTNG_REPORT = "testngreports";
 	public static final String JUNIT_REPORT = "testReport";
 	
-	private String username;
-	private String password;
+	private Secret username;
+	private Secret password;
 	private String jenkinsUrl;
 	private PrintStream logger;
 	
-	public Collector(PrintStream logger, String username, String password, String jenkinsUrl) {
+	public Collector(PrintStream logger, Secret username, Secret password, String jenkinsUrl) {
 		this.username = username;
 		this.password = password;
 		this.jenkinsUrl = jenkinsUrl;
@@ -82,8 +84,8 @@ public class Collector {
 	}
 	
 	private String authenticationString() {
-		if (!Strings.isNullOrEmpty(username) && !Strings.isNullOrEmpty(password)) {
-			return Base64.getEncoder().encodeToString(new String(username + ":" + new String(password)).getBytes());
+		if (!Strings.isNullOrEmpty(username.getPlainText()) && !Strings.isNullOrEmpty(password.getPlainText())) {
+			return Base64.getEncoder().encodeToString(new String(username.getPlainText() + ":" + new String(password.getPlainText())).getBytes());
 		}
 		return null;
 	}
