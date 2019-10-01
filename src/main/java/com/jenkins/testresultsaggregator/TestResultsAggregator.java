@@ -1,5 +1,6 @@
 package com.jenkins.testresultsaggregator;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import com.jenkins.testresultsaggregator.data.DataDTO;
 import com.jenkins.testresultsaggregator.data.DataJobDTO;
 import com.jenkins.testresultsaggregator.helper.Analyzer;
 import com.jenkins.testresultsaggregator.helper.Collector;
+import com.jenkins.testresultsaggregator.helper.LocalMessages;
 import com.jenkins.testresultsaggregator.helper.Reporter;
 import com.jenkins.testresultsaggregator.helper.Validate;
 
@@ -34,7 +36,6 @@ public class TestResultsAggregator extends Notifier {
 	private final static String displayName = "Aggregate Test Results";
 	private String recipientsList;
 	private String outOfDateResults;
-	
 	private List<DataDTO> dataJob;
 	
 	@DataBoundConstructor
@@ -46,16 +47,24 @@ public class TestResultsAggregator extends Notifier {
 	
 	@Override
 	public boolean perform(final AbstractBuild build, final Launcher launcher, final BuildListener listener) {
+		PrintStream logger = listener.getLogger();
+		Descriptor desc = getDescriptor();
 		try {
-			listener.getLogger().println("Starting Aggregate Test Results Action");
+			logger.println(LocalMessages.START_AGGREGATE.toString());
+			// Validate Input Data
 			List<DataDTO> validatedData = validateInputData(getDataJob());
-			new Collector(listener, getDescriptor().getUsername(), getDescriptor().getPassword(), getDescriptor().getJenkinsUrl()).collectResults(validatedData);
-			AggregatedDTO aggregated = new Analyzer(listener).analyze(validatedData, outOfDateResults);
-			new Reporter(listener, build.getProject().getSomeWorkspace(), getDescriptor().getMailhost(), getDescriptor().getMailNotificationFrom()).publishResuts(getRecipientsList(), getOutOfDateResults(), aggregated);
+			// Collect Data
+			Collector collector = new Collector(logger, desc.getUsername(), desc.getPassword(), desc.getJenkinsUrl());
+			collector.collectResults(validatedData);
+			// Analyze Results
+			AggregatedDTO aggregated = new Analyzer(logger).analyze(validatedData, outOfDateResults);
+			// Reporter for HTML and mail
+			Reporter reporter = new Reporter(logger, build.getProject().getSomeWorkspace(), desc.getMailhost(), desc.getMailNotificationFrom());
+			reporter.publishResuts(getRecipientsList(), getOutOfDateResults(), aggregated);
 		} catch (Exception e) {
-			listener.getLogger().printf("Error Occurred : %s ", e);
+			logger.printf(LocalMessages.ERROR_OCCURRED.toString() + " : %s ", e);
 		}
-		listener.getLogger().println("Finished Aggregate Test Results Action");
+		logger.println(LocalMessages.FINISHED_AGGREGATE.toString());
 		return true;
 	}
 	
@@ -134,12 +143,12 @@ public class TestResultsAggregator extends Notifier {
 				try {
 					int hours = Integer.parseInt(outOfDateResults);
 					if (hours < 0) {
-						return FormValidation.error("Please enter a positive integer number.");
+						return FormValidation.error(LocalMessages.VALIDATION_POSITIVE_NUMBER.toString());
 					} else {
 						return FormValidation.ok();
 					}
 				} catch (NumberFormatException e) {
-					return FormValidation.error("Please enter an integer number.");
+					return FormValidation.error(LocalMessages.VALIDATION_INTEGER_NUMBER.toString());
 				}
 			} else {
 				// No OutOfDate
@@ -150,18 +159,18 @@ public class TestResultsAggregator extends Notifier {
 		public FormValidation doTestApiConnection(@QueryParameter final String jenkinsUrl, @QueryParameter final String username, @QueryParameter final String password) {
 			try {
 				new Collector(null, username, password, jenkinsUrl).getAPIConnection();
-				return FormValidation.ok("Success");
+				return FormValidation.ok(LocalMessages.SUCCESS.toString());
 			} catch (Exception e) {
-				return FormValidation.error("Client error : " + e.getMessage());
+				return FormValidation.error(LocalMessages.ERROR_OCCURRED.toString() + ": " + e.getMessage());
 			}
 		}
 		
 		public FormValidation doTestSMTPConnection(@QueryParameter final String mailhost) {
 			try {
 				Validate.confirmSMTP(mailhost, -1, null, null, false, "TLS");
-				return FormValidation.ok("Success");
+				return FormValidation.ok(LocalMessages.SUCCESS.toString());
 			} catch (Exception e) {
-				return FormValidation.error("Client error : " + e.getMessage());
+				return FormValidation.error(LocalMessages.ERROR_OCCURRED.toString() + ": " + e.getMessage());
 			}
 		}
 		

@@ -1,5 +1,6 @@
 package com.jenkins.testresultsaggregator.helper;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -14,14 +15,12 @@ import com.jenkins.testresultsaggregator.data.DataJobDTO;
 import com.jenkins.testresultsaggregator.data.JobStatus;
 import com.jenkins.testresultsaggregator.data.ResultsDTO;
 
-import hudson.model.BuildListener;
-
 public class Analyzer {
 	
-	private BuildListener listener;
+	private PrintStream logger;
 	
-	public Analyzer(BuildListener listener) {
-		this.listener = listener;
+	public Analyzer(PrintStream logger) {
+		this.logger = logger;
 	}
 	
 	public AggregatedDTO analyze(List<DataDTO> dataJob, String outOfDateResults) throws Exception {

@@ -1,5 +1,6 @@
 package com.jenkins.testresultsaggregator.reporter;
 
+import java.io.PrintStream;
 import java.util.List;
 import java.util.Properties;
 
@@ -14,16 +15,15 @@ import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.data.DataDTO;
 import com.jenkins.testresultsaggregator.data.DataJobDTO;
 import com.jenkins.testresultsaggregator.data.JobStatus;
-
-import hudson.model.BuildListener;
+import com.jenkins.testresultsaggregator.helper.LocalMessages;
 
 public class MailNotification {
 	
-	private BuildListener listener;
+	private PrintStream logger;
 	private List<DataDTO> dataJob;
 	
-	public MailNotification(BuildListener listener, List<DataDTO> dataJob) {
-		this.listener = listener;
+	public MailNotification(PrintStream logger, List<DataDTO> dataJob) {
+		this.logger = logger;
 		this.dataJob = dataJob;
 	}
 	
@@ -41,13 +41,13 @@ public class MailNotification {
 	}
 	
 	public void send(String mailTo, String mailFrom, String subject, String body, String host) {
-		listener.getLogger().print("Generate email Report");
+		logger.print(LocalMessages.GENERATE.toString() + " " + LocalMessages.EMAIL_REPORT.toString());
 		if (validateResults()) {
-			listener.getLogger().println("...No mail will be Send since all Jobs are having status 'NOT_FOUND'.");
+			logger.println(LocalMessages.VALIDATION_MAIL_NOT_FOUND_JOBS.toString());
 		} else if (Strings.isNullOrEmpty(mailTo)) {
-			listener.getLogger().println("...No mail will be Send since the Recipients List is empty.");
+			logger.println(LocalMessages.VALIDATION_MAIL_RECEIPIENTS_EMPTY.toString());
 		} else if (Strings.isNullOrEmpty(host)) {
-			listener.getLogger().println("...No mail will be Send since SMTP host in Global configuration is empty.");
+			logger.println(LocalMessages.VALIDATION_MAIL_SMTP_ISSUE.toString());
 		} else {
 			String[] to = mailTo.split(",");
 			Properties properties = System.getProperties();
@@ -62,11 +62,11 @@ public class MailNotification {
 				message.setSubject(subject);
 				message.setContent(body, "text/html");
 				Transport.send(message);
-				listener.getLogger().println("...Sent message successfully to : ");
-				listener.getLogger().println("" + mailTo);
+				logger.println(LocalMessages.SEND_MAIL_TO.toString());
+				logger.println("" + mailTo);
 			} catch (MessagingException ex) {
-				listener.getLogger().println("");
-				listener.getLogger().printf("Error Occurred : %s ", ex);
+				logger.println("");
+				logger.printf(LocalMessages.ERROR_OCCURRED.toString() + ": " + ex.getMessage());
 			}
 		}
 	}

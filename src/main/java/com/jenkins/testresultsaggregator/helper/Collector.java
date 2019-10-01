@@ -1,6 +1,7 @@
 package com.jenkins.testresultsaggregator.helper;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -19,8 +20,6 @@ import com.jenkins.testresultsaggregator.data.JenkinsJobDTO;
 import com.jenkins.testresultsaggregator.data.JobStatus;
 import com.jenkins.testresultsaggregator.data.ResultsDTO;
 
-import hudson.model.BuildListener;
-
 public class Collector {
 	
 	public static final String JOB = "job";
@@ -37,13 +36,13 @@ public class Collector {
 	private String username;
 	private String password;
 	private String jenkinsUrl;
-	private BuildListener listener;
+	private PrintStream logger;
 	
-	public Collector(BuildListener listener, String username, String password, String jenkinsUrl) {
+	public Collector(PrintStream logger, String username, String password, String jenkinsUrl) {
 		this.username = username;
 		this.password = password;
 		this.jenkinsUrl = jenkinsUrl;
-		this.listener = listener;
+		this.logger = logger;
 	}
 	
 	public void collectResults(List<DataDTO> dataJob) {
@@ -54,7 +53,7 @@ public class Collector {
 			}
 		}
 		for (DataJobDTO tempDataJobDTO : allDataJobDTO) {
-			listener.getLogger().print("Collecting Data from Jenkins Job named '" + tempDataJobDTO.getJobName() + "'");
+			logger.print(LocalMessages.COLLECT_DATA.toString() + " '" + tempDataJobDTO.getJobName() + "'");
 			// Get Jenkins Job Info
 			tempDataJobDTO.setJenkinsJob(getJobInfo(tempDataJobDTO));
 			if (tempDataJobDTO.getJenkinsJob() == null) {
@@ -62,22 +61,22 @@ public class Collector {
 				tempDataJobDTO.setJenkinsJob(new JenkinsJobDTO());
 				tempDataJobDTO.setJenkinsBuild(new JenkinsBuildDTO(JobStatus.NOT_FOUND.name()));
 				tempDataJobDTO.setResultsDTO(new ResultsDTO(JobStatus.NOT_FOUND.name(), null));
-				listener.getLogger().println("...Job Not Found");
+				logger.println(LocalMessages.JOB_NOT_FOUND.toString());
 			} else if (!tempDataJobDTO.getJenkinsJob().getBuildable()) {
 				// Job is Disabled/ Not Buildable
 				tempDataJobDTO.setJenkinsJob(new JenkinsJobDTO());
 				tempDataJobDTO.setJenkinsBuild(new JenkinsBuildDTO(JobStatus.DISABLED.name()));
 				tempDataJobDTO.setResultsDTO(new ResultsDTO(JobStatus.DISABLED.name(), null));
-				listener.getLogger().println("...Job is Disabled");
+				logger.println(LocalMessages.JOB_IS_DISABLED.toString());
 			} else if (tempDataJobDTO.getJenkinsJob() != null) {
 				// Job Found and is Buildable
 				// Get Job Results
 				tempDataJobDTO.setJenkinsBuild(getJobResults(tempDataJobDTO));
 				// Get Actual Results
 				tempDataJobDTO.setResultsDTO(getResults(tempDataJobDTO));
-				listener.getLogger().println("...DONE");
+				logger.println(LocalMessages.FINISHED.toString());
 			} else {
-				listener.getLogger().println("...");
+				logger.println("...");
 			}
 		}
 	}
