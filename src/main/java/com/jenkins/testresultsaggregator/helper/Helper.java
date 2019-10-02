@@ -1,5 +1,6 @@
 package com.jenkins.testresultsaggregator.helper;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -8,6 +9,8 @@ import java.time.format.DateTimeFormatter;
 import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.data.JobStatus;
 import com.jenkins.testresultsaggregator.data.ResultsDTO;
+
+import hudson.FilePath;
 
 public class Helper {
 	
@@ -145,6 +148,25 @@ public class Helper {
 			return df.format(value);
 		} else {
 			return "";
+		}
+	}
+	
+	public static File createFolder(FilePath filePath, String folder) {
+		File theDir = new File(filePath.getRemote(), folder);
+		// if the directory does not exist, create it
+		if (!theDir.exists()) {
+			theDir.mkdir();
+		}
+		return theDir;
+	}
+	
+	public static String diff(long prev, long curr, String name) {
+		if (prev == curr) {
+			return "<li>" + name + ": " + curr + " (&plusmn;0)</li>";
+		} else if (prev < curr) {
+			return "<li>" + name + ": " + curr + " (+" + (curr - prev) + ")</li>";
+		} else { // if (a < b)
+			return "<li>" + name + ": " + curr + " (-" + (prev - curr) + ")</li>";
 		}
 	}
 }

@@ -11,6 +11,7 @@ import org.apache.commons.jelly.JellyContext;
 import org.apache.commons.jelly.XMLOutput;
 
 import com.jenkins.testresultsaggregator.data.AggregatedDTO;
+import com.jenkins.testresultsaggregator.helper.Helper;
 import com.jenkins.testresultsaggregator.helper.LocalMessages;
 
 import hudson.FilePath;
@@ -18,7 +19,7 @@ import hudson.FilePath;
 public class HTMLReporter {
 	
 	private static final String OVERVIEW_FILE = "index.html";
-	private static final String FOLDER = "/html";
+	private static final String FOLDER = "html";
 	private static final String REPORT = "htmlreport.jelly";
 	private PrintStream logger;
 	private FilePath workspace;
@@ -31,7 +32,7 @@ public class HTMLReporter {
 	public String createOverview(AggregatedDTO aggregated, List<String> columns) {
 		try {
 			logger.print(LocalMessages.GENERATE.toString() + " " + LocalMessages.HTML_REPORT.toString());
-			File directory = createFolder(workspace, FOLDER);
+			File directory = Helper.createFolder(workspace, FOLDER);
 			String file = directory + System.getProperty("file.separator") + OVERVIEW_FILE;
 			OutputStream output = new FileOutputStream(file);
 			JellyContext context = new JellyContext();
@@ -52,20 +53,6 @@ public class HTMLReporter {
 			logger.printf(LocalMessages.ERROR_OCCURRED.toString() + ": " + e.getMessage());
 		}
 		return null;
-	}
-	
-	private File createFolder(FilePath filePath, String folder) {
-		File theDir = new File(filePath.getRemote(), folder);
-		// if the directory does not exist, create it
-		if (!theDir.exists()) {
-			try {
-				theDir.mkdir();
-			} catch (SecurityException e) {
-				logger.println("");
-				logger.printf(LocalMessages.ERROR_OCCURRED.toString() + ": " + e.getMessage());
-			}
-		}
-		return theDir;
 	}
 	
 }

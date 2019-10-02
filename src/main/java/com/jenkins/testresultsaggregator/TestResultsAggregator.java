@@ -39,6 +39,11 @@ public class TestResultsAggregator extends Notifier {
 	private String outOfDateResults;
 	private List<DataDTO> dataJob;
 	
+	public static final String DISPLAY_NAME = "Job Results Aggregated";
+	public static final String GRAPH_NAME = "Job Results Trend";
+	public static final String URL = "reports";
+	public static final String ICON_FILE_NAME = "/plugin/test-results-aggregator/icons/report.png";
+	
 	@DataBoundConstructor
 	public TestResultsAggregator(final String recipientsList, final String outOfDateResults, final List<DataDTO> dataJob) {
 		this.setRecipientsList(recipientsList);
@@ -60,8 +65,11 @@ public class TestResultsAggregator extends Notifier {
 			// Analyze Results
 			AggregatedDTO aggregated = new Analyzer(logger).analyze(validatedData, outOfDateResults);
 			// Reporter for HTML and mail
-			Reporter reporter = new Reporter(logger, build.getProject().getSomeWorkspace(), desc.getMailhost(), desc.getMailNotificationFrom());
+			Reporter reporter = new Reporter(logger, build.getProject().getSomeWorkspace(), build.getRootDir(), desc.getMailhost(), desc.getMailNotificationFrom());
 			reporter.publishResuts(getRecipientsList(), getOutOfDateResults(), aggregated);
+			// Add Build Action
+			build.addAction(new TestResultsAggregatorTestResultBuildAction(aggregated));
+			
 		} catch (Exception e) {
 			logger.printf(LocalMessages.ERROR_OCCURRED.toString() + " : %s ", e);
 		}

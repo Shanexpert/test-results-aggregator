@@ -1,6 +1,7 @@
 package com.jenkins.testresultsaggregator.helper;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,6 +15,7 @@ import com.jenkins.testresultsaggregator.data.AggregatedDTO;
 import com.jenkins.testresultsaggregator.data.DataDTO;
 import com.jenkins.testresultsaggregator.reporter.HTMLReporter;
 import com.jenkins.testresultsaggregator.reporter.MailNotification;
+import com.jenkins.testresultsaggregator.reporter.XMLReporter;
 
 import hudson.FilePath;
 
@@ -21,15 +23,17 @@ public class Reporter {
 	
 	private PrintStream logger;
 	private FilePath workspace;
+	private File rootDir;
 	private String mailhost;
 	private String mailNotificationFrom;
 	
 	private boolean foundAtLeastOneGroupName;
 	private List<String> columns;
 	
-	public Reporter(PrintStream logger, FilePath workspace, String mailhost, String mailNotificationFrom) {
+	public Reporter(PrintStream logger, FilePath workspace, File rootDir, String mailhost, String mailNotificationFrom) {
 		this.logger = logger;
 		this.workspace = workspace;
+		this.rootDir = rootDir;
 		this.mailhost = mailhost;
 		this.mailNotificationFrom = mailNotificationFrom;
 	}
@@ -58,11 +62,12 @@ public class Reporter {
 				LocalMessages.COLUMN_LAST_RUN.toString(),
 				LocalMessages.COLUMN_COMMITS.toString(),
 				LocalMessages.COLUMN_REPORT.toString())));
-		// Generate HTML report
+		// Generate HTML Report
 		String htmlReport = new HTMLReporter(logger, workspace).createOverview(aggregated, columns);
-		// Generate Mail Body
-		String content = generateMailBody(htmlReport);
-		new MailNotification(logger, dataJob).send(recipientsList, mailNotificationFrom, generateMailSubject(aggregated), content, mailhost);
+		// Generate and Send Mail report
+		new MailNotification(logger, dataJob).send(recipientsList, mailNotificationFrom, generateMailSubject(aggregated), generateMailBody(htmlReport), mailhost);
+		// Generate XML Report
+		new XMLReporter(logger, rootDir).generateXMLReport(aggregated);
 	}
 	
 	private String generateMailBody(String htmlReport) throws Exception {

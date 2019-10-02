@@ -1,8 +1,17 @@
 package com.jenkins.testresultsaggregator.data;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
-public class AggregatedDTO {
+import com.jenkins.testresultsaggregator.TestResultsAggregator;
+
+import hudson.model.Run;
+import hudson.tasks.test.TestResult;
+
+public class AggregatedDTO extends BaseResult implements Serializable {
+	
+	private static final long serialVersionUID = 3491974223665L;
 	
 	private List<DataDTO> data;
 	private ResultsDTO results;
@@ -11,13 +20,12 @@ public class AggregatedDTO {
 	private int countJobFailures = 0;
 	private int countJobUnstable = 0;
 	private int countJobAborted = 0;
+	private int countTotal = 0;
+	
+	private Run<?, ?> owner;
 	
 	public AggregatedDTO() {
-	}
-	
-	public AggregatedDTO(List<DataDTO> data, ResultsDTO results) {
-		setData(data);
-		setResults(results);
+		super(TestResultsAggregator.URL);
 	}
 	
 	public ResultsDTO getResults() {
@@ -75,4 +83,32 @@ public class AggregatedDTO {
 	public void setCountJobAborted(int countJobAborted) {
 		this.countJobAborted = countJobAborted;
 	}
+	
+	public Run<?, ?> getRun() {
+		return owner;
+	}
+	
+	public void setRun(Run<?, ?> owner) {
+		this.owner = owner;
+	}
+	
+	public int getCountTotal() {
+		return countJobAborted + countJobUnstable + countJobFailures + countJobSuccess + countJobRunning;
+	}
+	
+	public void setCountTotal(int countTotal) {
+		this.countTotal = countTotal;
+	}
+	
+	@Override
+	public Collection<? extends TestResult> getChildren() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public boolean hasChildren() {
+		return false;
+	}
+	
 }
