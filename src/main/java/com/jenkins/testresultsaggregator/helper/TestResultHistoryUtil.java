@@ -32,11 +32,11 @@ public class TestResultHistoryUtil {
 		prevTotal = prevFailed + prevUnstable + prevSucces + prevAborted + prevRunning;
 		AggregatedDTO result = action.getResult();
 		int total = result.getCountJobAborted() + result.getCountJobFailures() + result.getCountJobRunning() + result.getCountJobSuccess() + result.getCountJobUnstable();
-		return "<ul>" + Helper.diff(prevTotal, total, "Total Jobs") +
-				Helper.diff(prevFailed, result.getCountJobFailures(), TestResultsAggregatorProjectAction.FAILED + " Jobs") +
-				Helper.diff(prevUnstable, result.getCountJobUnstable(), TestResultsAggregatorProjectAction.UNSTABLE + " Jobs") +
-				Helper.diff(prevAborted, result.getCountJobAborted(), TestResultsAggregatorProjectAction.ABORTED + " Jobs") +
-				Helper.diff(prevRunning, result.getCountJobRunning(), TestResultsAggregatorProjectAction.RUNNING + " Jobs") +
+		return "<ul>" + Helper.diff(prevTotal, total, "Total Jobs", true) +
+				Helper.diff(prevFailed, result.getCountJobFailures(), TestResultsAggregatorProjectAction.FAILED + " Jobs", true) +
+				Helper.diff(prevUnstable, result.getCountJobUnstable(), TestResultsAggregatorProjectAction.UNSTABLE + " Jobs", true) +
+				Helper.diff(prevAborted, result.getCountJobAborted(), TestResultsAggregatorProjectAction.ABORTED + " Jobs", true) +
+				Helper.diff(prevRunning, result.getCountJobRunning(), TestResultsAggregatorProjectAction.RUNNING + " Jobs", true) +
 				"</ul>";
 	}
 	
