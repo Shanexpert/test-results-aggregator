@@ -88,7 +88,7 @@ public class Helper {
 		} else if (JobStatus.FIXED.name().equals(result)) {
 			return "<font color='" + Colors.htmlSUCCESS() + "'>" + result + "</font>";
 		} else if (JobStatus.UNSTABLE.name().equals(result)) {
-			return "<font color='orange'><b>" + result + "</b></font>";
+			return "<font color='" + Colors.htmlUNSTABLE() + "'><b>" + result + "</b></font>";
 		} else if (JobStatus.STILL_UNSTABLE.name().equals(result)) {
 			return "<font color='" + Colors.htmlUNSTABLE() + "'><b>" + result + "</b></font>";
 		}

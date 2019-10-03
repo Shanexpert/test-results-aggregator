@@ -4,11 +4,12 @@ import java.awt.Color;
 
 public class Colors {
 	
+	public static final Color BLACK = Color.BLACK;
 	public static final Color SUCCESS = Color.GREEN;
-	public static final Color ABORTED = Color.GRAY;
+	public static final Color ABORTED = Color.DARK_GRAY;
 	public static final Color FAILED = Color.RED;
-	public static final Color RUNNING = Color.LIGHT_GRAY;
-	public static final Color UNSTABLE = Color.YELLOW;
+	public static final Color RUNNING = Color.BLUE;
+	public static final Color UNSTABLE = Color.ORANGE;
 	
 	private static String getHTMLColorString(Color color) {
 		String red = Integer.toHexString(color.getRed());
@@ -22,6 +23,10 @@ public class Colors {
 	
 	public static String html(Color color) {
 		return getHTMLColorString(color);
+	}
+	
+	public static String htmlBlack() {
+		return getHTMLColorString(BLACK);
 	}
 	
 	public static String htmlSUCCESS() {
