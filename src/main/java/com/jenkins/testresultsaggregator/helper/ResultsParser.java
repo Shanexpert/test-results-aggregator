@@ -74,8 +74,8 @@ public class ResultsParser {
 					}
 					
 					if (jobs != null) {
-						List<DataDTO> data = new ArrayList<>();
 						List<DataJobDTO> dataJobs = new ArrayList<>();
+						List<DataDTO> data = new ArrayList<>();
 						data.add(new DataDTO("", dataJobs));
 						finalResults.setData(data);
 						for (int i = 0; i < jobs.getChildNodes().getLength(); i++) {
@@ -86,7 +86,7 @@ public class ResultsParser {
 								dataJob.setResultsDTO(new ResultsDTO(null, null));
 								dataJob.setJenkinsJob(new JenkinsJobDTO());
 								for (int j = 0; j < currentNodeResults.getChildNodes().getLength(); j++) {
-									Node jobResults = currentNodeResults.getChildNodes().item(i);
+									Node jobResults = currentNodeResults.getChildNodes().item(j);
 									if (jobResults.getNodeName().equalsIgnoreCase(XMLReporter.NAME)) {
 										dataJob.setJobName(jobResults.getTextContent());
 									} else if (jobResults.getNodeName().equalsIgnoreCase(XMLReporter.FNAME)) {
