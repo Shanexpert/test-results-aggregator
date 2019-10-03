@@ -14,6 +14,6 @@ t.summary(icon: "clipboard.png") {
         text("${my.displayName}")
     }
     p() {
-        raw("${TestResultHistoryUtil.toSummary(my)}")
+		raw("${TestResultHistoryUtil.toSummary(my)}")
     }
 }
