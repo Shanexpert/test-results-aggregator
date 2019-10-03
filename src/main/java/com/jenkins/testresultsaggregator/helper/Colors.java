@@ -5,11 +5,11 @@ import java.awt.Color;
 public class Colors {
 	
 	public static final Color BLACK = Color.BLACK;
-	public static final Color SUCCESS = Color.GREEN;
-	public static final Color ABORTED = Color.DARK_GRAY;
-	public static final Color FAILED = Color.RED;
-	public static final Color RUNNING = Color.BLUE;
-	public static final Color UNSTABLE = Color.ORANGE;
+	public static final Color SUCCESS = new Color(8, 150, 8);// Color.GREEN;
+	public static final Color ABORTED = new Color(115, 115, 115);// Color.DARK_GRAY;
+	public static final Color FAILED = new Color(245, 15, 25);// Color.RED;
+	public static final Color RUNNING = new Color(0, 25, 235);// Color.BLUE;
+	public static final Color UNSTABLE = new Color(250, 150, 10); // Color.ORANGE;
 	
 	private static String getHTMLColorString(Color color) {
 		String red = Integer.toHexString(color.getRed());
