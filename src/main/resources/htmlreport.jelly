@@ -32,7 +32,7 @@
 					<td style="text-align: center">${job.getAggregate().getCalculatedJobStatusWithColor()}</td>
 					<td style="text-align: center">${job.getAggregate().getCalculatedTotal()}</td>
 					<td style="text-align: center">${job.getAggregate().getCalculatedPass()}</td>
-					<td style="text-align: center">${job.getAggregate().getCalculatedFailed()}</td>
+					<td style="text-align: center">${job.getAggregate().getCalculatedFailColor()}</td>
 					<td style="text-align: center">${job.getAggregate().getCalculatedSkipped()}</td>
 					<td style="text-align: center">${job.getAggregate().getCalculatedTimestamp()}</td>
 					<td style="text-align: center">${job.getAggregate().getCalculatedChanges()}</td>
@@ -49,7 +49,7 @@
 				</j:if>
 				<th style='text-align: center'><font color='white'>${aggregated.getResults().getCalculatedTotal()}</font></th>
 				<th style='text-align: center'><font color='white'>${aggregated.getResults().getCalculatedPass()}</font></th>
-				<th style='text-align: center'><font color='white'>${aggregated.getResults().getCalculatedFail()}</font></th>
+				<th style='text-align: center'><font color='white'>${aggregated.getResults().getCalculatedFailColor()}</font></th>
 				<th style='text-align: center'><font color='white'>${aggregated.getResults().getCalculatedSkip()}</font></th>
 				<th colspan='3'></th>
 			</tr>

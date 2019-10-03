@@ -268,6 +268,10 @@ public class ResultsDTO {
 	}
 	
 	public String getCalculatedFail() {
+		return getFail() + Helper.singInteger(getFailDif());
+	}
+	
+	public String getCalculatedFailColor() {
 		return Helper.colorizeFailResult(getFail()) + Helper.singInteger(getFailDif());
 	}
 	

@@ -39,9 +39,9 @@ public class Helper {
 			long bDays = currentHours / 24;
 			if (d.getSeconds() > outOfDate) {
 				if (bDays > 0) {
-					return "<font color='red'>" + bDays + " Days and" + bDours + " hours ago</font>";
+					return "<font color='" + Colors.htmlFAILED() + "'>" + bDays + " Days and" + bDours + " hours ago</font>";
 				} else {
-					return "<font color='red'>" + bDours + " hours ago</font>";
+					return "<font color='" + Colors.htmlFAILED() + "'>" + bDours + " hours ago</font>";
 				}
 			}
 			if (bDays > 0) {
@@ -72,7 +72,7 @@ public class Helper {
 	
 	public static String colorizeFailResult(int result) {
 		if (result > 0) {
-			return "<b><font color='red'>" + result + "</font></b>";
+			return "<b><font color='" + Colors.htmlFAILED() + "'>" + result + "</font></b>";
 		}
 		return Integer.toString(result);
 	}
@@ -96,17 +96,17 @@ public class Helper {
 	
 	public static String colorizeResultStatus(String result) {
 		if (JobStatus.SUCCESS.name().equals(result)) {
-			return "<font color='green'>" + result + "</font>";
+			return "<font color='" + Colors.htmlSUCCESS() + "'>" + result + "</font>";
 		} else if (JobStatus.FAILURE.name().equals(result)) {
-			return "<font color='red'><b>" + result + "</b></font>";
+			return "<font color='" + Colors.htmlFAILED() + "'><b>" + result + "</b></font>";
 		} else if (JobStatus.STILL_FAILING.name().equals(result)) {
-			return "<font color='red'><b>" + result + "</b></font>";
+			return "<font color='" + Colors.htmlFAILED() + "'><b>" + result + "</b></font>";
 		} else if (JobStatus.FIXED.name().equals(result)) {
-			return "<font color='green'>" + result + "</font>";
+			return "<font color='" + Colors.htmlSUCCESS() + "'>" + result + "</font>";
 		} else if (JobStatus.UNSTABLE.name().equals(result)) {
 			return "<font color='orange'><b>" + result + "</b></font>";
 		} else if (JobStatus.STILL_UNSTABLE.name().equals(result)) {
-			return "<font color='orange'><b>" + result + "</b></font>";
+			return "<font color='" + Colors.htmlUNSTABLE() + "'><b>" + result + "</b></font>";
 		}
 		return result;
 	}
@@ -125,11 +125,11 @@ public class Helper {
 			
 		}
 		if (percentageDouble >= 100) {
-			percentage = "Pass Rate : <font color='green'>" + percentage + "%" + "</font>";
+			percentage = "Pass Rate : <font color='" + Colors.htmlSUCCESS() + "'>" + percentage + "%" + "</font>";
 		} else if (percentageDouble >= 95) {
-			percentage = "Pass Rate : <font color='orange'>" + percentage + "%" + "</font>";
+			percentage = "Pass Rate : <font color='" + Colors.htmlUNSTABLE() + "'>" + percentage + "%" + "</font>";
 		} else {
-			percentage = "Pass Rate : <font color='red'>" + percentage + "%" + "</font>";
+			percentage = "Pass Rate : <font color='" + Colors.htmlFAILED() + "'>" + percentage + "%" + "</font>";
 		}
 		return percentage;
 	}
