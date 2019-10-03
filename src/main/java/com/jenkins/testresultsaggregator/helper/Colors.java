@@ -20,6 +20,10 @@ public class Colors {
 				(blue.length() == 1 ? "0" + blue : blue);
 	}
 	
+	public static String html(Color color) {
+		return getHTMLColorString(color);
+	}
+	
 	public static String htmlSUCCESS() {
 		return getHTMLColorString(SUCCESS);
 	}

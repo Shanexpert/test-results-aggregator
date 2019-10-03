@@ -1,5 +1,6 @@
 package com.jenkins.testresultsaggregator.data;
 
+import com.jenkins.testresultsaggregator.helper.Colors;
 import com.jenkins.testresultsaggregator.helper.Helper;
 
 public class ResultsDTO {
@@ -244,7 +245,7 @@ public class ResultsDTO {
 	}
 	
 	public String getCalculatedPass() {
-		return getPass() + Helper.singInteger(getPassDif());
+		return Helper.diff(getPassDif(), getPass(), false);
 	}
 	
 	public void setCalculatedPass(String calculatedPass) {
@@ -252,7 +253,7 @@ public class ResultsDTO {
 	}
 	
 	public String getCalculatedTotal() {
-		return getTotal() + Helper.singInteger(getTotalDif());
+		return Helper.diff(getTotalDif(), getTotal(), false);
 	}
 	
 	public void setCalculatedTotal(String calculatedTotal) {
@@ -260,7 +261,7 @@ public class ResultsDTO {
 	}
 	
 	public String getCalculatedSkip() {
-		return getSkip() + Helper.singInteger(getSkipDif());
+		return Helper.diff(getSkipDif(), getSkip(), false);
 	}
 	
 	public void setCalculatedSkip(String calculatedSkip) {
@@ -268,11 +269,11 @@ public class ResultsDTO {
 	}
 	
 	public String getCalculatedFail() {
-		return getFail() + Helper.singInteger(getFailDif());
+		return Helper.diff(getFailDif(), getFail(), false);
 	}
 	
 	public String getCalculatedFailColor() {
-		return Helper.colorizeFailResult(getFail()) + Helper.singInteger(getFailDif());
+		return Helper.diff(getFailDif(), getFail(), null, Colors.FAILED, false);
 	}
 	
 	public void setCalculatedFail(String calculatedFail) {

@@ -1,6 +1,7 @@
 package com.jenkins.testresultsaggregator.data;
 
 import com.google.common.base.Strings;
+import com.jenkins.testresultsaggregator.helper.Colors;
 import com.jenkins.testresultsaggregator.helper.Helper;
 
 public class AggregateJobDTO {
@@ -55,24 +56,23 @@ public class AggregateJobDTO {
 	}
 	
 	public void calculateTotal(ResultsDTO resultsDTO) {
-		setCalculatedTotal(resultsDTO.getTotal() + Helper.singInteger(resultsDTO.getTotalDif()));
+		setCalculatedTotal(Helper.diff(resultsDTO.getTotalDif(), resultsDTO.getTotal(), false));
 	}
 	
 	public void calculatePass(ResultsDTO resultsDTO) {
-		setCalculatedPass(resultsDTO.getPass() + Helper.singInteger(resultsDTO.getPassDif()));
-		
+		setCalculatedPass(Helper.diff(resultsDTO.getPassDif(), resultsDTO.getPass(), false));
 	}
 	
 	public void calculateFailedColor(ResultsDTO resultsDTO) {
-		setCalculatedFailedColor(Helper.colorizeFailResult(resultsDTO.getFail()) + Helper.singInteger(resultsDTO.getFailDif()));
+		setCalculatedFailedColor(Helper.diff(resultsDTO.getFailDif(), resultsDTO.getFail(), null, Colors.FAILED, false));
 	}
 	
 	public void calculateFailed(ResultsDTO resultsDTO) {
-		setCalculatedFailed(resultsDTO.getFail() + Helper.singInteger(resultsDTO.getFailDif()));
+		setCalculatedFailed(Helper.diff(resultsDTO.getFailDif(), resultsDTO.getFail(), false));
 	}
 	
 	public void calculateSkipped(ResultsDTO resultsDTO) {
-		setCalculatedSkipped(resultsDTO.getSkip() + Helper.singInteger(resultsDTO.getSkipDif()));
+		setCalculatedSkipped(Helper.diff(resultsDTO.getSkipDif(), resultsDTO.getSkip(), false));
 	}
 	
 	public String getCalculatedJobStatus() {

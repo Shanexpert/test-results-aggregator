@@ -1,5 +1,6 @@
 package com.jenkins.testresultsaggregator.helper;
 
+import java.awt.Color;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.time.Duration;
@@ -58,23 +59,6 @@ public class Helper {
 				return currentHours + " hours ago";
 			}
 		}
-	}
-	
-	public static String singInteger(int value) {
-		if (value < 0) {
-			return "(" + Integer.toString(value) + ")";
-		} else if (value > 0) {
-			return "(+" + value + ")";
-		} else {
-			return "";
-		}
-	}
-	
-	public static String colorizeFailResult(int result) {
-		if (result > 0) {
-			return "<b><font color='" + Colors.htmlFAILED() + "'>" + result + "</font></b>";
-		}
-		return Integer.toString(result);
 	}
 	
 	public static String getNumber(int value) {
@@ -160,13 +144,62 @@ public class Helper {
 		return theDir;
 	}
 	
+	public static String diff(long prev, long curr, boolean list) {
+		return diff(prev, curr, null, list);
+	}
+	
 	public static String diff(long prev, long curr, String name) {
-		if (prev == curr) {
-			return "<li>" + name + ": " + curr + " (&plusmn;0)</li>";
-		} else if (prev < curr) {
-			return "<li>" + name + ": " + curr + " (+" + (curr - prev) + ")</li>";
-		} else { // if (a < b)
-			return "<li>" + name + ": " + curr + " (-" + (prev - curr) + ")</li>";
+		return diff(prev, curr, name, null, false);
+	}
+	
+	public static String diff(long prev, long curr, String name, boolean list) {
+		return diff(prev, curr, name, null, list);
+	}
+	
+	public static String diff(long prev, long curr, String name, Color color, boolean list) {
+		String namePrefix = null;
+		String text = null;
+		if (Strings.isNullOrEmpty(name)) {
+			// Empty name
+			name = "";
 		}
+		if (!Strings.isNullOrEmpty(name)) {
+			namePrefix = name + ": ";
+		} else {
+			namePrefix = name;
+		}
+		if (color != null) {
+			text = "<b><font color='" + Colors.html(color) + "'>" + namePrefix + "</font></b>";
+		} else {
+			text = namePrefix;
+		}
+		if (list) {
+			if (prev == curr) {
+				return "<li>" + text + curr + "</li>";
+			} else if (prev < curr) {
+				return "<li>" + text + curr + " (+" + (curr - prev) + ")</li>";
+			} else { // if (a < b)
+				return "<li>" + text + curr + " (-" + (prev - curr) + ")</li>";
+			}
+		} else {
+			if (prev == curr) {
+				return text + curr + "";
+			} else if (prev < curr) {
+				return text + colorize(curr, color) + " (+" + (curr - prev) + ")";
+			} else { // if (a < b)
+				return text + colorize(curr, color) + " (-" + (prev - curr) + ")";
+			}
+		}
+	}
+	
+	private static String colorize(Long text, Color color) {
+		if (color != null) {
+			if (text == 0) {
+				return text.toString();
+			} else {
+				return "<b><font color='" + Colors.html(color) + "'>" + text + "</font></b>";
+			}
+		}
+		return text.toString();
 	}
 }

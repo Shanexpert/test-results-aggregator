@@ -192,24 +192,22 @@ public class Collector {
 						int previouslyFail = 0;
 						int previouslyPass = 0;
 						int previouslySkip = 0;
-						int previously = 0;
 						for (HashMap<Object, Object> temp : jenkinsPreviousBuildDTO.getActions()) {
 							if (temp.containsKey(FAILCOUNT)) {
-								resultsDTO.setFailDif(resultsDTO.getFail() - (Integer) temp.get(FAILCOUNT));
+								resultsDTO.setFailDif((Integer) temp.get(FAILCOUNT));
 								previouslyFail += (Integer) temp.get(FAILCOUNT);
 							}
 							if (temp.containsKey(SKIPCOUNT)) {
-								resultsDTO.setSkipDif(resultsDTO.getSkip() - (Integer) temp.get(SKIPCOUNT));
+								resultsDTO.setSkipDif((Integer) temp.get(SKIPCOUNT));
 								previouslySkip += (Integer) temp.get(SKIPCOUNT);
 							}
 							if (temp.containsKey(TOTALCOUNT)) {
-								resultsDTO.setTotalDif(resultsDTO.getTotal() - (Integer) temp.get(TOTALCOUNT));
+								resultsDTO.setTotalDif((Integer) temp.get(TOTALCOUNT));
 								previouslyPass += (Integer) temp.get(TOTALCOUNT);
 							}
 						}
 						// Calculate Pass Difference Results
-						previously = previouslyPass - Math.abs(previouslyFail) - Math.abs(previouslySkip);
-						resultsDTO.setPassDif(resultsDTO.getPass() - previously);
+						resultsDTO.setPassDif(previouslyPass - Math.abs(previouslyFail) - Math.abs(previouslySkip));
 					} catch (Exception ex) {
 						
 					}
