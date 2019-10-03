@@ -1,4 +1,4 @@
-package com.jenkins.testresultsaggregator.TestNGTestResultBuildAction
+package com.jenkins.testresultsaggregator.TestResultsAggregatorTestResultBuildAction
 
 import com.jenkins.testresultsaggregator.data.JobStatus
 import com.jenkins.testresultsaggregator.helper.Colors

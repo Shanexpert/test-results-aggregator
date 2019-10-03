@@ -1,4 +1,4 @@
-package com.jenkins.testresultsaggregator.TestNGProjectAction
+package com.jenkins.testresultsaggregator.TestResultsAggregatorProjectAction
 
 import com.jenkins.testresultsaggregator.helper.TestResultHistoryUtil
 

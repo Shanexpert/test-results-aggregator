@@ -1,4 +1,4 @@
-package com.jenkins.testresultsaggregator.TestNGTestResultBuildAction
+package com.jenkins.testresultsaggregator.TestResultsAggregatorTestResultBuildAction
 
 import hudson.Functions
 import com.jenkins.testresultsaggregator.helper.TestResultHistoryUtil

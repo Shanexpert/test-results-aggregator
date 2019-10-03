@@ -1,4 +1,4 @@
-package com.jenkins.testresultsaggregator.TestNGProjectAction
+package com.jenkins.testresultsaggregator.TestResultsAggregatorProjectAction
 
 f = namespace(lib.FormTagLib)
 l = namespace(lib.LayoutTagLib)
