@@ -10,6 +10,7 @@ public class AggregateJobDTO {
 	private String calculatedTotal;
 	private String calculatedPass;
 	private String calculatedFailed;
+	private String calculatedFailedColor;
 	private String calculatedSkipped;
 	private String calculatedChanges;
 	private String calculatedReport;
@@ -62,9 +63,12 @@ public class AggregateJobDTO {
 		
 	}
 	
+	public void calculateFailedColor(ResultsDTO resultsDTO) {
+		setCalculatedFailedColor(Helper.colorizeFailResult(resultsDTO.getFail()) + Helper.singInteger(resultsDTO.getFailDif()));
+	}
+	
 	public void calculateFailed(ResultsDTO resultsDTO) {
-		setCalculatedFailed(Helper.colorizeFailResult(resultsDTO.getFail()) + Helper.singInteger(resultsDTO.getFailDif()));
-		
+		setCalculatedFailed(resultsDTO.getFail() + Helper.singInteger(resultsDTO.getFailDif()));
 	}
 	
 	public void calculateSkipped(ResultsDTO resultsDTO) {
@@ -145,6 +149,14 @@ public class AggregateJobDTO {
 	
 	public void setCalculatedReport(String calculatedReport) {
 		this.calculatedReport = calculatedReport;
+	}
+	
+	public String getCalculatedFailedColor() {
+		return calculatedFailedColor;
+	}
+	
+	public void setCalculatedFailedColor(String calculatedFailedColor) {
+		this.calculatedFailedColor = calculatedFailedColor;
 	}
 	
 }

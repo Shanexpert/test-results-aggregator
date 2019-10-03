@@ -71,7 +71,7 @@ public class Analyzer {
 				// Calculate Pass
 				job.getAggregate().calculatePass(job.getResultsDTO());
 				// Calculate Fail
-				job.getAggregate().calculateFailed(job.getResultsDTO());
+				job.getAggregate().calculateFailedColor(job.getResultsDTO());
 				// Calculate Skipped
 				job.getAggregate().calculateSkipped(job.getResultsDTO());
 				// Calculate timestamp

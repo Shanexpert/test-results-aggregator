@@ -32,7 +32,7 @@
 					<td style="text-align: center">${job.getAggregate().getCalculatedJobStatusWithColor()}</td>
 					<td style="text-align: center">${job.getAggregate().getCalculatedTotal()}</td>
 					<td style="text-align: center">${job.getAggregate().getCalculatedPass()}</td>
-					<td style="text-align: center">${job.getAggregate().getCalculatedFailColor()}</td>
+					<td style="text-align: center">${job.getAggregate().getCalculatedFailedColor()}</td>
 					<td style="text-align: center">${job.getAggregate().getCalculatedSkipped()}</td>
 					<td style="text-align: center">${job.getAggregate().getCalculatedTimestamp()}</td>
 					<td style="text-align: center">${job.getAggregate().getCalculatedChanges()}</td>
