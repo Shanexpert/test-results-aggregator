@@ -2,6 +2,7 @@ package com.jenkins.testresultsaggregator.TestNGTestResultBuildAction
 
 import hudson.Functions
 import com.jenkins.testresultsaggregator.helper.TestResultHistoryUtil
+import com.jenkins.testresultsaggregator.helper.Colors;
 
 f = namespace(lib.FormTagLib)
 l = namespace(lib.LayoutTagLib)
@@ -39,15 +40,15 @@ div() {
 			}
         }
 
-        div(style: "width:100%; height:1em; background-color: #729FCF") {
+        div(style: "width:100%; height:1em; background-color: ${Colors.htmlSUCCESS()}") {
             def failpc = my.result.countJobFailures * 100 / my.result.countTotal
             def skippc = my.result.countJobUnstable * 100 / my.result.countTotal
 			def abortpc = my.result.countJobAborted * 100 / my.result.countTotal
 			def runnpc = my.result.countJobRunning * 100 / my.result.countTotal
-            div(style: "width:${failpc}%; height: 1em; background-color: #EF2929; float: left")
-            div(style: "width:${skippc}%; height: 1em; background-color: #FCE94F; float: left")
-			div(style: "width:${abortpc}%; height: 1em; background-color: #929292; float: left")
-			div(style: "width:${runnpc}%; height: 1em; background-color: #C6C1C1; float: left")
+            div(style: "width:${failpc}%; height: 1em; background-color: ${Colors.htmlFAILED()}; float: left")
+            div(style: "width:${skippc}%; height: 1em; background-color: ${Colors.htmlUNSTABLE()}; float: left")
+			div(style: "width:${abortpc}%; height: 1em; background-color: ${Colors.htmlABORTED()}; float: left")
+			div(style: "width:${runnpc}%; height: 1em; background-color: ${Colors.htmlRUNNING()}; float: left")
         }
 
         div(id: "pass", align: "right") {
