@@ -35,6 +35,7 @@ public class TestResultsAggregatorProjectAction extends TestResultProjectAction 
 	public static final String UNSTABLE = "Unstable";
 	public static final String ABORTED = "Aborted";
 	public static final String RUNNING = "Running";
+	public static final String TOTAL = "Total";
 	
 	public TestResultsAggregatorProjectAction(Job<?, ?> project) {
 		super(project);

@@ -101,6 +101,8 @@ public class ResultsParser {
 										dataJob.getResultsDTO().setSkip(Integer.parseInt(jobResults.getTextContent()));
 									} else if (jobResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.FAILED)) {
 										dataJob.getResultsDTO().setFail(Integer.parseInt(jobResults.getTextContent()));
+									} else if (jobResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.TOTAL)) {
+										dataJob.getResultsDTO().setTotal(Integer.parseInt(jobResults.getTextContent()));
 									}
 								}
 							}

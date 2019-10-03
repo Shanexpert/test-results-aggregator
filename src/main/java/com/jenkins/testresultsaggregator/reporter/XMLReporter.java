@@ -57,6 +57,7 @@ public class XMLReporter {
 					writer.println("<" + FNAME + ">" + dataJob.getJobFriendlyName() + "</" + FNAME + ">");
 					writer.println("<" + STATUS + ">" + dataJob.getResultsDTO().getCurrentResult() + "</" + STATUS + ">");
 					writer.println("<" + URL + ">" + dataJob.getJenkinsJob().getUrl() + "</" + URL + ">");
+					writer.println("<" + TestResultsAggregatorProjectAction.TOTAL + ">" + dataJob.getResultsDTO().getTotal() + "</" + TestResultsAggregatorProjectAction.TOTAL + ">");
 					writer.println("<" + TestResultsAggregatorProjectAction.SUCCESS + ">" + dataJob.getResultsDTO().getPass() + "</" + TestResultsAggregatorProjectAction.SUCCESS + ">");
 					writer.println("<" + TestResultsAggregatorProjectAction.ABORTED + ">" + dataJob.getResultsDTO().getSkip() + "</" + TestResultsAggregatorProjectAction.ABORTED + ">");
 					writer.println("<" + TestResultsAggregatorProjectAction.FAILED + ">" + dataJob.getResultsDTO().getFail() + "</" + TestResultsAggregatorProjectAction.FAILED + ">");
