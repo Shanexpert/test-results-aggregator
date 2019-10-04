@@ -11,68 +11,6 @@ st = namespace("jelly:stapler")
 script(src: "${app.rootUrl}/plugin/test-results-aggregator/js/toggle_table.js")
 script(src: "${app.rootUrl}/plugin/test-results-aggregator/js/toggle_mthd_summary.js")
 
-if (my.result.countJobSuccess > 0) {
-	h2(align: "left", style:"color:${Colors.htmlSUCCESS()}" , "Success Jobs")
-	a(href: "javascript:toggleTable('Success-tbl')") {
-		text("hide/expand the table")
-	}
-	table(id:"Success-tbl", border:"1px", class:"pane sortable") {
-		thead() {
-			tr() {
-				th(class: "pane-header") {
-					text("Job Name")
-				}
-				th(class: "pane-header" , width: "100px") {
-					text("Tests")
-				}
-				th(class: "pane-header" , width: "100px") {
-					text("Pass")
-				}
-				th(class: "pane-header" , width: "100px") {
-					text("Fail")
-				}
-				th(class: "pane-header" , width: "100px") {
-					text("Skip")
-				}
-				th(class: "pane-header" , width: "100px") {
-					text("Link")
-				}
-			}
-		}
-		tbody() {
-			for (data in my.result.getData()) {
-				for (job in data.getJobs()) {
-					if("${JobStatus.SUCCESS.name()}".equalsIgnoreCase(job.getResultsDTO().getCurrentResult())) {
-						tr() {
-							td(align: "left") {
-								text("${job.getJobName()}")
-							}
-							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedTotal()}")
-							}
-							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedPass()}")
-							}
-							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedFail()}")
-							}
-							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedSkip()}")
-							}
-							td(align: "center") {
-								a(href:"${job.getJenkinsJob().getUrl()}") {
-									text(">>>")
-								} 
-								text(" ")
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
 if (my.result.countJobFailures > 0) {
 	h2(align: "left", style:"color:${Colors.htmlFAILED()}" ,"Failed Jobs")
 	a(href: "javascript:toggleTable('fail-tbl')") {
@@ -186,7 +124,7 @@ if (my.result.countJobUnstable > 0) {
 							td(align: "center") {
 								a(href:"${job.getJenkinsJob().getUrl()}") {
 									text(">>>")
-								} 
+								}
 								text(" ")
 							}
 						}
@@ -229,6 +167,68 @@ if (my.result.countJobAborted > 0) {
 			for (data in my.result.getData()) {
 				for (job in data.getJobs()) {
 					if("${JobStatus.ABORTED.name()}".equalsIgnoreCase(job.getResultsDTO().getCurrentResult())) {
+						tr() {
+							td(align: "left") {
+								text("${job.getJobName()}")
+							}
+							td(align: "center") {
+								text("${job.getResultsDTO().getCalculatedTotal()}")
+							}
+							td(align: "center") {
+								text("${job.getResultsDTO().getCalculatedPass()}")
+							}
+							td(align: "center") {
+								text("${job.getResultsDTO().getCalculatedFail()}")
+							}
+							td(align: "center") {
+								text("${job.getResultsDTO().getCalculatedSkip()}")
+							}
+							td(align: "center") {
+								a(href:"${job.getJenkinsJob().getUrl()}") {
+									text(">>>")
+								}
+								text(" ")
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+if (my.result.countJobSuccess > 0) {
+	h2(align: "left", style:"color:${Colors.htmlSUCCESS()}" , "Success Jobs")
+	a(href: "javascript:toggleTable('Success-tbl')") {
+		text("hide/expand the table")
+	}
+	table(id:"Success-tbl", border:"1px", class:"pane sortable") {
+		thead() {
+			tr() {
+				th(class: "pane-header") {
+					text("Job Name")
+				}
+				th(class: "pane-header" , width: "100px") {
+					text("Tests")
+				}
+				th(class: "pane-header" , width: "100px") {
+					text("Pass")
+				}
+				th(class: "pane-header" , width: "100px") {
+					text("Fail")
+				}
+				th(class: "pane-header" , width: "100px") {
+					text("Skip")
+				}
+				th(class: "pane-header" , width: "100px") {
+					text("Link")
+				}
+			}
+		}
+		tbody() {
+			for (data in my.result.getData()) {
+				for (job in data.getJobs()) {
+					if("${JobStatus.SUCCESS.name()}".equalsIgnoreCase(job.getResultsDTO().getCurrentResult())) {
 						tr() {
 							td(align: "left") {
 								text("${job.getJobName()}")
