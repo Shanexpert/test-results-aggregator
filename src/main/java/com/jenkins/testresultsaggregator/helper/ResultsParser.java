@@ -31,6 +31,7 @@ public class ResultsParser {
 			return new AggregatedDTO();
 		}
 		AggregatedDTO finalResults = new AggregatedDTO();
+		finalResults.setResults(new ResultsDTO());
 		for (FilePath path : paths) {
 			File file = new File(path.getRemote());
 			if (!file.isFile()) {
@@ -68,6 +69,22 @@ public class ResultsParser {
 									finalResults.setCountJobSuccess(Integer.parseInt(currentNodeResults.getTextContent()));
 								} else if (currentNodeResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.UNSTABLE)) {
 									finalResults.setCountJobUnstable(Integer.parseInt(currentNodeResults.getTextContent()));
+								} else if (currentNodeResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.TOTAL_TEST)) {
+									finalResults.getResults().setTotal(Integer.parseInt(currentNodeResults.getTextContent()));
+								} else if (currentNodeResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.TOTAL_P_TEST)) {
+									finalResults.getResults().setTotalDif(Integer.parseInt(currentNodeResults.getTextContent()));
+								} else if (currentNodeResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.SUCCESS_TEST)) {
+									finalResults.getResults().setPass(Integer.parseInt(currentNodeResults.getTextContent()));
+								} else if (currentNodeResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.SUCCESS_P_TEST)) {
+									finalResults.getResults().setPassDif(Integer.parseInt(currentNodeResults.getTextContent()));
+								} else if (currentNodeResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.ABORTED_TEST)) {
+									finalResults.getResults().setSkip(Integer.parseInt(currentNodeResults.getTextContent()));
+								} else if (currentNodeResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.ABORTED_P_TEST)) {
+									finalResults.getResults().setSkipDif(Integer.parseInt(currentNodeResults.getTextContent()));
+								} else if (currentNodeResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.FAILED_TEST)) {
+									finalResults.getResults().setFail(Integer.parseInt(currentNodeResults.getTextContent()));
+								} else if (currentNodeResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.FAILED_P_TEST)) {
+									finalResults.getResults().setFailDif(Integer.parseInt(currentNodeResults.getTextContent()));
 								}
 							}
 						}
