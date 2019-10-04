@@ -62,7 +62,7 @@ public class Collector {
 			if (tempDataJobDTO.getJenkinsJob() == null) {
 				// Job Not Found
 				tempDataJobDTO.setJenkinsJob(new JenkinsJobDTO());
-				tempDataJobDTO.setResultsDTO(new ResultsDTO());
+				tempDataJobDTO.setResultsDTO(new ResultsDTO(JobStatus.NOT_FOUND.name(), null));
 				tempDataJobDTO.getResultsDTO().setUrl(null);
 				tempDataJobDTO.setAggregate(new AggregateJobDTO());
 				tempDataJobDTO.getAggregate().calculateReport(tempDataJobDTO.getResultsDTO());
