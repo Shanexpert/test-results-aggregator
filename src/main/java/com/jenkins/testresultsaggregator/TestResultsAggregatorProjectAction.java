@@ -30,6 +30,7 @@ import jenkins.model.lazy.LazyBuildMixIn.LazyLoadingJob;
  */
 public class TestResultsAggregatorProjectAction extends TestResultProjectAction implements ProminentProjectAction {
 	
+	// For Jobs
 	public static final String SUCCESS = "Success";
 	public static final String FAILED = "Failed";
 	public static final String UNSTABLE = "Unstable";
@@ -40,6 +41,16 @@ public class TestResultsAggregatorProjectAction extends TestResultProjectAction 
 	public static final String SUCCESS_P = "Success_P";
 	public static final String ABORTED_P = "Aborted_P";
 	public static final String FAILED_P = "Failed_P";
+	
+	// For Tests
+	public static final String TOTAL_TEST = "Total_TEST";
+	public static final String TOTAL_P_TEST = "Total_P_TEST";
+	public static final String SUCCESS_TEST = "Success_TEST";
+	public static final String SUCCESS_P_TEST = "Success_P_TEST";
+	public static final String ABORTED_TEST = "Aborted_TEST";
+	public static final String ABORTED_P_TEST = "Aborted_P_TEST";
+	public static final String FAILED_TEST = "Failed_TEST";
+	public static final String FAILED_P_TEST = "Failed_P_TEST";
 	
 	public TestResultsAggregatorProjectAction(Job<?, ?> project) {
 		super(project);

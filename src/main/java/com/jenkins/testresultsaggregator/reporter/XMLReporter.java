@@ -43,21 +43,20 @@ public class XMLReporter {
 			writer.println(S + ROOT + E);
 			
 			writer.println(S + RESULTS + E);
-			writer.println("<" + TestResultsAggregatorProjectAction.SUCCESS + ">" + aggregated.getCountJobSuccess() + "</" + TestResultsAggregatorProjectAction.SUCCESS + ">");
-			writer.println("<" + TestResultsAggregatorProjectAction.ABORTED + ">" + aggregated.getCountJobAborted() + "</" + TestResultsAggregatorProjectAction.ABORTED + ">");
-			writer.println("<" + TestResultsAggregatorProjectAction.FAILED + ">" + aggregated.getCountJobFailures() + "</" + TestResultsAggregatorProjectAction.FAILED + ">");
-			writer.println("<" + TestResultsAggregatorProjectAction.RUNNING + ">" + aggregated.getCountJobRunning() + "</" + TestResultsAggregatorProjectAction.RUNNING + ">");
-			writer.println("<" + TestResultsAggregatorProjectAction.UNSTABLE + ">" + aggregated.getCountJobUnstable() + "</" + TestResultsAggregatorProjectAction.UNSTABLE + ">");
+			writer.println(xmlTag(TestResultsAggregatorProjectAction.SUCCESS, aggregated.getCountJobSuccess()));
+			writer.println(xmlTag(TestResultsAggregatorProjectAction.ABORTED, aggregated.getCountJobAborted()));
+			writer.println(xmlTag(TestResultsAggregatorProjectAction.FAILED, aggregated.getCountJobFailures()));
+			writer.println(xmlTag(TestResultsAggregatorProjectAction.RUNNING, aggregated.getCountJobRunning()));
+			writer.println(xmlTag(TestResultsAggregatorProjectAction.UNSTABLE, aggregated.getCountJobUnstable()));
 			
-			writer.println("<" + TestResultsAggregatorProjectAction.TOTAL + ">" + aggregated.getResults().getTotal() + "</" + TestResultsAggregatorProjectAction.TOTAL + ">");
-			writer.println("<" + TestResultsAggregatorProjectAction.TOTAL_P + ">" + aggregated.getResults().getTotalDif() + "</" + TestResultsAggregatorProjectAction.TOTAL_P + ">");
-			writer.println("<" + TestResultsAggregatorProjectAction.SUCCESS + ">" + aggregated.getResults().getPass() + "</" + TestResultsAggregatorProjectAction.SUCCESS + ">");
-			writer.println("<" + TestResultsAggregatorProjectAction.SUCCESS_P + ">" + aggregated.getResults().getPassDif() + "</" + TestResultsAggregatorProjectAction.SUCCESS_P + ">");
-			writer.println("<" + TestResultsAggregatorProjectAction.FAILED + ">" + aggregated.getResults().getFail() + "</" + TestResultsAggregatorProjectAction.FAILED + ">");
-			writer.println("<" + TestResultsAggregatorProjectAction.FAILED_P + ">" + aggregated.getResults().getFailDif() + "</" + TestResultsAggregatorProjectAction.FAILED_P + ">");
-			writer.println("<" + TestResultsAggregatorProjectAction.ABORTED + ">" + aggregated.getResults().getSkip() + "</" + TestResultsAggregatorProjectAction.ABORTED + ">");
-			writer.println("<" + TestResultsAggregatorProjectAction.ABORTED_P + ">" + aggregated.getResults().getSkipDif() + "</" + TestResultsAggregatorProjectAction.ABORTED_P + ">");
-			
+			writer.println(xmlTag(TestResultsAggregatorProjectAction.TOTAL_TEST, aggregated.getResults().getTotal()));
+			writer.println(xmlTag(TestResultsAggregatorProjectAction.TOTAL_P_TEST, aggregated.getResults().getTotalDif()));
+			writer.println(xmlTag(TestResultsAggregatorProjectAction.SUCCESS_TEST, aggregated.getResults().getPass()));
+			writer.println(xmlTag(TestResultsAggregatorProjectAction.SUCCESS_P_TEST, aggregated.getResults().getPassDif()));
+			writer.println(xmlTag(TestResultsAggregatorProjectAction.FAILED_TEST, aggregated.getResults().getFail()));
+			writer.println(xmlTag(TestResultsAggregatorProjectAction.FAILED_P_TEST, aggregated.getResults().getFailDif()));
+			writer.println(xmlTag(TestResultsAggregatorProjectAction.ABORTED_TEST, aggregated.getResults().getSkip()));
+			writer.println(xmlTag(TestResultsAggregatorProjectAction.ABORTED_P_TEST, aggregated.getResults().getSkipDif()));
 			writer.println(SE + RESULTS + E);
 			
 			writer.println(S + JOBS + E);
