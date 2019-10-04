@@ -42,9 +42,9 @@ public class AggregatedGroupDTO {
 	}
 	
 	public String getCalculatedGroupStatusWithColor() {
-		final String SUCCESS = "<br><font color='" + Colors.htmlSUCCESS() + "'>SUCCESS</font>";
-		final String FAILED = "<br><font color='" + Colors.htmlFAILED() + "'>FAIL</font>";
-		final String UNSTABLE = "<br><font color='" + Colors.htmlUNSTABLE() + "'>UNSTABLE</font>";
+		final String SUCCESS = "<font color='" + Colors.htmlSUCCESS() + "'>SUCCESS</font>";
+		final String FAILED = "<font color='" + Colors.htmlFAILED() + "'>FAIL</font>";
+		final String UNSTABLE = "<font color='" + Colors.htmlUNSTABLE() + "'>UNSTABLE</font>";
 		if (JobStatus.FAILURE.name().equalsIgnoreCase(calculatedGroupStatus)) {
 			return FAILED;
 		} else if (JobStatus.UNSTABLE.name().equalsIgnoreCase(calculatedGroupStatus)) {
