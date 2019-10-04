@@ -31,7 +31,7 @@
 						</j:if>
 						<j:set var="groupadded" value="true"/>
 					</j:if>
-					<td> ${job.getJobNameFromFriendlyName()}</td>
+					<td>${job.getJobNameFromFriendlyName()}</td>
 					<td style="text-align: center">${job.getAggregate().getCalculatedJobStatusWithColor()}</td>
 					<td style="text-align: center">${job.getAggregate().getCalculatedTotal()}</td>
 					<td style="text-align: center">${job.getAggregate().getCalculatedPass()}</td>
