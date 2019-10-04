@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.google.common.base.Strings;
+import com.jenkins.testresultsaggregator.data.AggregateJobDTO;
 import com.jenkins.testresultsaggregator.data.ChangeSetDTO;
 import com.jenkins.testresultsaggregator.data.DataDTO;
 import com.jenkins.testresultsaggregator.data.DataJobDTO;
@@ -61,8 +62,9 @@ public class Collector {
 			if (tempDataJobDTO.getJenkinsJob() == null) {
 				// Job Not Found
 				tempDataJobDTO.setJenkinsJob(new JenkinsJobDTO());
-				tempDataJobDTO.setJenkinsBuild(new JenkinsBuildDTO(JobStatus.NOT_FOUND.name()));
-				tempDataJobDTO.setResultsDTO(new ResultsDTO(JobStatus.NOT_FOUND.name(), null));
+				tempDataJobDTO.getResultsDTO().setUrl(null);
+				tempDataJobDTO.setAggregate(new AggregateJobDTO());
+				tempDataJobDTO.getAggregate().calculateReport(tempDataJobDTO.getResultsDTO());
 				logger.println(LocalMessages.JOB_NOT_FOUND.toString());
 			} else if (!tempDataJobDTO.getJenkinsJob().getBuildable()) {
 				// Job is Disabled/ Not Buildable

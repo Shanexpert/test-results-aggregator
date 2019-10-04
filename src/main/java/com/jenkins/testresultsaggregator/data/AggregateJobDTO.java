@@ -16,6 +16,10 @@ public class AggregateJobDTO {
 	private String calculatedChanges;
 	private String calculatedReport;
 	
+	public AggregateJobDTO() {
+		
+	}
+	
 	public String calculateJobStatus(ResultsDTO resultsDTO) {
 		String currentResult = resultsDTO.getCurrentResult();
 		String previousResult = resultsDTO.getPreviousResult();
@@ -100,9 +104,13 @@ public class AggregateJobDTO {
 	}
 	
 	public void calculateReport(ResultsDTO resultsDTO) {
-		if(JobStatus.DISABLED.name().equalsIgnoreCase(resultsDTO.getCurrentResult())) {
+		if (resultsDTO == null) {
+			setCalculatedReport(null);
+		} else if (Strings.isNullOrEmpty(resultsDTO.getUrl())) {
+			setCalculatedReport(null);
+		} else if (JobStatus.DISABLED.name().equalsIgnoreCase(resultsDTO.getCurrentResult())) {
 			setCalculatedReport("<a href='" + resultsDTO.getUrl() + "'>link</a>");
-		}else {
+		} else {
 			setCalculatedReport("<a href='" + resultsDTO.getReportUrl() + "'>link</a>");
 		}
 	}
