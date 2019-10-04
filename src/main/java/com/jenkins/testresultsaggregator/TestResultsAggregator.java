@@ -190,12 +190,15 @@ public class TestResultsAggregator extends Notifier {
 		for (DataDTO tempDataDTO : data) {
 			if (tempDataDTO.getJobs() != null && !tempDataDTO.getJobs().isEmpty()) {
 				boolean allJobsareEmpty = true;
+				List<DataJobDTO> validateDataJobs = new ArrayList<>();
 				for (DataJobDTO temp : tempDataDTO.getJobs()) {
 					if (!Strings.isNullOrEmpty(temp.getJobName())) {
 						allJobsareEmpty = false;
+						validateDataJobs.add(temp);
 					}
 				}
 				if (!allJobsareEmpty) {
+					tempDataDTO.setJobs(validateDataJobs);
 					validateData.add(tempDataDTO);
 				}
 			}
