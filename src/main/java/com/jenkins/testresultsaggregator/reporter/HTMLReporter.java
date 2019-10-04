@@ -39,6 +39,8 @@ public class HTMLReporter {
 			context.setVariable("name", "Test Result Aggregator");
 			context.setVariable("columns", columns);
 			context.setVariable("aggregated", aggregated);
+			// Themes light and dark
+			context.setVariable("theme", "light");
 			XMLOutput xmlOutput = XMLOutput.createXMLOutput(output);
 			URL template = HTMLReporter.class.getResource("/" + REPORT);
 			context.runScript(template, xmlOutput);
