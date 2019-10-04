@@ -31,7 +31,7 @@ public class MailNotification {
 		boolean allJobsNotFound = true;
 		for (DataDTO tempDataDTO : dataJob) {
 			for (DataJobDTO tempDataJobDTO : tempDataDTO.getJobs()) {
-				if (!JobStatus.NOT_FOUND.name().equals(tempDataJobDTO.getJenkinsBuild().getResult())) {
+				if (tempDataJobDTO.getJenkinsBuild() != null && !JobStatus.NOT_FOUND.name().equals(tempDataJobDTO.getJenkinsBuild().getResult())) {
 					allJobsNotFound = false;
 					break;
 				}

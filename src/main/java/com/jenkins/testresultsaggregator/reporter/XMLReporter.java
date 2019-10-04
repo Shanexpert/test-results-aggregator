@@ -53,42 +53,45 @@ public class XMLReporter {
 			writer.println(S + JOBS + E);
 			for (DataDTO data : aggregated.getData()) {
 				for (DataJobDTO dataJob : data.getJobs()) {
-					writer.println(S + JOB + E);
-					writer.println("<" + NAME + ">" + dataJob.getJobName() + "</" + NAME + ">");
-					writer.println("<" + FNAME + ">" + dataJob.getJobFriendlyName() + "</" + FNAME + ">");
-					writer.println("<" + STATUS + ">" + dataJob.getResultsDTO().getCurrentResult() + "</" + STATUS + ">");
-					if (JobStatus.DISABLED.name().equalsIgnoreCase(dataJob.getResultsDTO().getCurrentResult())) {
-						writer.println("<" + URL + ">" + dataJob.getJenkinsJob().getUrl().toString() + "</" + URL + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.TOTAL + ">" + dataJob.getResultsDTO().getTotal() + "</" + TestResultsAggregatorProjectAction.TOTAL + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.TOTAL_P + ">" + dataJob.getResultsDTO().getTotalDif() + "</" + TestResultsAggregatorProjectAction.TOTAL_P + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.SUCCESS + ">" + dataJob.getResultsDTO().getPass() + "</" + TestResultsAggregatorProjectAction.SUCCESS + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.SUCCESS_P + ">" + dataJob.getResultsDTO().getPassDif() + "</" + TestResultsAggregatorProjectAction.SUCCESS_P + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.ABORTED + ">" + dataJob.getResultsDTO().getSkip() + "</" + TestResultsAggregatorProjectAction.ABORTED + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.ABORTED_P + ">" + dataJob.getResultsDTO().getSkipDif() + "</" + TestResultsAggregatorProjectAction.ABORTED_P + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.FAILED + ">" + dataJob.getResultsDTO().getFail() + "</" + TestResultsAggregatorProjectAction.FAILED + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.FAILED_P + ">" + dataJob.getResultsDTO().getFailDif() + "</" + TestResultsAggregatorProjectAction.FAILED_P + ">");
-					} else if (JobStatus.NOT_FOUND.name().equalsIgnoreCase(dataJob.getResultsDTO().getCurrentResult())) {
-						writer.println("<" + URL + ">" + null + "</" + URL + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.TOTAL + ">" + 0 + "</" + TestResultsAggregatorProjectAction.TOTAL + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.TOTAL_P + ">" + 0 + "</" + TestResultsAggregatorProjectAction.TOTAL_P + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.SUCCESS + ">" + 0 + "</" + TestResultsAggregatorProjectAction.SUCCESS + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.SUCCESS_P + ">" + 0 + "</" + TestResultsAggregatorProjectAction.SUCCESS_P + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.ABORTED + ">" + 0 + "</" + TestResultsAggregatorProjectAction.ABORTED + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.ABORTED_P + ">" + 0 + "</" + TestResultsAggregatorProjectAction.ABORTED_P + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.FAILED + ">" + 0 + "</" + TestResultsAggregatorProjectAction.FAILED + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.FAILED_P + ">" + 0 + "</" + TestResultsAggregatorProjectAction.FAILED_P + ">");
-					} else {
-						writer.println("<" + URL + ">" + dataJob.getJenkinsJob().getLastBuild().getUrl().toString() + "</" + URL + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.TOTAL + ">" + dataJob.getResultsDTO().getTotal() + "</" + TestResultsAggregatorProjectAction.TOTAL + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.TOTAL_P + ">" + dataJob.getResultsDTO().getTotalDif() + "</" + TestResultsAggregatorProjectAction.TOTAL_P + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.SUCCESS + ">" + dataJob.getResultsDTO().getPass() + "</" + TestResultsAggregatorProjectAction.SUCCESS + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.SUCCESS_P + ">" + dataJob.getResultsDTO().getPassDif() + "</" + TestResultsAggregatorProjectAction.SUCCESS_P + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.ABORTED + ">" + dataJob.getResultsDTO().getSkip() + "</" + TestResultsAggregatorProjectAction.ABORTED + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.ABORTED_P + ">" + dataJob.getResultsDTO().getSkipDif() + "</" + TestResultsAggregatorProjectAction.ABORTED_P + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.FAILED + ">" + dataJob.getResultsDTO().getFail() + "</" + TestResultsAggregatorProjectAction.FAILED + ">");
-						writer.println("<" + TestResultsAggregatorProjectAction.FAILED_P + ">" + dataJob.getResultsDTO().getFailDif() + "</" + TestResultsAggregatorProjectAction.FAILED_P + ">");
+					if (dataJob.getJenkinsBuild() != null) {
+						writer.println(S + JOB + E);
+						writer.println("<" + NAME + ">" + dataJob.getJobName() + "</" + NAME + ">");
+						writer.println("<" + FNAME + ">" + dataJob.getJobFriendlyName() + "</" + FNAME + ">");
+						writer.println("<" + STATUS + ">" + dataJob.getResultsDTO().getCurrentResult() + "</" + STATUS + ">");
+						
+						if (JobStatus.DISABLED.name().equalsIgnoreCase(dataJob.getResultsDTO().getCurrentResult())) {
+							writer.println("<" + URL + ">" + dataJob.getJenkinsJob().getUrl().toString() + "</" + URL + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.TOTAL + ">" + dataJob.getResultsDTO().getTotal() + "</" + TestResultsAggregatorProjectAction.TOTAL + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.TOTAL_P + ">" + dataJob.getResultsDTO().getTotalDif() + "</" + TestResultsAggregatorProjectAction.TOTAL_P + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.SUCCESS + ">" + dataJob.getResultsDTO().getPass() + "</" + TestResultsAggregatorProjectAction.SUCCESS + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.SUCCESS_P + ">" + dataJob.getResultsDTO().getPassDif() + "</" + TestResultsAggregatorProjectAction.SUCCESS_P + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.ABORTED + ">" + dataJob.getResultsDTO().getSkip() + "</" + TestResultsAggregatorProjectAction.ABORTED + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.ABORTED_P + ">" + dataJob.getResultsDTO().getSkipDif() + "</" + TestResultsAggregatorProjectAction.ABORTED_P + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.FAILED + ">" + dataJob.getResultsDTO().getFail() + "</" + TestResultsAggregatorProjectAction.FAILED + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.FAILED_P + ">" + dataJob.getResultsDTO().getFailDif() + "</" + TestResultsAggregatorProjectAction.FAILED_P + ">");
+						} else if (JobStatus.NOT_FOUND.name().equalsIgnoreCase(dataJob.getResultsDTO().getCurrentResult())) {
+							writer.println("<" + URL + ">" + null + "</" + URL + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.TOTAL + ">" + 0 + "</" + TestResultsAggregatorProjectAction.TOTAL + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.TOTAL_P + ">" + 0 + "</" + TestResultsAggregatorProjectAction.TOTAL_P + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.SUCCESS + ">" + 0 + "</" + TestResultsAggregatorProjectAction.SUCCESS + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.SUCCESS_P + ">" + 0 + "</" + TestResultsAggregatorProjectAction.SUCCESS_P + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.ABORTED + ">" + 0 + "</" + TestResultsAggregatorProjectAction.ABORTED + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.ABORTED_P + ">" + 0 + "</" + TestResultsAggregatorProjectAction.ABORTED_P + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.FAILED + ">" + 0 + "</" + TestResultsAggregatorProjectAction.FAILED + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.FAILED_P + ">" + 0 + "</" + TestResultsAggregatorProjectAction.FAILED_P + ">");
+						} else {
+							writer.println("<" + URL + ">" + dataJob.getJenkinsJob().getLastBuild().getUrl().toString() + "</" + URL + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.TOTAL + ">" + dataJob.getResultsDTO().getTotal() + "</" + TestResultsAggregatorProjectAction.TOTAL + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.TOTAL_P + ">" + dataJob.getResultsDTO().getTotalDif() + "</" + TestResultsAggregatorProjectAction.TOTAL_P + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.SUCCESS + ">" + dataJob.getResultsDTO().getPass() + "</" + TestResultsAggregatorProjectAction.SUCCESS + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.SUCCESS_P + ">" + dataJob.getResultsDTO().getPassDif() + "</" + TestResultsAggregatorProjectAction.SUCCESS_P + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.ABORTED + ">" + dataJob.getResultsDTO().getSkip() + "</" + TestResultsAggregatorProjectAction.ABORTED + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.ABORTED_P + ">" + dataJob.getResultsDTO().getSkipDif() + "</" + TestResultsAggregatorProjectAction.ABORTED_P + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.FAILED + ">" + dataJob.getResultsDTO().getFail() + "</" + TestResultsAggregatorProjectAction.FAILED + ">");
+							writer.println("<" + TestResultsAggregatorProjectAction.FAILED_P + ">" + dataJob.getResultsDTO().getFailDif() + "</" + TestResultsAggregatorProjectAction.FAILED_P + ">");
+						}
+						writer.println(SE + JOB + E);
 					}
-					writer.println(SE + JOB + E);
 				}
 			}
 			writer.println(SE + JOBS + E);
