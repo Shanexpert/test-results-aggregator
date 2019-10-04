@@ -29,7 +29,7 @@ public class HTMLReporter {
 		this.workspace = workspace;
 	}
 	
-	public String createOverview(AggregatedDTO aggregated, List<String> columns) {
+	public String createOverview(AggregatedDTO aggregated, List<String> columns, String theme) {
 		try {
 			logger.print(LocalMessages.GENERATE.toString() + " " + LocalMessages.HTML_REPORT.toString());
 			File directory = Helper.createFolder(workspace, FOLDER);
@@ -40,7 +40,7 @@ public class HTMLReporter {
 			context.setVariable("columns", columns);
 			context.setVariable("aggregated", aggregated);
 			// Themes light and dark
-			context.setVariable("theme", "light");
+			context.setVariable("theme", theme);
 			XMLOutput xmlOutput = XMLOutput.createXMLOutput(output);
 			URL template = HTMLReporter.class.getResource("/" + REPORT);
 			context.runScript(template, xmlOutput);

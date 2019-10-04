@@ -1,4 +1,4 @@
-package com.jenkins.testresultsaggregator.helper;
+package com.jenkins.testresultsaggregator.reporter;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,9 +13,7 @@ import java.util.List;
 import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.data.AggregatedDTO;
 import com.jenkins.testresultsaggregator.data.DataDTO;
-import com.jenkins.testresultsaggregator.reporter.HTMLReporter;
-import com.jenkins.testresultsaggregator.reporter.MailNotification;
-import com.jenkins.testresultsaggregator.reporter.XMLReporter;
+import com.jenkins.testresultsaggregator.helper.LocalMessages;
 
 import hudson.FilePath;
 
@@ -38,7 +36,7 @@ public class Reporter {
 		this.mailNotificationFrom = mailNotificationFrom;
 	}
 	
-	public void publishResuts(String recipientsList, String outOfDateResults, AggregatedDTO aggregated) throws Exception {
+	public void publishResuts(String recipientsList, String outOfDateResults, AggregatedDTO aggregated, boolean optionPrintGroupStatusInNewColumn, String theme) throws Exception {
 		List<DataDTO> dataJob = aggregated.getData();
 		foundAtLeastOneGroupName = false;
 		for (DataDTO data : dataJob) {
@@ -50,7 +48,10 @@ public class Reporter {
 		// Calculate and Generate Columns
 		columns = new ArrayList<>();
 		if (foundAtLeastOneGroupName) {
-			columns = new ArrayList<>(Arrays.asList(LocalMessages.COLUMN_GROUP.toString(), LocalMessages.COLUMN_GROUP_STATUS.toString()));
+			columns = new ArrayList<>(Arrays.asList(LocalMessages.COLUMN_GROUP.toString()));
+		}
+		if (optionPrintGroupStatusInNewColumn) {
+			columns.add(LocalMessages.COLUMN_GROUP_STATUS.toString());
 		}
 		columns.addAll(new ArrayList<>(Arrays.asList(
 				LocalMessages.COLUMN_JOB.toString(),
@@ -63,7 +64,7 @@ public class Reporter {
 				LocalMessages.COLUMN_COMMITS.toString(),
 				LocalMessages.COLUMN_REPORT.toString())));
 		// Generate HTML Report
-		String htmlReport = new HTMLReporter(logger, workspace).createOverview(aggregated, columns);
+		String htmlReport = new HTMLReporter(logger, workspace).createOverview(aggregated, columns, theme);
 		// Generate and Send Mail report
 		new MailNotification(logger, dataJob).send(recipientsList, mailNotificationFrom, generateMailSubject(aggregated), generateMailBody(htmlReport), mailhost);
 		// Generate XML Report

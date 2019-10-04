@@ -15,8 +15,8 @@ import com.jenkins.testresultsaggregator.data.DataJobDTO;
 import com.jenkins.testresultsaggregator.helper.Analyzer;
 import com.jenkins.testresultsaggregator.helper.Collector;
 import com.jenkins.testresultsaggregator.helper.LocalMessages;
-import com.jenkins.testresultsaggregator.helper.Reporter;
 import com.jenkins.testresultsaggregator.helper.Validate;
+import com.jenkins.testresultsaggregator.reporter.Reporter;
 
 import hudson.Extension;
 import hudson.Launcher;
@@ -62,11 +62,13 @@ public class TestResultsAggregator extends Notifier {
 			// Collect Data
 			Collector collector = new Collector(logger, desc.getUsername(), desc.getPassword(), desc.getJenkinsUrl());
 			collector.collectResults(validatedData);
+			// String prefixPercentage = "Pass Rate : ";
+			String prefixPercentage = "";
 			// Analyze Results
-			AggregatedDTO aggregated = new Analyzer(logger).analyze(validatedData, outOfDateResults);
+			AggregatedDTO aggregated = new Analyzer(logger).analyze(validatedData, outOfDateResults, prefixPercentage);
 			// Reporter for HTML and mail
 			Reporter reporter = new Reporter(logger, build.getProject().getSomeWorkspace(), build.getRootDir(), desc.getMailhost(), desc.getMailNotificationFrom());
-			reporter.publishResuts(getRecipientsList(), getOutOfDateResults(), aggregated);
+			reporter.publishResuts(getRecipientsList(), getOutOfDateResults(), aggregated, false, "light");
 			// Add Build Action
 			build.addAction(new TestResultsAggregatorTestResultBuildAction(aggregated));
 			

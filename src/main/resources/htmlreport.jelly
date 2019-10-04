@@ -29,6 +29,9 @@
 							<th rowspan='${dataJob.getJobs().size()}'>${dataJob.getGroupName()}</th>
 							<th rowspan='${dataJob.getJobs().size()}'>${dataJob.getAggregatedGroup().getCalculatedGroupStatusWithColor()}<br>${dataJob.getAggregatedGroup().getCalculatedGroupPercentage()}</br></th>
 						</j:if>
+						<j:if test="${columns.size() == 10}">
+							<th rowspan='${dataJob.getJobs().size()}'>${dataJob.getGroupName()}<br>${dataJob.getAggregatedGroup().getCalculatedGroupPercentage()}</br></th>
+						</j:if>
 						<j:set var="groupadded" value="true"/>
 					</j:if>
 					<td>${job.getJobNameFromFriendlyName()}</td>
@@ -46,6 +49,9 @@
 					<j:if test="${columns.size() == 9}">
 						<td style='border-bottom:1px solid black' colspan='9'></td>
 					</j:if>
+					<j:if test="${columns.size() == 10}">
+						<td style='border-bottom:1px solid black' colspan='10'></td>
+					</j:if>
 					<j:if test="${columns.size() == 11}">
 						<td style='border-bottom:1px solid black' colspan='11'></td>
 					</j:if>
@@ -54,6 +60,9 @@
 			<tr bgcolor='black'>
 				<j:if test="${columns.size() == 9}">
 					<th style='text-align: center' colspan='2'><font color='white'>Summary</font></th>
+				</j:if>
+				<j:if test="${columns.size() == 10}">
+					<th style='text-align: center' colspan='3'><font color='white'>Summary</font></th>
 				</j:if>
 				<j:if test="${columns.size() == 11}">
 					<th style='text-align: center' colspan='4'><font color='white'>Summary</font></th>

@@ -23,7 +23,7 @@ public class Analyzer {
 		this.logger = logger;
 	}
 	
-	public AggregatedDTO analyze(List<DataDTO> dataJob, String outOfDateResults) throws Exception {
+	public AggregatedDTO analyze(List<DataDTO> dataJob, String outOfDateResults, String prefixPercentage) throws Exception {
 		// Check if Groups/Names are used
 		List<DataJobDTO> listDataJobDTO = new ArrayList<>();
 		boolean foundAtLeastOneGroupName = false;
@@ -118,7 +118,7 @@ public class Analyzer {
 				tempDataJob.getAggregatedGroup().setCalculatedGroupStatus(JobStatus.SUCCESS.name());
 			}
 			// Calculate Percentage Per Group
-			tempDataJob.getAggregatedGroup().setCalculatedGroupPercentage(Helper.countPercentage(totalResultsPerGroup));
+			tempDataJob.getAggregatedGroup().setCalculatedGroupPercentage(Helper.countPercentage(totalResultsPerGroup, prefixPercentage));
 		}
 		aggregatedDTO.setData(dataJob);
 		aggregatedDTO.setResults(totalResults);
