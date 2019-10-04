@@ -63,9 +63,13 @@ public class XMLReporter {
 						writer.println("<" + URL + ">" + dataJob.getJenkinsJob().getLastBuild().getUrl().toString() + "</" + URL + ">");
 					}
 					writer.println("<" + TestResultsAggregatorProjectAction.TOTAL + ">" + dataJob.getResultsDTO().getTotal() + "</" + TestResultsAggregatorProjectAction.TOTAL + ">");
+					writer.println("<" + TestResultsAggregatorProjectAction.TOTAL_P + ">" + dataJob.getResultsDTO().getTotalDif() + "</" + TestResultsAggregatorProjectAction.TOTAL_P + ">");
 					writer.println("<" + TestResultsAggregatorProjectAction.SUCCESS + ">" + dataJob.getResultsDTO().getPass() + "</" + TestResultsAggregatorProjectAction.SUCCESS + ">");
+					writer.println("<" + TestResultsAggregatorProjectAction.SUCCESS_P + ">" + dataJob.getResultsDTO().getPassDif() + "</" + TestResultsAggregatorProjectAction.SUCCESS_P + ">");
 					writer.println("<" + TestResultsAggregatorProjectAction.ABORTED + ">" + dataJob.getResultsDTO().getSkip() + "</" + TestResultsAggregatorProjectAction.ABORTED + ">");
+					writer.println("<" + TestResultsAggregatorProjectAction.ABORTED_P + ">" + dataJob.getResultsDTO().getSkipDif() + "</" + TestResultsAggregatorProjectAction.ABORTED_P + ">");
 					writer.println("<" + TestResultsAggregatorProjectAction.FAILED + ">" + dataJob.getResultsDTO().getFail() + "</" + TestResultsAggregatorProjectAction.FAILED + ">");
+					writer.println("<" + TestResultsAggregatorProjectAction.FAILED_P + ">" + dataJob.getResultsDTO().getFailDif() + "</" + TestResultsAggregatorProjectAction.FAILED_P + ">");
 					writer.println(SE + JOB + E);
 				}
 			}

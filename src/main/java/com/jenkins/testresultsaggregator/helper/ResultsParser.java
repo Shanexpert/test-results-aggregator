@@ -107,6 +107,14 @@ public class ResultsParser {
 										dataJob.getResultsDTO().setFail(Integer.parseInt(jobResults.getTextContent()));
 									} else if (jobResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.TOTAL)) {
 										dataJob.getResultsDTO().setTotal(Integer.parseInt(jobResults.getTextContent()));
+									} else if (jobResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.SUCCESS_P)) {
+										dataJob.getResultsDTO().setPassDif(Integer.parseInt(jobResults.getTextContent()));
+									} else if (jobResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.ABORTED_P)) {
+										dataJob.getResultsDTO().setSkipDif(Integer.parseInt(jobResults.getTextContent()));
+									} else if (jobResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.FAILED_P)) {
+										dataJob.getResultsDTO().setFailDif(Integer.parseInt(jobResults.getTextContent()));
+									} else if (jobResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.TOTAL_P)) {
+										dataJob.getResultsDTO().setTotalDif(Integer.parseInt(jobResults.getTextContent()));
 									}
 								}
 							}

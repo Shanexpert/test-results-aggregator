@@ -36,6 +36,10 @@ public class TestResultsAggregatorProjectAction extends TestResultProjectAction 
 	public static final String ABORTED = "Aborted";
 	public static final String RUNNING = "Running";
 	public static final String TOTAL = "Total";
+	public static final String TOTAL_P = "Total_P";
+	public static final String SUCCESS_P = "Success_P";
+	public static final String ABORTED_P = "Aborted_P";
+	public static final String FAILED_P = "Failed_P";
 	
 	public TestResultsAggregatorProjectAction(Job<?, ?> project) {
 		super(project);
