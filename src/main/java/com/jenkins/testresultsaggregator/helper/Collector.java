@@ -66,9 +66,8 @@ public class Collector {
 				logger.println(LocalMessages.JOB_NOT_FOUND.toString());
 			} else if (!tempDataJobDTO.getJenkinsJob().getBuildable()) {
 				// Job is Disabled/ Not Buildable
-				tempDataJobDTO.setJenkinsJob(new JenkinsJobDTO());
-				tempDataJobDTO.setJenkinsBuild(new JenkinsBuildDTO(JobStatus.DISABLED.name()));
-				tempDataJobDTO.setResultsDTO(new ResultsDTO(JobStatus.DISABLED.name(), null));
+				tempDataJobDTO.getResultsDTO().setUrl(tempDataJobDTO.getJenkinsJob().getUrl().toString());
+				tempDataJobDTO.getAggregate().calculateReport(tempDataJobDTO.getResultsDTO());
 				logger.println(LocalMessages.JOB_IS_DISABLED.toString());
 			} else if (tempDataJobDTO.getJenkinsJob() != null) {
 				// Job Found and is Buildable
@@ -121,6 +120,8 @@ public class Collector {
 	public ResultsDTO getResults(DataJobDTO dataJobDTO) {
 		if (dataJobDTO.getJenkinsBuild() != null) {
 			ResultsDTO resultsDTO = new ResultsDTO();
+			// Set Url
+			resultsDTO.setUrl(dataJobDTO.getJenkinsJob().getUrl().toString());
 			// Set Building status
 			resultsDTO.setBuilding(dataJobDTO.getJenkinsBuild().getBuilding());
 			// Set Current Result

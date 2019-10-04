@@ -100,7 +100,11 @@ public class AggregateJobDTO {
 	}
 	
 	public void calculateReport(ResultsDTO resultsDTO) {
-		setCalculatedReport("<a href='" + resultsDTO.getReportUrl() + "'>link</a>");
+		if(JobStatus.DISABLED.name().equalsIgnoreCase(resultsDTO.getCurrentResult())) {
+			setCalculatedReport("<a href='" + resultsDTO.getUrl() + "'>link</a>");
+		}else {
+			setCalculatedReport("<a href='" + resultsDTO.getReportUrl() + "'>link</a>");
+		}
 	}
 	
 	public String getCalculatedTotal() {

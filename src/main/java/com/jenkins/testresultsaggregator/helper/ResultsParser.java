@@ -94,7 +94,11 @@ public class ResultsParser {
 									} else if (jobResults.getNodeName().equalsIgnoreCase(XMLReporter.STATUS)) {
 										dataJob.getResultsDTO().setCurrentResult(jobResults.getTextContent());
 									} else if (jobResults.getNodeName().equalsIgnoreCase(XMLReporter.URL)) {
-										dataJob.getJenkinsJob().setUrl(new URL(jobResults.getTextContent()));
+										try {
+											dataJob.getJenkinsJob().setUrl(new URL(jobResults.getTextContent()));
+										} catch (Exception ex) {
+											
+										}
 									} else if (jobResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.SUCCESS)) {
 										dataJob.getResultsDTO().setPass(Integer.parseInt(jobResults.getTextContent()));
 									} else if (jobResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.ABORTED)) {

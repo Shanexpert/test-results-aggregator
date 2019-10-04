@@ -13,6 +13,10 @@ public class JenkinsJobDTO {
 	public JenkinsJobDTO() {
 	}
 	
+	public JenkinsJobDTO(URL url) {
+		setUrl(url);
+	}
+	
 	public Boolean getBuildable() {
 		return buildable;
 	}
@@ -44,11 +48,11 @@ public class JenkinsJobDTO {
 	public void setInQueue(Boolean inQueue) {
 		this.inQueue = inQueue;
 	}
-
+	
 	public URL getUrl() {
 		return url;
 	}
-
+	
 	public void setUrl(URL url) {
 		this.url = url;
 	}

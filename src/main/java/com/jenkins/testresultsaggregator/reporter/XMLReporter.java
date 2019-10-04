@@ -9,6 +9,7 @@ import com.jenkins.testresultsaggregator.TestResultsAggregatorProjectAction;
 import com.jenkins.testresultsaggregator.data.AggregatedDTO;
 import com.jenkins.testresultsaggregator.data.DataDTO;
 import com.jenkins.testresultsaggregator.data.DataJobDTO;
+import com.jenkins.testresultsaggregator.data.JobStatus;
 import com.jenkins.testresultsaggregator.helper.LocalMessages;
 
 public class XMLReporter {
@@ -56,7 +57,11 @@ public class XMLReporter {
 					writer.println("<" + NAME + ">" + dataJob.getJobName() + "</" + NAME + ">");
 					writer.println("<" + FNAME + ">" + dataJob.getJobFriendlyName() + "</" + FNAME + ">");
 					writer.println("<" + STATUS + ">" + dataJob.getResultsDTO().getCurrentResult() + "</" + STATUS + ">");
-					writer.println("<" + URL + ">" + dataJob.getJenkinsJob().getUrl() + "</" + URL + ">");
+					if (JobStatus.DISABLED.name().equalsIgnoreCase(dataJob.getResultsDTO().getCurrentResult())) {
+						writer.println("<" + URL + ">" + dataJob.getJenkinsJob().getUrl().toString() + "</" + URL + ">");
+					} else {
+						writer.println("<" + URL + ">" + dataJob.getJenkinsJob().getLastBuild().getUrl().toString() + "</" + URL + ">");
+					}
 					writer.println("<" + TestResultsAggregatorProjectAction.TOTAL + ">" + dataJob.getResultsDTO().getTotal() + "</" + TestResultsAggregatorProjectAction.TOTAL + ">");
 					writer.println("<" + TestResultsAggregatorProjectAction.SUCCESS + ">" + dataJob.getResultsDTO().getPass() + "</" + TestResultsAggregatorProjectAction.SUCCESS + ">");
 					writer.println("<" + TestResultsAggregatorProjectAction.ABORTED + ">" + dataJob.getResultsDTO().getSkip() + "</" + TestResultsAggregatorProjectAction.ABORTED + ">");

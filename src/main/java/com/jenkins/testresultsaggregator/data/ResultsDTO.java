@@ -31,6 +31,7 @@ public class ResultsDTO {
 	private String description;
 	private boolean building;
 	
+	private String url;
 	private String reportUrl;
 	private String consoleUrl;
 	
@@ -278,6 +279,14 @@ public class ResultsDTO {
 	
 	public void setCalculatedFail(String calculatedFail) {
 		this.calculatedFail = calculatedFail;
+	}
+	
+	public String getUrl() {
+		return url;
+	}
+	
+	public void setUrl(String url) {
+		this.url = url;
 	}
 	
 }
