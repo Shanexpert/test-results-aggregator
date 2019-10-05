@@ -11,6 +11,7 @@ import org.apache.commons.jelly.JellyContext;
 import org.apache.commons.jelly.XMLOutput;
 
 import com.jenkins.testresultsaggregator.data.AggregatedDTO;
+import com.jenkins.testresultsaggregator.helper.Colors;
 import com.jenkins.testresultsaggregator.helper.Helper;
 import com.jenkins.testresultsaggregator.helper.LocalMessages;
 
@@ -41,6 +42,8 @@ public class HTMLReporter {
 			context.setVariable("aggregated", aggregated);
 			// Themes light and dark
 			context.setVariable("theme", theme);
+			// Header & footer color
+			context.setVariable("headerColor", Colors.htmlHEADER());
 			XMLOutput xmlOutput = XMLOutput.createXMLOutput(output);
 			URL template = HTMLReporter.class.getResource("/" + REPORT);
 			context.runScript(template, xmlOutput);

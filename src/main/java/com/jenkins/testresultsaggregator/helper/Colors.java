@@ -10,6 +10,7 @@ public class Colors {
 	public static final Color FAILED = new Color(245, 15, 25);// Color.RED;
 	public static final Color RUNNING = new Color(0, 25, 235);// Color.BLUE;
 	public static final Color UNSTABLE = new Color(255, 205, 10); // Color.ORANGE;
+	public static final Color HEADER = new Color(170, 180, 240);
 	
 	private static String getHTMLColorString(Color color) {
 		String red = Integer.toHexString(color.getRed());
@@ -47,5 +48,9 @@ public class Colors {
 	
 	public static String htmlUNSTABLE() {
 		return getHTMLColorString(UNSTABLE);
+	}
+	
+	public static String htmlHEADER() {
+		return getHTMLColorString(HEADER);
 	}
 }

@@ -40,23 +40,20 @@ public class Helper {
 			long bDays = currentHours / 24;
 			if (d.getSeconds() > outOfDate) {
 				if (bDays > 0) {
-					return "<font color='" + Colors.htmlFAILED() + "'>" + bDays + " D:" + bDours + " h ago</font>";
+					return "<font color='" + Colors.htmlFAILED() + "'>" + bDays + "D:" + bDours + "h ago</font>";
 				} else {
-					return "<font color='" + Colors.htmlFAILED() + "'>" + bDours + " h ago</font>";
+					return "<font color='" + Colors.htmlFAILED() + "'>" + bDours + "h ago</font>";
 				}
 			}
 			if (bDays > 0) {
 				if (bDays == 1) {
-					return bDays + " D:" + bDours + " h ago";
+					return bDays + "D:" + bDours + "h ago";
 				}
-				return bDays + " D:" + bDours + " h ago";
+				return bDays + "D:" + bDours + "h ago";
 			} else if (bDours == 0) {
-				return currentMin + " m ago";
+				return currentMin + "m ago";
 			} else {
-				if (currentHours == 1) {
-					return currentHours + " h ago";
-				}
-				return currentHours + " h ago";
+				return currentHours + "h ago";
 			}
 		}
 	}
