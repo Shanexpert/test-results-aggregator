@@ -68,7 +68,9 @@ public class TestResultsAggregator extends Notifier {
 			AggregatedDTO aggregated = new Analyzer(logger).analyze(validatedData, outOfDateResults, prefixPercentage);
 			// Reporter for HTML and mail
 			Reporter reporter = new Reporter(logger, build.getProject().getSomeWorkspace(), build.getRootDir(), desc.getMailhost(), desc.getMailNotificationFrom());
-			reporter.publishResuts(getRecipientsList(), getOutOfDateResults(), aggregated, false, "light");
+			String preBodyText = null;
+			String afterBodyText = "<a href=\"www.google.com\">Test</a>";
+			reporter.publishResuts(getRecipientsList(), getOutOfDateResults(), aggregated, false, "light", preBodyText, afterBodyText);
 			// Add Build Action
 			build.addAction(new TestResultsAggregatorTestResultBuildAction(aggregated));
 			

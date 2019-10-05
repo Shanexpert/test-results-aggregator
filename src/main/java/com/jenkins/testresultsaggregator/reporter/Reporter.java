@@ -36,7 +36,13 @@ public class Reporter {
 		this.mailNotificationFrom = mailNotificationFrom;
 	}
 	
-	public void publishResuts(String recipientsList, String outOfDateResults, AggregatedDTO aggregated, boolean optionPrintGroupStatusInNewColumn, String theme) throws Exception {
+	public void publishResuts(String recipientsList, String outOfDateResults,
+			AggregatedDTO aggregated,
+			boolean optionPrintGroupStatusInNewColumn,
+			String theme,
+			String preBodyText,
+			String afterBodyText)
+			throws Exception {
 		List<DataDTO> dataJob = aggregated.getData();
 		foundAtLeastOneGroupName = false;
 		for (DataDTO data : dataJob) {
@@ -66,7 +72,7 @@ public class Reporter {
 		// Generate HTML Report
 		String htmlReport = new HTMLReporter(logger, workspace).createOverview(aggregated, columns, theme);
 		// Generate and Send Mail report
-		new MailNotification(logger, dataJob).send(recipientsList, mailNotificationFrom, generateMailSubject(aggregated), generateMailBody(htmlReport), mailhost);
+		new MailNotification(logger, dataJob).send(recipientsList, mailNotificationFrom, generateMailSubject(aggregated), generateMailBody(htmlReport), mailhost, preBodyText, afterBodyText);
 		// Generate XML Report
 		new XMLReporter(logger, rootDir).generateXMLReport(aggregated);
 	}

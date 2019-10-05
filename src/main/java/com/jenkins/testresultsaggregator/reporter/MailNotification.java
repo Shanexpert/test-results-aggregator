@@ -40,7 +40,7 @@ public class MailNotification {
 		return allJobsNotFound;
 	}
 	
-	public void send(String mailTo, String mailFrom, String subject, String body, String host) {
+	public void send(String mailTo, String mailFrom, String subject, String body, String host, String preBodyText, String afterBodyText) {
 		logger.print(LocalMessages.GENERATE.toString() + " " + LocalMessages.EMAIL_REPORT.toString());
 		if (validateResults()) {
 			logger.println(LocalMessages.VALIDATION_MAIL_NOT_FOUND_JOBS.toString());
@@ -59,14 +59,27 @@ public class MailNotification {
 				for (String recipient : to) {
 					message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
 				}
+				// Add Body with before and after text
+				StringBuffer messageBody = new StringBuffer();
+				if (!Strings.isNullOrEmpty(preBodyText)) {
+					messageBody.append(preBodyText);
+					messageBody.append("<br></br>");
+				}
+				messageBody.append(body);
+				messageBody.append("<br></br>");
+				if (!Strings.isNullOrEmpty(afterBodyText)) {
+					messageBody.append(afterBodyText);
+				}
+				message.setContent(messageBody, "text/html");
+				// Add Subject
 				message.setSubject(subject);
-				message.setContent(body, "text/html");
 				Transport.send(message);
 				logger.println(LocalMessages.SEND_MAIL_TO.toString());
 				logger.println("" + mailTo);
 			} catch (MessagingException ex) {
 				logger.println("");
 				logger.printf(LocalMessages.ERROR_OCCURRED.toString() + ": " + ex.getMessage());
+				logger.println("");
 			}
 		}
 	}
