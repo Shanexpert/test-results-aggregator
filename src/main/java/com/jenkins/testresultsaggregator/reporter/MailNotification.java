@@ -70,7 +70,7 @@ public class MailNotification {
 				if (!Strings.isNullOrEmpty(afterBodyText)) {
 					messageBody.append(afterBodyText);
 				}
-				message.setContent(messageBody, "text/html");
+				message.setContent(messageBody.toString(), "text/html");
 				// Add Subject
 				message.setSubject(subject);
 				Transport.send(message);
