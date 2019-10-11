@@ -162,7 +162,7 @@ public class Helper {
 			name = "";
 		}
 		if (!Strings.isNullOrEmpty(name)) {
-			namePrefix = name + ": ";
+			namePrefix = name + ":";
 		} else {
 			namePrefix = name;
 		}
@@ -175,17 +175,17 @@ public class Helper {
 			if (prev == curr) {
 				return "<li>" + text + curr + "</li>";
 			} else if (prev < curr) {
-				return "<li>" + text + curr + " (+" + (curr - prev) + ")</li>";
+				return "<li>" + text + curr + "(+" + (curr - prev) + ")</li>";
 			} else { // if (a < b)
-				return "<li>" + text + curr + " (-" + (prev - curr) + ")</li>";
+				return "<li>" + text + curr + "(-" + (prev - curr) + ")</li>";
 			}
 		} else {
 			if (prev == curr) {
 				return text + curr + "";
 			} else if (prev < curr) {
-				return text + colorize(curr, color) + " (+" + (curr - prev) + ")";
+				return text + colorize(curr, color) + "(+" + (curr - prev) + ")";
 			} else { // if (a < b)
-				return text + colorize(curr, color) + " (-" + (prev - curr) + ")";
+				return text + colorize(curr, color) + "(-" + (prev - curr) + ")";
 			}
 		}
 	}
