@@ -94,11 +94,6 @@ public class TestResultsAggregator extends Notifier {
 		Descriptor desc = getDescriptor();
 		try {
 			logger.println(LocalMessages.START_AGGREGATE.toString());
-			// Validate Input Data
-			List<DataDTO> validatedData = validateInputData(getDataJob());
-			// Collect Data
-			Collector collector = new Collector(logger, desc.getUsername(), desc.getPassword(), desc.getJenkinsUrl());
-			collector.collectResults(validatedData);
 			// Set up Properties
 			properties = new Properties();
 			properties.put(AggregatorProperties.OUT_OF_DATE_RESULTS_ARG.name(), outOfDateResults);
@@ -108,6 +103,11 @@ public class TestResultsAggregator extends Notifier {
 			properties.put(AggregatorProperties.TEXT_AFTER_MAIL_BODY.name(), getAfterbody());
 			properties.put(AggregatorProperties.PRINT_GROUP_STATUS_IN_NEW_COLUMN.name(), false);
 			properties.put(AggregatorProperties.SORT_JOBS_BY.name(), getSortresults());
+			// Validate Input Data
+			List<DataDTO> validatedData = validateInputData(getDataJob());
+			// Collect Data
+			Collector collector = new Collector(logger, desc.getUsername(), desc.getPassword(), desc.getJenkinsUrl());
+			collector.collectResults(validatedData);
 			// Analyze Results
 			AggregatedDTO aggregated = new Analyzer(logger).analyze(validatedData, properties);
 			// Reporter for HTML and mail
@@ -188,7 +188,6 @@ public class TestResultsAggregator extends Notifier {
 			mailhost = jsonObject.getString("mailhost");
 			jenkinsUrl = jsonObject.getString("jenkinsUrl");
 			mailNotificationFrom = jsonObject.getString("mailNotificationFrom");
-			
 			save();
 			return super.configure(req, jsonObject);
 		}

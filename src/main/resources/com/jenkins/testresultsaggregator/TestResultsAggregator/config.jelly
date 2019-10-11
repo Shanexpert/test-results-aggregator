@@ -29,24 +29,24 @@
         </f:repeatable>
     </f:entry>
     
-  <f:entry title="${%recipientsList}" field="recipientsList"><f:textbox /></f:entry>
-  <f:entry title="${%beforebody}" field="beforebody"><f:textbox /></f:entry>
-  <f:entry title="${%afterbody}" field="afterbody"><f:textbox /></f:entry>
-  <f:entry name="goalType" title="${%theme}" field="goalType">
-  <select name="goalType">
+  <f:entry title="${%recipientsList}" field="recipientsList"><f:textarea /></f:entry>
+  <f:entry title="${%beforebody}" field="beforebody"><f:textarea /></f:entry>
+  <f:entry title="${%afterbody}" field="afterbody"><f:textarea /></f:entry>
+  <f:entry name="goalType" title="${%theme}" field="theme">
+  <select name="theme">
     <option value="light">Light</option>
     <option value="dark">Dark</option>
   </select>
   </f:entry>
-  <f:entry name="goalType" title="${%sortresults}" field="goalType">
-  <select name="goalType">
-    <option value="name">Name</option>
-    <option value="status">Status</option>
-    <option value="totaltests">Total tests</option>
-    <option value="pass">Pass</option>
-    <option value="fail">Fail</option>
-    <option value="skip">Skip</option>
-    <option value="time">Time</option>
+  <f:entry name="goalType" title="${%sortresults}" field="sortresults">
+  <select name="sortresults">
+    <option value="NAME">Job Name</option>
+    <option value="STATUS">Job Status</option>
+    <option value="TOTAL_TEST">Total Tests</option>
+    <option value="PASS">Pass Tests</option>
+    <option value="FAIL">Fail Tests</option>
+    <option value="SKIP">Skip Tests</option>
+    <option value="LAST_RUN">Time</option>
   </select>
   </f:entry>
   <f:entry title="${%outOfDateResults}" field="outOfDateResults"><f:textbox /></f:entry>

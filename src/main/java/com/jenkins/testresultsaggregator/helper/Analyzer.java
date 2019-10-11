@@ -60,7 +60,7 @@ public class Analyzer {
 					} else if (TestResultsAggregator.SortResultsBy.STATUS.name().equalsIgnoreCase(orderBy)) {
 						return dataJobDTO1.getResultsDTO().getCurrentResult().compareTo(dataJobDTO2.getResultsDTO().getCurrentResult());
 					} else if (TestResultsAggregator.SortResultsBy.TOTAL_TEST.name().equalsIgnoreCase(orderBy)) {
-						return dataJobDTO1.getResultsDTO().getTotal() - dataJobDTO2.getResultsDTO().getTotal();
+						return dataJobDTO2.getResultsDTO().getTotal() - dataJobDTO1.getResultsDTO().getTotal();
 					} else if (TestResultsAggregator.SortResultsBy.PASS.name().equalsIgnoreCase(orderBy)) {
 						return dataJobDTO1.getResultsDTO().getPass() - dataJobDTO2.getResultsDTO().getPass();
 					} else if (TestResultsAggregator.SortResultsBy.FAIL.name().equalsIgnoreCase(orderBy)) {

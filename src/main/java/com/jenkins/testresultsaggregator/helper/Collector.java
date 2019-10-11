@@ -107,7 +107,6 @@ public class Collector {
 			String reply = Http.get(jobUrlAPI, authenticationString());
 			return Deserialize.initializeObjectMapper().readValue(reply, JenkinsJobDTO.class);
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		return null;
 	}
@@ -119,7 +118,6 @@ public class Collector {
 			String reply = Http.get(jobUrlAPILastBuild, authenticationString());
 			return Deserialize.initializeObjectMapper().readValue(reply, JenkinsBuildDTO.class);
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		return null;
 	}
