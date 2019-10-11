@@ -3,6 +3,7 @@ package com.jenkins.testresultsaggregator;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -36,19 +37,55 @@ public class TestResultsAggregator extends Notifier {
 	
 	private final static String displayName = "Aggregate Test Results";
 	private String recipientsList;
+	private String beforebody;
+	private String afterbody;
+	private String theme;
+	private String sortresults;
 	private String outOfDateResults;
+	
 	private List<DataDTO> dataJob;
 	
+	private Properties properties;
 	public static final String DISPLAY_NAME = "Job Results Aggregated";
 	public static final String GRAPH_NAME = "Job Results Trend";
 	public static final String URL = "reports";
 	public static final String ICON_FILE_NAME = "/plugin/test-results-aggregator/icons/report.png";
 	
+	public enum AggregatorProperties {
+		OUT_OF_DATE_RESULTS_ARG,
+		PERCENTAGE_PREFIX,
+		TEXT_BEFORE_MAIL_BODY,
+		TEXT_AFTER_MAIL_BODY,
+		THEME,
+		PRINT_GROUP_STATUS_IN_NEW_COLUMN,
+		SORT_JOBS_BY
+	}
+	
+	public enum SortResultsBy {
+		NAME,
+		STATUS,
+		TOTAL_TEST,
+		PASS,
+		FAIL,
+		SKIP,
+		LAST_RUN,
+		COMMITS
+	}
+	
+	public enum Theme {
+		dark,
+		light
+	}
+	
 	@DataBoundConstructor
-	public TestResultsAggregator(final String recipientsList, final String outOfDateResults, final List<DataDTO> dataJob) {
+	public TestResultsAggregator(final String recipientsList, final String outOfDateResults, final List<DataDTO> dataJob, String beforebody, String afterbody, String theme, String sortresults) {
 		this.setRecipientsList(recipientsList);
 		this.setOutOfDateResults(outOfDateResults);
 		this.setDataJob(dataJob);
+		this.setBeforebody(beforebody);
+		this.setAfterbody(afterbody);
+		this.setTheme(theme);
+		this.setSortresults(sortresults);
 	}
 	
 	@Override
@@ -62,18 +99,22 @@ public class TestResultsAggregator extends Notifier {
 			// Collect Data
 			Collector collector = new Collector(logger, desc.getUsername(), desc.getPassword(), desc.getJenkinsUrl());
 			collector.collectResults(validatedData);
-			// String prefixPercentage = "Pass Rate : ";
-			String prefixPercentage = "";
+			// Set up Properties
+			properties = new Properties();
+			properties.put(AggregatorProperties.OUT_OF_DATE_RESULTS_ARG.name(), outOfDateResults);
+			properties.put(AggregatorProperties.PERCENTAGE_PREFIX.name(), "");
+			properties.put(AggregatorProperties.THEME.name(), getTheme());
+			properties.put(AggregatorProperties.TEXT_BEFORE_MAIL_BODY.name(), getBeforebody());
+			properties.put(AggregatorProperties.TEXT_AFTER_MAIL_BODY.name(), getAfterbody());
+			properties.put(AggregatorProperties.PRINT_GROUP_STATUS_IN_NEW_COLUMN.name(), false);
+			properties.put(AggregatorProperties.SORT_JOBS_BY.name(), getSortresults());
 			// Analyze Results
-			AggregatedDTO aggregated = new Analyzer(logger).analyze(validatedData, outOfDateResults, prefixPercentage);
+			AggregatedDTO aggregated = new Analyzer(logger).analyze(validatedData, properties);
 			// Reporter for HTML and mail
 			Reporter reporter = new Reporter(logger, build.getProject().getSomeWorkspace(), build.getRootDir(), desc.getMailhost(), desc.getMailNotificationFrom());
-			String preBodyText = null;
-			String afterBodyText = "<a href=\"www.google.com\">Test</a>";
-			reporter.publishResuts(getRecipientsList(), getOutOfDateResults(), aggregated, false, "light", preBodyText, afterBodyText);
+			reporter.publishResuts(getRecipientsList(), aggregated, properties);
 			// Add Build Action
 			build.addAction(new TestResultsAggregatorTestResultBuildAction(aggregated));
-			
 		} catch (Exception e) {
 			logger.printf(LocalMessages.ERROR_OCCURRED.toString() + " : %s ", e);
 		}
@@ -93,12 +134,12 @@ public class TestResultsAggregator extends Notifier {
 		 * Global configuration information variables. If you don't want fields to be persisted, use <tt>transient</tt>.
 		 */
 		private String jenkinsUrl;
-		private Secret username;
+		private String username;
 		private Secret password;
 		private String mailhost;
 		private String mailNotificationFrom;
 		
-		public Secret getUsername() {
+		public String getUsername() {
 			return username;
 		}
 		
@@ -142,11 +183,12 @@ public class TestResultsAggregator extends Notifier {
 		
 		@Override
 		public boolean configure(StaplerRequest req, JSONObject jsonObject) throws FormException {
-			username = Secret.fromString((String) jsonObject.get("username"));
+			username = jsonObject.getString("username");
 			password = Secret.fromString((String) jsonObject.get("password"));
 			mailhost = jsonObject.getString("mailhost");
 			jenkinsUrl = jsonObject.getString("jenkinsUrl");
 			mailNotificationFrom = jsonObject.getString("mailNotificationFrom");
+			
 			save();
 			return super.configure(req, jsonObject);
 		}
@@ -169,7 +211,7 @@ public class TestResultsAggregator extends Notifier {
 			}
 		}
 		
-		public FormValidation doTestApiConnection(@QueryParameter final String jenkinsUrl, @QueryParameter final Secret username, @QueryParameter final Secret password) {
+		public FormValidation doTestApiConnection(@QueryParameter final String jenkinsUrl, @QueryParameter final String username, @QueryParameter final Secret password) {
 			try {
 				new Collector(null, username, password, jenkinsUrl).getAPIConnection();
 				return FormValidation.ok(LocalMessages.SUCCESS.toString());
@@ -236,6 +278,38 @@ public class TestResultsAggregator extends Notifier {
 	
 	public void setOutOfDateResults(String outOfDateResults) {
 		this.outOfDateResults = outOfDateResults;
+	}
+	
+	public String getBeforebody() {
+		return beforebody;
+	}
+	
+	public void setBeforebody(String beforebody) {
+		this.beforebody = beforebody;
+	}
+	
+	public String getAfterbody() {
+		return afterbody;
+	}
+	
+	public void setAfterbody(String afterbody) {
+		this.afterbody = afterbody;
+	}
+	
+	public String getTheme() {
+		return theme;
+	}
+	
+	public void setTheme(String theme) {
+		this.theme = theme;
+	}
+	
+	public String getSortresults() {
+		return sortresults;
+	}
+	
+	public void setSortresults(String sortresults) {
+		this.sortresults = sortresults;
 	}
 	
 }
