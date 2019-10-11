@@ -34,19 +34,19 @@
   <f:entry title="${%afterbody}" field="afterbody"><f:textarea /></f:entry>
   <f:entry name="goalType" title="${%theme}" field="theme">
   <select name="theme">
-    <option value="light">Light</option>
-    <option value="dark">Dark</option>
+    <option value="light" selected="${instance.theme.equals('light')? 'true':null}">Light</option>
+    <option value="dark" selected="${instance.theme.equals('dark')? 'true':null}">Dark</option>
   </select>
   </f:entry>
   <f:entry name="goalType" title="${%sortresults}" field="sortresults">
   <select name="sortresults">
-    <option value="NAME">Job Name</option>
-    <option value="STATUS">Job Status</option>
-    <option value="TOTAL_TEST">Total Tests</option>
-    <option value="PASS">Pass Tests</option>
-    <option value="FAIL">Fail Tests</option>
-    <option value="SKIP">Skip Tests</option>
-    <option value="LAST_RUN">Time</option>
+    <option value="NAME" selected="${instance.sortresults.equals('NAME')? 'true':null}">Job Name</option>
+    <option value="STATUS" selected="${instance.sortresults.equals('STATUS')? 'true':null}">Job Status</option>
+    <option value="TOTAL_TEST" selected="${instance.sortresults.equals('TOTAL_TEST')? 'true':null}">Total Tests</option>
+    <option value="PASS" selected="${instance.sortresults.equals('PASS')? 'true':null}">Pass Tests</option>
+    <option value="FAIL" selected="${instance.sortresults.equals('FAIL')? 'true':null}">Fail Tests</option>
+    <option value="SKIP" selected="${instance.sortresults.equals('SKIP')? 'true':null}">Skip Tests</option>
+    <option value="LAST_RUN" selected="${instance.sortresults.equals('LAST_RUN')? 'true':null}">Time</option>
   </select>
   </f:entry>
   <f:entry title="${%outOfDateResults}" field="outOfDateResults"><f:textbox /></f:entry>
