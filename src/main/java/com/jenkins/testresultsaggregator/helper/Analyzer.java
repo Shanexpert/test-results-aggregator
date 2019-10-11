@@ -49,39 +49,6 @@ public class Analyzer {
 				}
 			});
 		}
-		// Order Jobs per
-		final String orderBy = (String) properties.get(TestResultsAggregator.AggregatorProperties.SORT_JOBS_BY.name());
-		for (DataDTO data : dataJob) {
-			Collections.sort(data.getJobs(), new Comparator<DataJobDTO>() {
-				@Override
-				public int compare(DataJobDTO dataJobDTO1, DataJobDTO dataJobDTO2) {
-					try {
-						if (TestResultsAggregator.SortResultsBy.NAME.name().equalsIgnoreCase(orderBy)) {
-							return dataJobDTO1.getJobNameFromFriendlyName().compareTo(dataJobDTO2.getJobNameFromFriendlyName());
-						} else if (TestResultsAggregator.SortResultsBy.STATUS.name().equalsIgnoreCase(orderBy)) {
-							return dataJobDTO1.getAggregate().getCalculatedJobStatus().compareTo(dataJobDTO2.getAggregate().getCalculatedJobStatus());
-						} else if (TestResultsAggregator.SortResultsBy.TOTAL_TEST.name().equalsIgnoreCase(orderBy)) {
-							return dataJobDTO2.getResultsDTO().getTotal() - dataJobDTO1.getResultsDTO().getTotal();
-						} else if (TestResultsAggregator.SortResultsBy.PASS.name().equalsIgnoreCase(orderBy)) {
-							return dataJobDTO1.getResultsDTO().getPass() - dataJobDTO2.getResultsDTO().getPass();
-						} else if (TestResultsAggregator.SortResultsBy.FAIL.name().equalsIgnoreCase(orderBy)) {
-							return dataJobDTO1.getResultsDTO().getFail() - dataJobDTO2.getResultsDTO().getFail();
-						} else if (TestResultsAggregator.SortResultsBy.SKIP.name().equalsIgnoreCase(orderBy)) {
-							return dataJobDTO1.getResultsDTO().getSkip() - dataJobDTO2.getResultsDTO().getSkip();
-						} else if (TestResultsAggregator.SortResultsBy.LAST_RUN.name().equalsIgnoreCase(orderBy)) {
-							return dataJobDTO1.getResultsDTO().getTimestamp().compareTo(dataJobDTO2.getResultsDTO().getTimestamp());
-						} else if (TestResultsAggregator.SortResultsBy.COMMITS.name().equalsIgnoreCase(orderBy)) {
-							return dataJobDTO1.getResultsDTO().getNumberOfChanges() - dataJobDTO2.getResultsDTO().getNumberOfChanges();
-						} else {
-							// Dafault
-							return dataJobDTO1.getJobNameFromFriendlyName().compareTo(dataJobDTO2.getJobNameFromFriendlyName());
-						}
-					} catch (NullPointerException ex) {
-						return -1;
-					}
-				}
-			});
-		}
 		AggregatedDTO aggregatedDTO = new AggregatedDTO();
 		// Calculate Aggregated Results for Reporting
 		ResultsDTO totalResults = new ResultsDTO();
@@ -148,6 +115,40 @@ public class Analyzer {
 			// Calculate Percentage Per Group
 			tempDataJob.getAggregatedGroup().setCalculatedGroupPercentage(Helper.countPercentage(totalResultsPerGroup, properties.getProperty(AggregatorProperties.PERCENTAGE_PREFIX.toString())));
 		}
+		// Order Jobs per
+		final String orderBy = (String) properties.get(TestResultsAggregator.AggregatorProperties.SORT_JOBS_BY.name());
+		for (DataDTO data : dataJob) {
+			Collections.sort(data.getJobs(), new Comparator<DataJobDTO>() {
+				@Override
+				public int compare(DataJobDTO dataJobDTO1, DataJobDTO dataJobDTO2) {
+					try {
+						if (TestResultsAggregator.SortResultsBy.NAME.name().equalsIgnoreCase(orderBy)) {
+							return dataJobDTO1.getJobNameFromFriendlyName().compareTo(dataJobDTO2.getJobNameFromFriendlyName());
+						} else if (TestResultsAggregator.SortResultsBy.STATUS.name().equalsIgnoreCase(orderBy)) {
+							return dataJobDTO1.getAggregate().getCalculatedJobStatus().compareTo(dataJobDTO2.getAggregate().getCalculatedJobStatus());
+						} else if (TestResultsAggregator.SortResultsBy.TOTAL_TEST.name().equalsIgnoreCase(orderBy)) {
+							return dataJobDTO2.getResultsDTO().getTotal() - dataJobDTO1.getResultsDTO().getTotal();
+						} else if (TestResultsAggregator.SortResultsBy.PASS.name().equalsIgnoreCase(orderBy)) {
+							return dataJobDTO1.getResultsDTO().getPass() - dataJobDTO2.getResultsDTO().getPass();
+						} else if (TestResultsAggregator.SortResultsBy.FAIL.name().equalsIgnoreCase(orderBy)) {
+							return dataJobDTO1.getResultsDTO().getFail() - dataJobDTO2.getResultsDTO().getFail();
+						} else if (TestResultsAggregator.SortResultsBy.SKIP.name().equalsIgnoreCase(orderBy)) {
+							return dataJobDTO1.getResultsDTO().getSkip() - dataJobDTO2.getResultsDTO().getSkip();
+						} else if (TestResultsAggregator.SortResultsBy.LAST_RUN.name().equalsIgnoreCase(orderBy)) {
+							return dataJobDTO1.getResultsDTO().getTimestamp().compareTo(dataJobDTO2.getResultsDTO().getTimestamp());
+						} else if (TestResultsAggregator.SortResultsBy.COMMITS.name().equalsIgnoreCase(orderBy)) {
+							return dataJobDTO1.getResultsDTO().getNumberOfChanges() - dataJobDTO2.getResultsDTO().getNumberOfChanges();
+						} else {
+							// Dafault
+							return dataJobDTO1.getJobNameFromFriendlyName().compareTo(dataJobDTO2.getJobNameFromFriendlyName());
+						}
+					} catch (NullPointerException ex) {
+						return -1;
+					}
+				}
+			});
+		}
+		// Set
 		aggregatedDTO.setData(dataJob);
 		aggregatedDTO.setResults(totalResults);
 		return aggregatedDTO;
