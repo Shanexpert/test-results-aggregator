@@ -36,12 +36,12 @@ public class Collector {
 	public static final String TESTNG_REPORT = "testngreports";
 	public static final String JUNIT_REPORT = "testReport";
 	
-	private Secret username;
+	private String username;
 	private Secret password;
 	private String jenkinsUrl;
 	private PrintStream logger;
 	
-	public Collector(PrintStream logger, Secret username, Secret password, String jenkinsUrl) {
+	public Collector(PrintStream logger, String username, Secret password, String jenkinsUrl) {
 		this.username = username;
 		this.password = password;
 		this.jenkinsUrl = jenkinsUrl;
@@ -90,8 +90,8 @@ public class Collector {
 	}
 	
 	private String authenticationString() {
-		if (!Strings.isNullOrEmpty(username.getPlainText()) && !Strings.isNullOrEmpty(password.getPlainText())) {
-			return Base64.getEncoder().encodeToString(new String(username.getPlainText() + ":" + new String(password.getPlainText())).getBytes());
+		if (!Strings.isNullOrEmpty(username) && !Strings.isNullOrEmpty(password.getPlainText())) {
+			return Base64.getEncoder().encodeToString(new String(username + ":" + new String(password.getPlainText())).getBytes());
 		}
 		return null;
 	}
