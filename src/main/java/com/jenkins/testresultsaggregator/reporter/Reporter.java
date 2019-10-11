@@ -9,8 +9,10 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import com.google.common.base.Strings;
+import com.jenkins.testresultsaggregator.TestResultsAggregator.AggregatorProperties;
 import com.jenkins.testresultsaggregator.data.AggregatedDTO;
 import com.jenkins.testresultsaggregator.data.DataDTO;
 import com.jenkins.testresultsaggregator.helper.LocalMessages;
@@ -36,13 +38,7 @@ public class Reporter {
 		this.mailNotificationFrom = mailNotificationFrom;
 	}
 	
-	public void publishResuts(String recipientsList, String outOfDateResults,
-			AggregatedDTO aggregated,
-			boolean optionPrintGroupStatusInNewColumn,
-			String theme,
-			String preBodyText,
-			String afterBodyText)
-			throws Exception {
+	public void publishResuts(String recipientsList, AggregatedDTO aggregated, Properties properties) throws Exception {
 		List<DataDTO> dataJob = aggregated.getData();
 		foundAtLeastOneGroupName = false;
 		for (DataDTO data : dataJob) {
@@ -56,7 +52,7 @@ public class Reporter {
 		if (foundAtLeastOneGroupName) {
 			columns = new ArrayList<>(Arrays.asList(LocalMessages.COLUMN_GROUP.toString()));
 		}
-		if (optionPrintGroupStatusInNewColumn) {
+		if (Boolean.valueOf(properties.getProperty(AggregatorProperties.PRINT_GROUP_STATUS_IN_NEW_COLUMN.name()))) {
 			columns.add(LocalMessages.COLUMN_GROUP_STATUS.toString());
 		}
 		columns.addAll(new ArrayList<>(Arrays.asList(
@@ -70,9 +66,16 @@ public class Reporter {
 				LocalMessages.COLUMN_COMMITS.toString(),
 				LocalMessages.COLUMN_REPORT.toString())));
 		// Generate HTML Report
-		String htmlReport = new HTMLReporter(logger, workspace).createOverview(aggregated, columns, theme);
+		String htmlReport = new HTMLReporter(logger, workspace).createOverview(aggregated, columns, properties.getProperty(AggregatorProperties.THEME.name()));
 		// Generate and Send Mail report
-		new MailNotification(logger, dataJob).send(recipientsList, mailNotificationFrom, generateMailSubject(aggregated), generateMailBody(htmlReport), mailhost, preBodyText, afterBodyText);
+		new MailNotification(logger, dataJob).send(
+				recipientsList,
+				mailNotificationFrom,
+				generateMailSubject(aggregated),
+				generateMailBody(htmlReport),
+				mailhost,
+				properties.getProperty(AggregatorProperties.TEXT_BEFORE_MAIL_BODY.name()),
+				properties.getProperty(AggregatorProperties.TEXT_AFTER_MAIL_BODY.name()));
 		// Generate XML Report
 		new XMLReporter(logger, rootDir).generateXMLReport(aggregated);
 	}
