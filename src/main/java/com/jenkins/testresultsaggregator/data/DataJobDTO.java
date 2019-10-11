@@ -3,6 +3,9 @@ package com.jenkins.testresultsaggregator.data;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
+import com.google.common.base.Strings;
+import com.jenkins.testresultsaggregator.helper.Colors;
+
 import hudson.model.AbstractDescribableImpl;
 
 public class DataJobDTO extends AbstractDescribableImpl<DataJobDTO> {
@@ -74,6 +77,23 @@ public class DataJobDTO extends AbstractDescribableImpl<DataJobDTO> {
 			return jobName;
 		}
 		return jobFriendlyName;
+	}
+	
+	public String getJobNameFromFriendlyName(boolean withLinktoResults) {
+		if (withLinktoResults) {
+			String reportUrl = null;
+			if (resultsDTO == null) {
+				reportUrl = null;
+			} else if (Strings.isNullOrEmpty(resultsDTO.getUrl())) {
+				reportUrl = null;
+			} else if (JobStatus.DISABLED.name().equalsIgnoreCase(resultsDTO.getCurrentResult())) {
+				reportUrl = resultsDTO.getUrl();
+			} else {
+				reportUrl = resultsDTO.getReportUrl();
+			}
+			return "<a href='" + reportUrl + "' style='text-decoration:none;'><font color='" + Colors.htmlJOB_NAME_URL() + "'>" + getJobNameFromFriendlyName() + "</font></a>";
+		}
+		return getJobNameFromFriendlyName();
 	}
 	
 	public AggregateJobDTO getAggregate() {

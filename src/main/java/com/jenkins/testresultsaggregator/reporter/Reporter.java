@@ -63,8 +63,7 @@ public class Reporter {
 				LocalMessages.COLUMN_FAIL.toString(),
 				LocalMessages.COLUMN_SKIP.toString(),
 				LocalMessages.COLUMN_LAST_RUN.toString(),
-				LocalMessages.COLUMN_COMMITS.toString(),
-				LocalMessages.COLUMN_REPORT.toString())));
+				LocalMessages.COLUMN_COMMITS.toString())));
 		// Generate HTML Report
 		String htmlReport = new HTMLReporter(logger, workspace).createOverview(aggregated, columns, properties.getProperty(AggregatorProperties.THEME.name()));
 		// Generate and Send Mail report

@@ -25,16 +25,16 @@
 				<j:forEach items="${dataJob.getJobs()}" var="job">
 					<tr bgcolor='${bgcolor}'>
 					<j:if test="${groupadded == false}">
-						<j:if test="${columns.size() == 11}">
+						<j:if test="${columns.size() == 10}">
 							<th rowspan='${dataJob.getJobs().size()}'>${dataJob.getGroupName()}</th>
 							<th rowspan='${dataJob.getJobs().size()}'>${dataJob.getAggregatedGroup().getCalculatedGroupStatusWithColor()}<br>${dataJob.getAggregatedGroup().getCalculatedGroupPercentage()}</br></th>
 						</j:if>
-						<j:if test="${columns.size() == 10}">
+						<j:if test="${columns.size() == 9}">
 							<th rowspan='${dataJob.getJobs().size()}'>${dataJob.getGroupName()}<br>${dataJob.getAggregatedGroup().getCalculatedGroupPercentage()}</br></th>
 						</j:if>
 						<j:set var="groupadded" value="true"/>
 					</j:if>
-					<td>${job.getJobNameFromFriendlyName()}</td>
+					<td>${job.getJobNameFromFriendlyName(true)}</td>
 					<td style="text-align: center">${job.getAggregate().getCalculatedJobStatusWithColor()}</td>
 					<td style="text-align: center">${job.getAggregate().getCalculatedTotal()}</td>
 					<td style="text-align: center">${job.getAggregate().getCalculatedPass()}</td>
@@ -42,36 +42,27 @@
 					<td style="text-align: center">${job.getAggregate().getCalculatedSkipped()}</td>
 					<td style="text-align: center">${job.getAggregate().getCalculatedTimestamp()}</td>
 					<td style="text-align: center">${job.getAggregate().getCalculatedChanges()}</td>
-					<td style="text-align: center">${job.getAggregate().getCalculatedReport()}</td>
 					</tr>
 				</j:forEach>
 				<tr>
-					<j:if test="${columns.size() == 9}">
-						<td style='border-bottom:1px solid ${headerColor}' colspan='9'></td>
-					</j:if>
-					<j:if test="${columns.size() == 10}">
-						<td style='border-bottom:1px solid ${headerColor}' colspan='10'></td>
-					</j:if>
-					<j:if test="${columns.size() == 11}">
-						<td style='border-bottom:1px solid ${headerColor}' colspan='11'></td>
-					</j:if>
+					<td style='border-bottom:1px solid ${headerColor}' colspan='${columns.size()}'></td>
 				</tr>
 			</j:forEach>
 			<tr bgcolor='${headerColor}'>
-				<j:if test="${columns.size() == 9}">
+				<j:if test="${columns.size() == 8}">
 					<th style='text-align: center' colspan='2'><font color='white'>Summary</font></th>
 				</j:if>
-				<j:if test="${columns.size() == 10}">
+				<j:if test="${columns.size() == 9}">
 					<th style='text-align: center' colspan='3'><font color='white'>Summary</font></th>
 				</j:if>
-				<j:if test="${columns.size() == 11}">
+				<j:if test="${columns.size() == 10}">
 					<th style='text-align: center' colspan='4'><font color='white'>Summary</font></th>
 				</j:if>
 				<th style='text-align: center'><font color='white'>${aggregated.getResults().getCalculatedTotal()}</font></th>
 				<th style='text-align: center'><font color='white'>${aggregated.getResults().getCalculatedPass()}</font></th>
 				<th style='text-align: center'><font color='white'>${aggregated.getResults().getCalculatedFailColor()}</font></th>
 				<th style='text-align: center'><font color='white'>${aggregated.getResults().getCalculatedSkip()}</font></th>
-				<th colspan='3'></th>
+				<th colspan='2'></th>
 			</tr>
 		</table>
        </body>
