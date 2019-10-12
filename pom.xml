@@ -48,10 +48,16 @@
 			<version>2.9.10</version>
 		</dependency>
 		<dependency>
-            <groupId>org.jenkins-ci.plugins</groupId>
-            <artifactId>junit</artifactId>
-            <version>1.2</version>
-        </dependency>
+			<groupId>org.jenkins-ci.plugins</groupId>
+			<artifactId>junit</artifactId>
+			<version>1.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jenkins-ci.plugins</groupId>
+			<artifactId>mailer</artifactId>
+			<version>1.21</version>
+			<optional>true</optional>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>Test-Results-Aggregator-Plugin</finalName>
