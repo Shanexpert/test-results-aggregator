@@ -26,27 +26,24 @@
 					<tr bgcolor='${bgcolor}'>
 					<j:if test="${groupadded == false}">
 						<j:if test="${columns.size() == 10}">
-							<th rowspan='${dataJob.getJobs().size()}'>${dataJob.getGroupName()}</th>
-							<th rowspan='${dataJob.getJobs().size()}'>${dataJob.getAggregatedGroup().getCalculatedGroupStatusWithColor()}<br>${dataJob.getAggregatedGroup().getCalculatedGroupPercentage()}</br></th>
+							<th rowspan='${dataJob.getJobs().size()}' style='border-bottom:1px solid ${headerColor}'>${dataJob.getGroupName()}</th>
+							<th rowspan='${dataJob.getJobs().size()}' style='border-bottom:1px solid ${headerColor}'>${dataJob.getAggregatedGroup().getCalculatedGroupStatusWithColor()}<br>${dataJob.getAggregatedGroup().getCalculatedGroupPercentage()}</br></th>
 						</j:if>
 						<j:if test="${columns.size() == 9}">
-							<th rowspan='${dataJob.getJobs().size()}'>${dataJob.getGroupName()}<br>${dataJob.getAggregatedGroup().getCalculatedGroupPercentage()}</br></th>
+							<th rowspan='${dataJob.getJobs().size()}' style='border-bottom:1px solid ${headerColor}'>${dataJob.getGroupName()}<br>${dataJob.getAggregatedGroup().getCalculatedGroupPercentage()}</br></th>
 						</j:if>
 						<j:set var="groupadded" value="true"/>
 					</j:if>
-					<td>${job.getJobNameFromFriendlyName(true)}</td>
-					<td style="text-align: center">${job.getAggregate().getCalculatedJobStatusWithColor()}</td>
-					<td style="text-align: center">${job.getAggregate().getCalculatedTotal()}</td>
-					<td style="text-align: center">${job.getAggregate().getCalculatedPass()}</td>
-					<td style="text-align: center">${job.getAggregate().getCalculatedFailedColor()}</td>
-					<td style="text-align: center">${job.getAggregate().getCalculatedSkipped()}</td>
-					<td style="text-align: center">${job.getAggregate().getCalculatedTimestamp()}</td>
-					<td style="text-align: center">${job.getAggregate().getCalculatedChanges()}</td>
+					<td style='border-bottom:1px solid ${headerColor}'>${job.getJobNameFromFriendlyName(true)}</td>
+					<td style="border-bottom:1px solid ${headerColor};text-align: center">${job.getAggregate().getCalculatedJobStatusWithColor(true)}</td>
+					<td style="border-bottom:1px solid ${headerColor};text-align: center">${job.getAggregate().getCalculatedTotal()}</td>
+					<td style="border-bottom:1px solid ${headerColor};text-align: center">${job.getAggregate().getCalculatedPass()}</td>
+					<td style="border-bottom:1px solid ${headerColor};text-align: center">${job.getAggregate().getCalculatedFailedColor()}</td>
+					<td style="border-bottom:1px solid ${headerColor};text-align: center">${job.getAggregate().getCalculatedSkipped()}</td>
+					<td style="border-bottom:1px solid ${headerColor};text-align: center">${job.getAggregate().getCalculatedTimestamp()}</td>
+					<td style="border-bottom:1px solid ${headerColor};text-align: center">${job.getAggregate().getCalculatedChanges()}</td>
 					</tr>
 				</j:forEach>
-				<tr>
-					<td style='border-bottom:1px solid ${headerColor}' colspan='${columns.size()}'></td>
-				</tr>
 			</j:forEach>
 			<tr bgcolor='${headerColor}'>
 				<j:if test="${columns.size() == 8}">
