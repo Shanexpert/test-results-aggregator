@@ -77,17 +77,17 @@ public class Helper {
 	
 	public static String colorizeResultStatus(String result) {
 		if (JobStatus.SUCCESS.name().equals(result)) {
-			return "<font color='" + Colors.htmlSUCCESS() + "'>" + result + "</font>";
+			return "<font color='" + Colors.htmlSUCCESS() + "'><b>" + result + "</b></font>";
 		} else if (JobStatus.FAILURE.name().equals(result)) {
 			return "<font color='" + Colors.htmlFAILED() + "'><b><i>" + result + "</i></b></font>";
 		} else if (JobStatus.STILL_FAILING.name().equals(result)) {
 			return "<font color='" + Colors.htmlFAILED() + "'><b><i>" + result + "</i></b></font>";
 		} else if (JobStatus.FIXED.name().equals(result)) {
-			return "<font color='" + Colors.htmlSUCCESS() + "'>" + result + "</font>";
+			return "<font color='" + Colors.htmlSUCCESS() + "'><b>" + result + "</b></font>";
 		} else if (JobStatus.UNSTABLE.name().equals(result)) {
-			return "<font color='" + Colors.htmlUNSTABLE() + "'><i>" + result + "</i></font>";
+			return "<font color='" + Colors.htmlUNSTABLE() + "'><b><i>" + result + "</i></b></font>";
 		} else if (JobStatus.STILL_UNSTABLE.name().equals(result)) {
-			return "<font color='" + Colors.htmlUNSTABLE() + "'><i>" + result + "</i></font>";
+			return "<font color='" + Colors.htmlUNSTABLE() + "'><b><i>" + result + "</i></b></font>";
 		}
 		return result;
 	}

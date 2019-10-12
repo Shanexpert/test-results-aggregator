@@ -15,6 +15,7 @@ public class AggregateJobDTO {
 	private String calculatedSkipped;
 	private String calculatedChanges;
 	private String calculatedReport;
+	private String reportURL;
 	
 	public AggregateJobDTO() {
 		
@@ -83,6 +84,17 @@ public class AggregateJobDTO {
 		return calculatedJobStatus;
 	}
 	
+	public String getCalculatedJobStatusWithColor(boolean withLinktoResults) {
+		if (withLinktoResults) {
+			if (getReportURL() == null) {
+				getCalculatedJobStatusWithColor();
+			} else {
+				return "<a href='" + getReportURL() + "' style='text-decoration:none;'>" + Helper.colorizeResultStatus(calculatedJobStatus) + "</a>";
+			}
+		}
+		return getCalculatedJobStatusWithColor();
+	}
+	
 	public String getCalculatedJobStatusWithColor() {
 		return Helper.colorizeResultStatus(calculatedJobStatus);
 	}
@@ -106,12 +118,16 @@ public class AggregateJobDTO {
 	public void calculateReport(ResultsDTO resultsDTO) {
 		if (resultsDTO == null) {
 			setCalculatedReport(null);
+			setReportURL(null);
 		} else if (Strings.isNullOrEmpty(resultsDTO.getUrl())) {
 			setCalculatedReport(null);
+			setReportURL(null);
 		} else if (JobStatus.DISABLED.name().equalsIgnoreCase(resultsDTO.getCurrentResult())) {
 			setCalculatedReport("<a href='" + resultsDTO.getUrl() + "'>link</a>");
+			setReportURL(resultsDTO.getUrl());
 		} else {
 			setCalculatedReport("<a href='" + resultsDTO.getReportUrl() + "'>link</a>");
+			setReportURL(resultsDTO.getReportUrl());
 		}
 	}
 	
@@ -169,6 +185,14 @@ public class AggregateJobDTO {
 	
 	public void setCalculatedFailedColor(String calculatedFailedColor) {
 		this.calculatedFailedColor = calculatedFailedColor;
+	}
+	
+	public String getReportURL() {
+		return reportURL;
+	}
+	
+	public void setReportURL(String reportURL) {
+		this.reportURL = reportURL;
 	}
 	
 }
