@@ -2,6 +2,7 @@ package com.jenkins.testresultsaggregator.data;
 
 import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.helper.Colors;
+import com.jenkins.testresultsaggregator.helper.GetEnumFromString;
 import com.jenkins.testresultsaggregator.helper.Helper;
 
 public class AggregateJobDTO {
@@ -82,6 +83,10 @@ public class AggregateJobDTO {
 	
 	public String getCalculatedJobStatus() {
 		return calculatedJobStatus;
+	}
+	
+	public JobStatus getCalculatedJobStatusEnum() {
+		return GetEnumFromString.get(com.jenkins.testresultsaggregator.data.JobStatus.class, calculatedJobStatus);
 	}
 	
 	public String getCalculatedJobStatusWithColor(boolean withLinktoResults) {

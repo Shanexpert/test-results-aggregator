@@ -125,7 +125,7 @@ public class Analyzer {
 						if (TestResultsAggregator.SortResultsBy.NAME.name().equalsIgnoreCase(orderBy)) {
 							return dataJobDTO1.getJobNameFromFriendlyName().compareTo(dataJobDTO2.getJobNameFromFriendlyName());
 						} else if (TestResultsAggregator.SortResultsBy.STATUS.name().equalsIgnoreCase(orderBy)) {
-							return dataJobDTO1.getAggregate().getCalculatedJobStatus().compareTo(dataJobDTO2.getAggregate().getCalculatedJobStatus());
+							return dataJobDTO1.getAggregate().getCalculatedJobStatusEnum().getPriority() - dataJobDTO2.getAggregate().getCalculatedJobStatusEnum().getPriority();
 						} else if (TestResultsAggregator.SortResultsBy.TOTAL_TEST.name().equalsIgnoreCase(orderBy)) {
 							return dataJobDTO2.getResultsDTO().getTotal() - dataJobDTO1.getResultsDTO().getTotal();
 						} else if (TestResultsAggregator.SortResultsBy.PASS.name().equalsIgnoreCase(orderBy)) {

@@ -44,6 +44,8 @@ public class HTMLReporter {
 			context.setVariable("theme", theme);
 			// Header & footer color
 			context.setVariable("headerColor", Colors.htmlHEADER());
+			// Line Seperator color
+			context.setVariable("lineSeperatorcolor", Colors.htmlLINESEPERATOR());
 			XMLOutput xmlOutput = XMLOutput.createXMLOutput(output);
 			URL template = HTMLReporter.class.getResource("/" + REPORT);
 			context.runScript(template, xmlOutput);
