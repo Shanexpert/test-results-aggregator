@@ -72,8 +72,12 @@ public class TestResultsAggregatorProjectAction extends TestResultProjectAction 
 		return TestResultsAggregator.DISPLAY_NAME;
 	}
 	
-	public String getGraphName() {
-		return TestResultsAggregator.GRAPH_NAME;
+	public String getGraphNameJobs() {
+		return TestResultsAggregator.GRAPH_NAME_JOBS;
+	}
+	
+	public String getGraphNameTests() {
+		return TestResultsAggregator.GRAPH_NAME_TESTS;
 	}
 	
 	public String getUrlName() {
@@ -84,7 +88,7 @@ public class TestResultsAggregatorProjectAction extends TestResultProjectAction 
 		return TestResultsAggregator.URL;
 	}
 	
-	public void doGraph(final StaplerRequest req, StaplerResponse rsp) throws IOException {
+	public void doGraphJob(final StaplerRequest req, StaplerResponse rsp) throws IOException {
 		if (newGraphNotNeeded(req, rsp)) {
 			return;
 		}
@@ -92,7 +96,20 @@ public class TestResultsAggregatorProjectAction extends TestResultProjectAction 
 		populateDataSetBuilder(dataSetBuilder);
 		new hudson.util.Graph(-1, getGraphWidth(), getGraphHeight()) {
 			protected JFreeChart createGraph() {
-				return GraphHelper.createChart(req, dataSetBuilder.build());
+				return GraphHelper.createChartJob(req, dataSetBuilder.build());
+			}
+		}.doPng(req, rsp);
+	}
+	
+	public void doGraphTests(final StaplerRequest req, StaplerResponse rsp) throws IOException {
+		if (newGraphNotNeeded(req, rsp)) {
+			return;
+		}
+		final DataSetBuilder<String, ChartUtil.NumberOnlyBuildLabel> dataSetBuilder = new DataSetBuilder<String, ChartUtil.NumberOnlyBuildLabel>();
+		populateDataSetBuilder2(dataSetBuilder);
+		new hudson.util.Graph(-1, getGraphWidth(), getGraphHeight()) {
+			protected JFreeChart createGraph() {
+				return GraphHelper.createChartTests(req, dataSetBuilder.build());
 			}
 		}.doPng(req, rsp);
 	}
@@ -124,7 +141,20 @@ public class TestResultsAggregatorProjectAction extends TestResultProjectAction 
 		populateDataSetBuilder(dataSetBuilder);
 		new hudson.util.Graph(-1, getGraphWidth(), getGraphHeight()) {
 			protected JFreeChart createGraph() {
-				return GraphHelper.createChart(req, dataSetBuilder.build());
+				return GraphHelper.createChartJob(req, dataSetBuilder.build());
+			}
+		}.doMap(req, rsp);
+	}
+	
+	public void doGraphMap2(final StaplerRequest req, StaplerResponse rsp) throws IOException {
+		if (newGraphNotNeeded(req, rsp)) {
+			return;
+		}
+		final DataSetBuilder<String, ChartUtil.NumberOnlyBuildLabel> dataSetBuilder = new DataSetBuilder<String, ChartUtil.NumberOnlyBuildLabel>();
+		populateDataSetBuilder(dataSetBuilder);
+		new hudson.util.Graph(-1, getGraphWidth(), getGraphHeight()) {
+			protected JFreeChart createGraph() {
+				return GraphHelper.createChartTests(req, dataSetBuilder.build());
 			}
 		}.doMap(req, rsp);
 	}
@@ -174,6 +204,27 @@ public class TestResultsAggregatorProjectAction extends TestResultProjectAction 
 				dataset.add(action.getUnstableCount(), UNSTABLE, label);
 				dataset.add(action.getAborted(), ABORTED, label);
 				dataset.add(action.getRunning(), RUNNING, label);
+			}
+		}
+	}
+	
+	protected void populateDataSetBuilder2(DataSetBuilder<String, ChartUtil.NumberOnlyBuildLabel> dataset) {
+		if (!(job instanceof LazyBuildMixIn.LazyLoadingJob)) {
+			return;
+		}
+		SortedMap<Integer, Run<?, ?>> loadedBuilds = (SortedMap<Integer, Run<?, ?>>) ((LazyLoadingJob<?, ?>) job).getLazyBuildMixIn()._getRuns().getLoadedBuilds();
+		for (Run<?, ?> build : loadedBuilds.values()) {
+			ChartUtil.NumberOnlyBuildLabel label = new ChartUtil.NumberOnlyBuildLabel(build);
+			TestResultsAggregatorTestResultBuildAction action = build.getAction(getBuildActionClass());
+			Result result = build.getResult();
+			if (result == null || result.isWorseThan(Result.FAILURE)) {
+				// We don't want to add aborted or builds with no results into the graph
+				continue;
+			}
+			if (action != null) {
+				dataset.add(action.getSuccessTTests(), SUCCESS, label);
+				dataset.add(action.getFailedTTests(), FAILED, label);
+				dataset.add(action.getSkippedTTests(), UNSTABLE, label);
 			}
 		}
 	}

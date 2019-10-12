@@ -32,12 +32,16 @@ public class TestResultsAggregatorTestResultBuildAction extends AbstractTestResu
 	private static final long serialVersionUID = 31415926L;
 	private static final Logger LOGGER = Logger.getLogger(TestResultsAggregatorTestResultBuildAction.class.getName());
 	private transient Reference<AggregatedDTO> aggregatedResults;
-	
+	// Jobs
 	protected Integer success;
 	protected int failed;
 	protected int unstable;
 	protected int aborted;
 	protected int running;
+	// Tests
+	protected int successTTests;
+	protected int failedTTests;
+	protected int skippedTTests;
 	
 	public TestResultsAggregatorTestResultBuildAction(AggregatedDTO aggregatedResults) {
 		if (aggregatedResults != null) {
@@ -46,12 +50,17 @@ public class TestResultsAggregatorTestResultBuildAction extends AbstractTestResu
 		}
 	}
 	
-	private void count(AggregatedDTO testngResults) {
-		this.success = testngResults.getCountJobSuccess();
-		this.failed = testngResults.getCountJobFailures();
-		this.aborted = testngResults.getCountJobAborted();
-		this.unstable = testngResults.getCountJobUnstable();
-		this.running = testngResults.getCountJobRunning();
+	private void count(AggregatedDTO aggregated) {
+		// Job stats
+		this.success = aggregated.getCountJobSuccess();
+		this.failed = aggregated.getCountJobFailures();
+		this.aborted = aggregated.getCountJobAborted();
+		this.unstable = aggregated.getCountJobUnstable();
+		this.running = aggregated.getCountJobRunning();
+		// Tests stats
+		this.successTTests = aggregated.getResults().getPass();
+		this.failedTTests = aggregated.getResults().getFail();
+		this.skippedTTests = aggregated.getResults().getSkip();
 	}
 	
 	private void countAndSave(AggregatedDTO aggregatedDTO) {
@@ -147,6 +156,21 @@ public class TestResultsAggregatorTestResultBuildAction extends AbstractTestResu
 	public int getRunning() {
 		countAsNeeded();
 		return running;
+	}
+	
+	public int getSuccessTTests() {
+		countAsNeeded();
+		return successTTests;
+	}
+	
+	public int getFailedTTests() {
+		countAsNeeded();
+		return failedTTests;
+	}
+	
+	public int getSkippedTTests() {
+		countAsNeeded();
+		return skippedTTests;
 	}
 	
 	@Override

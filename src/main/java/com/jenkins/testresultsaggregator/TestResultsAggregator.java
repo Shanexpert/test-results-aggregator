@@ -46,7 +46,8 @@ public class TestResultsAggregator extends Notifier {
 	
 	private Properties properties;
 	public static final String DISPLAY_NAME = "Job Results Aggregated";
-	public static final String GRAPH_NAME = "Job Results Trend";
+	public static final String GRAPH_NAME_JOBS = "Job Results Trend";
+	public static final String GRAPH_NAME_TESTS = "Test Results Trend";
 	public static final String URL = "reports";
 	public static final String ICON_FILE_NAME = "/plugin/test-results-aggregator/icons/report.png";
 	

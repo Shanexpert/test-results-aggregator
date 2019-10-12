@@ -13,7 +13,12 @@ t.summary(icon: "clipboard.png") {
     a(href: "${my.urlName}") {
         text("${my.displayName}")
     }
+	h3("Jobs")
     p() {
 		raw("${TestResultHistoryUtil.toSummary(my)}")
     }
+	h3("Tests")
+	p() {
+		raw("${TestResultHistoryUtil.toSummaryTest(my)}")
+	}
 }
