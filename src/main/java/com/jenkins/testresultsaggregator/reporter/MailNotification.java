@@ -40,15 +40,13 @@ public class MailNotification {
 		return allJobsNotFound;
 	}
 	
-	public void send(String mailTo, String mailFrom, String subject, String body, String host, String preBodyText, String afterBodyText) throws UnsupportedEncodingException, MessagingException {
+	public void send(String mailTo, String mailFrom, String subject, String body, String preBodyText, String afterBodyText) throws UnsupportedEncodingException, MessagingException {
 		logger.print(LocalMessages.GENERATE.toString() + " " + LocalMessages.EMAIL_REPORT.toString());
 		MimeMessageBuilder mimeMessageBuilder = new MimeMessageBuilder();
 		if (validateResults()) {
 			logger.println(LocalMessages.VALIDATION_MAIL_NOT_FOUND_JOBS.toString());
 		} else if (Strings.isNullOrEmpty(mailTo)) {
 			logger.println(LocalMessages.VALIDATION_MAIL_RECEIPIENTS_EMPTY.toString());
-		} else if (Strings.isNullOrEmpty(host)) {
-			logger.println(LocalMessages.VALIDATION_MAIL_SMTP_ISSUE.toString());
 		} else {
 			try {// Add Recipients
 				String[] to = mailTo.split(",");

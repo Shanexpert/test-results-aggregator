@@ -16,7 +16,6 @@ import com.jenkins.testresultsaggregator.data.DataJobDTO;
 import com.jenkins.testresultsaggregator.helper.Analyzer;
 import com.jenkins.testresultsaggregator.helper.Collector;
 import com.jenkins.testresultsaggregator.helper.LocalMessages;
-import com.jenkins.testresultsaggregator.helper.Validate;
 import com.jenkins.testresultsaggregator.reporter.Reporter;
 
 import hudson.Extension;
@@ -111,7 +110,7 @@ public class TestResultsAggregator extends Notifier {
 			// Analyze Results
 			AggregatedDTO aggregated = new Analyzer(logger).analyze(validatedData, properties);
 			// Reporter for HTML and mail
-			Reporter reporter = new Reporter(logger, build.getProject().getSomeWorkspace(), build.getRootDir(), desc.getMailhost(), desc.getMailNotificationFrom());
+			Reporter reporter = new Reporter(logger, build.getProject().getSomeWorkspace(), build.getRootDir(), desc.getMailNotificationFrom());
 			reporter.publishResuts(getRecipientsList(), aggregated, properties);
 			// Add Build Action
 			build.addAction(new TestResultsAggregatorTestResultBuildAction(aggregated));
@@ -136,7 +135,6 @@ public class TestResultsAggregator extends Notifier {
 		private String jenkinsUrl;
 		private String username;
 		private Secret password;
-		private String mailhost;
 		private String mailNotificationFrom;
 		
 		public String getUsername() {
@@ -145,10 +143,6 @@ public class TestResultsAggregator extends Notifier {
 		
 		public Secret getPassword() {
 			return password;
-		}
-		
-		public String getMailhost() {
-			return mailhost;
 		}
 		
 		public String getJenkinsUrl() {
@@ -185,7 +179,6 @@ public class TestResultsAggregator extends Notifier {
 		public boolean configure(StaplerRequest req, JSONObject jsonObject) throws FormException {
 			username = jsonObject.getString("username");
 			password = Secret.fromString((String) jsonObject.get("password"));
-			mailhost = jsonObject.getString("mailhost");
 			jenkinsUrl = jsonObject.getString("jenkinsUrl");
 			mailNotificationFrom = jsonObject.getString("mailNotificationFrom");
 			save();
@@ -218,16 +211,6 @@ public class TestResultsAggregator extends Notifier {
 				return FormValidation.error(LocalMessages.ERROR_OCCURRED.toString() + ": " + e.getMessage());
 			}
 		}
-		
-		public FormValidation doTestSMTPConnection(@QueryParameter final String mailhost) {
-			try {
-				Validate.confirmSMTP(mailhost, -1, null, null, false, "TLS");
-				return FormValidation.ok(LocalMessages.SUCCESS.toString());
-			} catch (Exception e) {
-				return FormValidation.error(LocalMessages.ERROR_OCCURRED.toString() + ": " + e.getMessage());
-			}
-		}
-		
 	}
 	
 	private List<DataDTO> validateInputData(List<DataDTO> data) {

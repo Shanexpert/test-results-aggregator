@@ -24,17 +24,15 @@ public class Reporter {
 	private PrintStream logger;
 	private FilePath workspace;
 	private File rootDir;
-	private String mailhost;
 	private String mailNotificationFrom;
 	
 	private boolean foundAtLeastOneGroupName;
 	private List<String> columns;
 	
-	public Reporter(PrintStream logger, FilePath workspace, File rootDir, String mailhost, String mailNotificationFrom) {
+	public Reporter(PrintStream logger, FilePath workspace, File rootDir, String mailNotificationFrom) {
 		this.logger = logger;
 		this.workspace = workspace;
 		this.rootDir = rootDir;
-		this.mailhost = mailhost;
 		this.mailNotificationFrom = mailNotificationFrom;
 	}
 	
@@ -72,7 +70,6 @@ public class Reporter {
 				mailNotificationFrom,
 				generateMailSubject(aggregated),
 				generateMailBody(htmlReport),
-				mailhost,
 				properties.getProperty(AggregatorProperties.TEXT_BEFORE_MAIL_BODY.name()),
 				properties.getProperty(AggregatorProperties.TEXT_AFTER_MAIL_BODY.name()));
 		// Generate XML Report

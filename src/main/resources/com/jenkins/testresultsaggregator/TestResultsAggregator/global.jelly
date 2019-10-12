@@ -5,8 +5,6 @@
 		    <f:entry title="${%APIAccountUsername}" field="username"><f:textbox /></f:entry>
 	   		<f:entry title="${%APIAccountPassword}" field="password"><f:password /></f:entry>
     		<f:validateButton title="${%TestAPIConnection}" progress="${%Testing...}"  method="testApiConnection" with="jenkinsUrl,username,password" />
-    		<f:entry title="${%SMTPserver}" field="mailhost"><f:textbox /></f:entry>
-		    <f:validateButton title="${%TestSMTPConnection}" progress="${%Testing...}"  method="testSMTPConnection" with="mailhost" />
-	    <f:entry title="${%MailNotificationFrom}" field="mailNotificationFrom"><f:textbox default="${descriptor.defaultMailNotificationFrom()}"/></f:entry>
+	    	<f:entry title="${%MailNotificationFrom}" field="mailNotificationFrom"><f:textbox default="${descriptor.defaultMailNotificationFrom()}"/></f:entry>
   	</f:section>
 </j:jelly>
