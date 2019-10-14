@@ -193,20 +193,16 @@ public class Helper {
 	}
 	
 	private static String colorize(String text, Color color) {
-		if (color != null) {
-			return "<font color='" + Colors.htmlBlack() + "'>" + text + "</font>";
+		if (color == null) {
+			color = Colors.BLACK;
 		}
-		return text.toString();
+		return "<font color='" + Colors.html(color) + "'>" + text + "</font>";
 	}
 	
 	private static String colorize(Long text, Color color) {
-		if (color != null) {
-			if (text == 0) {
-				return "<font color='" + Colors.htmlBlack() + "'>" + text + "</font>";
-			} else {
-				return "<font color='" + Colors.html(color) + "'>" + text + "</font>";
-			}
+		if (color == null) {
+			color = Colors.BLACK;
 		}
-		return text.toString();
+		return "<font color='" + Colors.html(color) + "'>" + text + "</font>";
 	}
 }
