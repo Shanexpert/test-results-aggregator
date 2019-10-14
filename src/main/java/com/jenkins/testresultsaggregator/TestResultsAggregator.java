@@ -30,6 +30,7 @@ import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
 import hudson.util.Secret;
+import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 
 public class TestResultsAggregator extends Notifier {
@@ -205,11 +206,15 @@ public class TestResultsAggregator extends Notifier {
 		}
 		
 		public FormValidation doTestApiConnection(@QueryParameter final String jenkinsUrl, @QueryParameter final String username, @QueryParameter final Secret password) {
-			try {
-				new Collector(null, username, password, jenkinsUrl).getAPIConnection();
-				return FormValidation.ok(LocalMessages.SUCCESS.toString());
-			} catch (Exception e) {
-				return FormValidation.error(LocalMessages.ERROR_OCCURRED.toString() + ": " + e.getMessage());
+			if (Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER)) {
+				try {
+					new Collector(null, username, password, jenkinsUrl).getAPIConnection();
+					return FormValidation.ok(LocalMessages.SUCCESS.toString());
+				} catch (Exception e) {
+					return FormValidation.error(LocalMessages.ERROR_OCCURRED.toString() + ": " + e.getMessage());
+				}
+			} else {
+				return FormValidation.error(LocalMessages.ERROR_OCCURRED.toString() + " no permissions");
 			}
 		}
 	}
