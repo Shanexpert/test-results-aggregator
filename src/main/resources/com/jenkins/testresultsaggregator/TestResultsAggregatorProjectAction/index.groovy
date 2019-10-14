@@ -14,13 +14,13 @@ l.layout(title: "Job Results Trend") {
 		table(width:'100%'){
 			tr(){
 				th(){
-					h2("Job Results Trend")
+					h3("Job Results Trend")
 				}
 				th(){
 					
 				}
 				th(){
-					h2("Test Results Trend")
+					h3("Test Results Trend")
 				}
 			}
 			tr(){
@@ -62,7 +62,7 @@ l.layout(title: "Job Results Trend") {
 				th(align:'right'){
 					br()
 					 def buildNumber = my.project.lastCompletedBuild.number
-					 h2() {
+					 h3() {
 						 text("Latest Job Results (")
 						 a(href: "${my.upUrl}${buildNumber}/${my.urlName}") {
 							 text("build #${buildNumber}")
