@@ -133,11 +133,11 @@ public class Analyzer {
 						} else if (TestResultsAggregator.SortResultsBy.TOTAL_TEST.name().equalsIgnoreCase(orderBy)) {
 							return dataJobDTO2.getResultsDTO().getTotal() - dataJobDTO1.getResultsDTO().getTotal();
 						} else if (TestResultsAggregator.SortResultsBy.PASS.name().equalsIgnoreCase(orderBy)) {
-							return dataJobDTO1.getResultsDTO().getPass() - dataJobDTO2.getResultsDTO().getPass();
+							return dataJobDTO2.getResultsDTO().getPass() - dataJobDTO1.getResultsDTO().getPass();
 						} else if (TestResultsAggregator.SortResultsBy.FAIL.name().equalsIgnoreCase(orderBy)) {
-							return dataJobDTO1.getResultsDTO().getFail() - dataJobDTO2.getResultsDTO().getFail();
+							return dataJobDTO2.getResultsDTO().getFail() - dataJobDTO1.getResultsDTO().getFail();
 						} else if (TestResultsAggregator.SortResultsBy.SKIP.name().equalsIgnoreCase(orderBy)) {
-							return dataJobDTO1.getResultsDTO().getSkip() - dataJobDTO2.getResultsDTO().getSkip();
+							return dataJobDTO2.getResultsDTO().getSkip() - dataJobDTO1.getResultsDTO().getSkip();
 						} else if (TestResultsAggregator.SortResultsBy.LAST_RUN.name().equalsIgnoreCase(orderBy)) {
 							return dataJobDTO1.getResultsDTO().getTimestamp().compareTo(dataJobDTO2.getResultsDTO().getTimestamp());
 						} else if (TestResultsAggregator.SortResultsBy.COMMITS.name().equalsIgnoreCase(orderBy)) {
