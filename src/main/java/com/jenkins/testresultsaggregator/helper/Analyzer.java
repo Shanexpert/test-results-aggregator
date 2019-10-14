@@ -54,6 +54,7 @@ public class Analyzer {
 		ResultsDTO totalResults = new ResultsDTO();
 		for (DataDTO tempDataJob : dataJob) {
 			boolean foundFailure = false;
+			boolean foundRunning = false;
 			boolean foundSkip = false;
 			ResultsDTO totalResultsPerGroup = new ResultsDTO();
 			tempDataJob.setAggregatedGroup(new AggregatedGroupDTO());
@@ -88,6 +89,7 @@ public class Analyzer {
 					foundSkip = true;
 					aggregatedDTO.setCountJobUnstable(aggregatedDTO.getCountJobUnstable() + 1);
 				} else if (JobStatus.RUNNING.name().equals(job.getAggregate().getCalculatedJobStatus())) {
+					foundRunning = true;
 					tempDataJob.getAggregatedGroup().setJobRunning(tempDataJob.getAggregatedGroup().getJobRunning() + 1);
 					aggregatedDTO.setCountJobRunning(aggregatedDTO.getCountJobRunning() + 1);
 				} else if (JobStatus.ABORTED.name().equals(job.getAggregate().getCalculatedJobStatus())) {
@@ -107,6 +109,8 @@ public class Analyzer {
 			// Calculate Group Status
 			if (foundFailure) {
 				tempDataJob.getAggregatedGroup().setCalculatedGroupStatus(JobStatus.FAILURE.name());
+			} else if (foundRunning) {
+				tempDataJob.getAggregatedGroup().setCalculatedGroupStatus(JobStatus.RUNNING.name());
 			} else if (foundSkip) {
 				tempDataJob.getAggregatedGroup().setCalculatedGroupStatus(JobStatus.UNSTABLE.name());
 			} else {
