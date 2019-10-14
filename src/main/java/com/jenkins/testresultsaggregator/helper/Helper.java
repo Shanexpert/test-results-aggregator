@@ -86,6 +86,8 @@ public class Helper {
 			return "<font color='" + Colors.htmlSUCCESS() + "'><b>" + result + "</b></font>";
 		} else if (JobStatus.UNSTABLE.name().equals(result)) {
 			return "<font color='" + Colors.htmlUNSTABLE() + "'><b><i>" + result + "</i></b></font>";
+		} else if (JobStatus.ABORTED.name().equals(result)) {
+			return "<font color='" + Colors.htmlABORTED() + "'><b><i>" + result + "</i></b></font>";
 		} else if (JobStatus.STILL_UNSTABLE.name().equals(result)) {
 			return "<font color='" + Colors.htmlUNSTABLE() + "'><b><i>" + result + "</i></b></font>";
 		}
