@@ -45,7 +45,7 @@ public class GraphHelper {
 	
 	public static JFreeChart createChartJob(final StaplerRequest req, CategoryDataset dataset) {
 		final JFreeChart chart = ChartFactory.createStackedAreaChart(
-				"Jobs", // chart title
+				null, // chart title
 				null, // unused
 				"Jobs Count", // range axis label
 				dataset, // data
@@ -132,7 +132,7 @@ public class GraphHelper {
 	
 	public static JFreeChart createChartTests(final StaplerRequest req, CategoryDataset dataset) {
 		final JFreeChart chart = ChartFactory.createStackedAreaChart(
-				"Tests", // chart title
+				null, // chart title
 				null, // unused
 				"Test Count", // range axis label
 				dataset, // data
