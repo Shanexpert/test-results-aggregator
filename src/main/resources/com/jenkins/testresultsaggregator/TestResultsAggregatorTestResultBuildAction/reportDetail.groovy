@@ -48,16 +48,16 @@ if (my.result.countJobFailures > 0) {
 								text("${job.getJobName()}")
 							}
 							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedTotal()}")
+								raw("${job.getResultsDTO().getCalculatedTotal()}")
 							}
 							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedPass()}")
+								raw("${job.getResultsDTO().getCalculatedPass()}")
 							}
 							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedFail()}")
+								raw("${job.getResultsDTO().getCalculatedFail()}")
 							}
 							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedSkip()}")
+								raw("${job.getResultsDTO().getCalculatedSkip()}")
 							}
 							td(align: "center") {
 								a(href:"${job.getJenkinsJob().getUrl()}") {
@@ -110,16 +110,16 @@ if (my.result.countJobUnstable > 0) {
 								text("${job.getJobName()}")
 							}
 							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedTotal()}")
+								raw("${job.getResultsDTO().getCalculatedTotal()}")
 							}
 							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedPass()}")
+								raw("${job.getResultsDTO().getCalculatedPass()}")
 							}
 							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedFail()}")
+								raw("${job.getResultsDTO().getCalculatedFail()}")
 							}
 							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedSkip()}")
+								raw("${job.getResultsDTO().getCalculatedSkip()}")
 							}
 							td(align: "center") {
 								a(href:"${job.getJenkinsJob().getUrl()}") {
@@ -172,16 +172,16 @@ if (my.result.countJobAborted > 0) {
 								text("${job.getJobName()}")
 							}
 							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedTotal()}")
+								raw("${job.getResultsDTO().getCalculatedTotal()}")
 							}
 							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedPass()}")
+								raw("${job.getResultsDTO().getCalculatedPass()}")
 							}
 							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedFail()}")
+								raw("${job.getResultsDTO().getCalculatedFail()}")
 							}
 							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedSkip()}")
+								raw("${job.getResultsDTO().getCalculatedSkip()}")
 							}
 							td(align: "center") {
 								a(href:"${job.getJenkinsJob().getUrl()}") {
@@ -234,16 +234,16 @@ if (my.result.countJobSuccess > 0) {
 								text("${job.getJobName()}")
 							}
 							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedTotal()}")
+								raw("${job.getResultsDTO().getCalculatedTotal()}")
 							}
 							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedPass()}")
+								raw("${job.getResultsDTO().getCalculatedPass()}")
 							}
 							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedFail()}")
+								raw("${job.getResultsDTO().getCalculatedFail()}")
 							}
 							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedSkip()}")
+								raw("${job.getResultsDTO().getCalculatedSkip()}")
 							}
 							td(align: "center") {
 								a(href:"${job.getJenkinsJob().getUrl()}") {
@@ -296,16 +296,16 @@ if (my.result.countJobRunning > 0) {
 								text("${job.getJobName()}")
 							}
 							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedTotal()}")
+								raw("${job.getResultsDTO().getCalculatedTotal()}")
 							}
 							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedPass()}")
+								raw("${job.getResultsDTO().getCalculatedPass()}")
 							}
 							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedFail()}")
+								raw("${job.getResultsDTO().getCalculatedFail()}")
 							}
 							td(align: "center") {
-								text("${job.getResultsDTO().getCalculatedSkip()}")
+								raw("${job.getResultsDTO().getCalculatedSkip()}")
 							}
 							td(align: "center") {
 								a(href:"${job.getJenkinsJob().getUrl()}") {
