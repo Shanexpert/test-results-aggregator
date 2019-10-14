@@ -26,7 +26,7 @@ l.layout(title: "Job Results Trend") {
 			tr(){
 				th(){
 					if (my.isGraphActive()) {
-						img(lazymap: "graphMap?rel=../", alt: "[Job results trend chart]", src: "graphJob" , width:"80%")
+						img(lazymap: "graphMapJob?rel=../", alt: "[Job results trend chart]", src: "graphJob" , width:"80%")
 					} else {
 						p("Need at least 2 builds with results to show trend graph")
 					}
@@ -36,7 +36,7 @@ l.layout(title: "Job Results Trend") {
 				}
 				th(){
 					if (my.isGraphActive()) {
-						img(lazymap: "graphMap2?rel=../", alt: "[Test results trend chart]", src: "graphTests", width:"80%")
+						img(lazymap: "graphMapTests?rel=../", alt: "[Test results trend chart]", src: "graphTests", width:"80%")
 					} else {
 						p("Need at least 2 builds with results to show trend graph")
 					}
