@@ -41,13 +41,18 @@ public class TestResultHistoryUtil {
 	}
 	
 	public static String toSummaryTest(TestResultsAggregatorTestResultBuildAction action) {
-		int prevFailed, prevUnstable, prevSucces, prevTotal;
+		int prevFailed = 0;
+		int prevUnstable = 0;
+		int prevSucces = 0;
+		int prevTotal = 0;
 		Run<?, ?> run = action.run;
 		AggregatedDTO previousResult = TestResultHistoryUtil.getPreviousBuildTestResults(run);
-		prevFailed = previousResult.getResults().getFail();
-		prevUnstable = previousResult.getResults().getSkip();
-		prevSucces = previousResult.getResults().getPass();
-		prevTotal = previousResult.getResults().getTotal();
+		if (previousResult != null && previousResult.getResults() != null) {
+			prevFailed = previousResult.getResults().getFail();
+			prevUnstable = previousResult.getResults().getSkip();
+			prevSucces = previousResult.getResults().getPass();
+			prevTotal = previousResult.getResults().getTotal();
+		}
 		AggregatedDTO result = action.getResult();
 		return "<ul>" + Helper.diff(prevTotal, result.getResults().getTotal(), "Total Tests", true) +
 				Helper.diff(prevFailed, result.getResults().getFail(), TestResultsAggregatorProjectAction.FAILED + " Tests", true) +
