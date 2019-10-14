@@ -184,11 +184,11 @@ public class GraphHelper {
 					return "";
 				}
 				if (TestResultsAggregatorProjectAction.SUCCESS.equalsIgnoreCase(dataset.getRowKey(row).toString())) {
-					return String.valueOf(report.getSuccess()) + " " + TestResultsAggregatorProjectAction.SUCCESS;
+					return String.valueOf(report.getSuccessTTests()) + " " + TestResultsAggregatorProjectAction.SUCCESS;
 				} else if (TestResultsAggregatorProjectAction.FAILED.equalsIgnoreCase(dataset.getRowKey(row).toString())) {
-					return String.valueOf(report.getFailCount()) + " " + TestResultsAggregatorProjectAction.FAILED;
+					return String.valueOf(report.getFailedTTests()) + " " + TestResultsAggregatorProjectAction.FAILED;
 				} else if (TestResultsAggregatorProjectAction.UNSTABLE.equalsIgnoreCase(dataset.getRowKey(row).toString())) {
-					return String.valueOf(report.getUnstableCount()) + " " + TestResultsAggregatorProjectAction.UNSTABLE;
+					return String.valueOf(report.getSkippedTTests()) + " " + TestResultsAggregatorProjectAction.UNSTABLE;
 				} else {
 					return "";
 				}
