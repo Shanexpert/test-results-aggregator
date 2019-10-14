@@ -14,13 +14,13 @@ l.layout(title: "Job Results Trend") {
 		table(width:'100%'){
 			tr(){
 				th(){
-					h1("Job Results Trend")
+					h2("Job Results Trend")
 				}
 				th(){
 					
 				}
 				th(){
-					h1("Test Results Trend")
+					h2("Test Results Trend")
 				}
 			}
 			tr(){
