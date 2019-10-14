@@ -188,20 +188,24 @@ public class TestResultsAggregator extends Notifier {
 		}
 		
 		public FormValidation doCheckOutOfDateResults(@QueryParameter final String outOfDateResults) {
-			if (!Strings.isNullOrEmpty(outOfDateResults)) {
-				try {
-					int hours = Integer.parseInt(outOfDateResults);
-					if (hours < 0) {
-						return FormValidation.error(LocalMessages.VALIDATION_POSITIVE_NUMBER.toString());
-					} else {
-						return FormValidation.ok();
+			if (Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER)) {
+				if (!Strings.isNullOrEmpty(outOfDateResults)) {
+					try {
+						int hours = Integer.parseInt(outOfDateResults);
+						if (hours < 0) {
+							return FormValidation.error(LocalMessages.VALIDATION_POSITIVE_NUMBER.toString());
+						} else {
+							return FormValidation.ok();
+						}
+					} catch (NumberFormatException e) {
+						return FormValidation.error(LocalMessages.VALIDATION_INTEGER_NUMBER.toString());
 					}
-				} catch (NumberFormatException e) {
-					return FormValidation.error(LocalMessages.VALIDATION_INTEGER_NUMBER.toString());
+				} else {
+					// No OutOfDate
+					return FormValidation.ok();
 				}
 			} else {
-				// No OutOfDate
-				return FormValidation.ok();
+				return FormValidation.error(LocalMessages.ERROR_OCCURRED.toString() + " no permissions");
 			}
 		}
 		
