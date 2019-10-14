@@ -56,14 +56,14 @@ public class Reporter {
 		columns.addAll(new ArrayList<>(Arrays.asList(
 				LocalMessages.COLUMN_JOB.toString(),
 				LocalMessages.COLUMN_JOB_STATUS.toString(),
-				LocalMessages.COLUMN_TESTS.toString(),
-				LocalMessages.COLUMN_PASS.toString(),
 				LocalMessages.COLUMN_FAIL.toString(),
-				LocalMessages.COLUMN_SKIP.toString(),
-				LocalMessages.COLUMN_LAST_RUN.toString(),
-				LocalMessages.COLUMN_COMMITS.toString())));
+				LocalMessages.COLUMN_TESTS.toString(),
+				// LocalMessages.COLUMN_PASS.toString(),
+				// LocalMessages.COLUMN_SKIP.toString(),
+				LocalMessages.COLUMN_COMMITS.toString(),
+				LocalMessages.COLUMN_LAST_RUN.toString())));
 		// Generate HTML Report
-		String htmlReport = new HTMLReporter(logger, workspace).createOverview(aggregated, columns, properties.getProperty(AggregatorProperties.THEME.name()));
+		String htmlReport = new HTMLReporter(logger, workspace).createOverview(aggregated, columns, properties.getProperty(AggregatorProperties.THEME.name()), foundAtLeastOneGroupName);
 		// Generate and Send Mail report
 		new MailNotification(logger, dataJob).send(
 				recipientsList,

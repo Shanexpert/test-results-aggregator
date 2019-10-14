@@ -136,6 +136,13 @@ public class AggregateJobDTO {
 		}
 	}
 	
+	public String getCalculatedTotal(boolean withLinktoResults) {
+		if (withLinktoResults) {
+			return "<a href='" + getReportURL() + "' style='text-decoration:none;'>" + getCalculatedTotal() + "</a>";
+		}
+		return calculatedTotal;
+	}
+	
 	public String getCalculatedTotal() {
 		return calculatedTotal;
 	}
@@ -182,6 +189,13 @@ public class AggregateJobDTO {
 	
 	public void setCalculatedReport(String calculatedReport) {
 		this.calculatedReport = calculatedReport;
+	}
+	
+	public String getCalculatedFailedColor(boolean withLinktoResults) {
+		if (withLinktoResults) {
+			return "<a href='" + getReportURL() + "' style='text-decoration:none;'>" + getCalculatedFailedColor() + "</a>";
+		}
+		return calculatedFailedColor;
 	}
 	
 	public String getCalculatedFailedColor() {

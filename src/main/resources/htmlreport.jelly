@@ -25,40 +25,29 @@
 				<j:forEach items="${dataJob.getJobs()}" var="job">
 					<tr bgcolor='${bgcolor}'>
 					<j:if test="${groupadded == false}">
-						<j:if test="${columns.size() == 10}">
-							<th rowspan='${dataJob.getJobs().size()}' style='border-bottom:1px solid ${lineSeperatorcolor}'>${dataJob.getGroupName()}</th>
-							<th rowspan='${dataJob.getJobs().size()}' style='border-bottom:1px solid ${lineSeperatorcolor}'>${dataJob.getAggregatedGroup().getCalculatedGroupStatusWithColor()}<br>${dataJob.getAggregatedGroup().getCalculatedGroupPercentage()}</br></th>
-						</j:if>
-						<j:if test="${columns.size() == 9}">
+						<j:if test="${showGroups == true}">
 							<th rowspan='${dataJob.getJobs().size()}' style='border-bottom:1px solid ${lineSeperatorcolor}'>${dataJob.getGroupName()}<br>${dataJob.getAggregatedGroup().getCalculatedGroupPercentage()}</br></th>
 						</j:if>
 						<j:set var="groupadded" value="true"/>
 					</j:if>
 					<td style='border-bottom:1px solid ${lineSeperatorcolor}'>${job.getJobNameFromFriendlyName(true)}</td>
-					<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getAggregate().getCalculatedJobStatusWithColor(true)}</td>
-					<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getAggregate().getCalculatedTotal()}</td>
-					<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getAggregate().getCalculatedPass()}</td>
-					<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getAggregate().getCalculatedFailedColor()}</td>
-					<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getAggregate().getCalculatedSkipped()}</td>
-					<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getAggregate().getCalculatedTimestamp()}</td>
+					<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center;">${job.getAggregate().getCalculatedJobStatusWithColor(true)}</td>
+					<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getAggregate().getCalculatedFailedColor(true)}</td>
+					<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getAggregate().getCalculatedTotal(true)}</td>
 					<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getAggregate().getCalculatedChanges()}</td>
+					<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getAggregate().getCalculatedTimestamp()}</td>
 					</tr>
 				</j:forEach>
 			</j:forEach>
-			<tr bgcolor='${headerColor}'>
-				<j:if test="${columns.size() == 8}">
-					<th style='text-align: center' colspan='2'><font color='white'>Summary</font></th>
+			<tr bgcolor='${footerColor}'>
+				<j:if test="${showGroups == true}">
+					<th style='text-align: center' colspan='3'><font color='${footerTextColor}'>Summary</font></th>
 				</j:if>
-				<j:if test="${columns.size() == 9}">
-					<th style='text-align: center' colspan='3'><font color='white'>Summary</font></th>
+				<j:if test="${showGroups == false}">
+					<th style='text-align: center' colspan='2'><font color='${footerTextColor}'>Summary</font></th>
 				</j:if>
-				<j:if test="${columns.size() == 10}">
-					<th style='text-align: center' colspan='4'><font color='white'>Summary</font></th>
-				</j:if>
-				<th style='text-align: center'><font color='white'>${aggregated.getResults().getCalculatedTotal()}</font></th>
-				<th style='text-align: center'><font color='white'>${aggregated.getResults().getCalculatedPass()}</font></th>
-				<th style='text-align: center'><font color='white'>${aggregated.getResults().getCalculatedFailColor()}</font></th>
-				<th style='text-align: center'><font color='white'>${aggregated.getResults().getCalculatedSkip()}</font></th>
+				<th style='text-align: center'>${aggregated.getResults().getCalculatedFailColor()}</th>
+				<th style='text-align: center'><font color='${footerTextColor}'>${aggregated.getResults().getCalculatedTotal()}</font></th>
 				<th colspan='2'></th>
 			</tr>
 		</table>

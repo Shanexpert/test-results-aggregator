@@ -30,7 +30,7 @@ public class HTMLReporter {
 		this.workspace = workspace;
 	}
 	
-	public String createOverview(AggregatedDTO aggregated, List<String> columns, String theme) {
+	public String createOverview(AggregatedDTO aggregated, List<String> columns, String theme, boolean showGroups) {
 		try {
 			logger.print(LocalMessages.GENERATE.toString() + " " + LocalMessages.HTML_REPORT.toString());
 			File directory = Helper.createFolder(workspace, FOLDER);
@@ -38,12 +38,15 @@ public class HTMLReporter {
 			OutputStream output = new FileOutputStream(file);
 			JellyContext context = new JellyContext();
 			context.setVariable("name", "Test Result Aggregator");
+			context.setVariable("showGroups", showGroups);
 			context.setVariable("columns", columns);
 			context.setVariable("aggregated", aggregated);
 			// Themes light and dark
 			context.setVariable("theme", theme);
 			// Header & footer color
 			context.setVariable("headerColor", Colors.htmlHEADER());
+			context.setVariable("footerColor", Colors.htmlFOOTER());
+			context.setVariable("footerTextColor", Colors.htmlFOOTERTEXT());
 			// Line Seperator color
 			context.setVariable("lineSeperatorcolor", Colors.htmlLINESEPERATOR());
 			XMLOutput xmlOutput = XMLOutput.createXMLOutput(output);

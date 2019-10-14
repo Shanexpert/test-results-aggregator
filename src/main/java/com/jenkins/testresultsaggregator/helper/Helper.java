@@ -175,27 +175,34 @@ public class Helper {
 			if (prev == curr) {
 				return "<li>" + text + curr + "</li>";
 			} else if (prev < curr) {
-				return "<li>" + text + curr + "(+" + (curr - prev) + ")</li>";
+				return "<li>" + text + curr + colorize("(+", Colors.BLACK) + colorize(curr - prev, Colors.BLACK) + colorize(")", Colors.BLACK) + "</li>";
 			} else { // if (a < b)
-				return "<li>" + text + curr + "(-" + (prev - curr) + ")</li>";
+				return "<li>" + text + curr + colorize("(-", Colors.BLACK) + colorize(prev - curr, Colors.BLACK) + colorize(")", Colors.BLACK) + "</li>";
 			}
 		} else {
 			if (prev == curr) {
-				return text + curr + "";
+				return text + colorize(curr, Colors.BLACK) + "";
 			} else if (prev < curr) {
-				return text + colorize(curr, color) + "(+" + (curr - prev) + ")";
+				return text + colorize(curr, color) + colorize("(+", Colors.BLACK) + colorize(curr - prev, Colors.BLACK) + colorize(")", Colors.BLACK);
 			} else { // if (a < b)
-				return text + colorize(curr, color) + "(-" + (prev - curr) + ")";
+				return text + colorize(curr, color) + colorize("(-", Colors.BLACK) + colorize(prev - curr, Colors.BLACK) + colorize(")", Colors.BLACK);
 			}
 		}
+	}
+	
+	private static String colorize(String text, Color color) {
+		if (color != null) {
+			return "<font color='" + Colors.htmlBlack() + "'>" + text + "</font>";
+		}
+		return text.toString();
 	}
 	
 	private static String colorize(Long text, Color color) {
 		if (color != null) {
 			if (text == 0) {
-				return text.toString();
+				return "<font color='" + Colors.htmlBlack() + "'>" + text + "</font>";
 			} else {
-				return "<b><font color='" + Colors.html(color) + "'>" + text + "</font></b>";
+				return "<font color='" + Colors.html(color) + "'>" + text + "</font>";
 			}
 		}
 		return text.toString();
