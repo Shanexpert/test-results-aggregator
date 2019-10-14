@@ -200,7 +200,7 @@ public class Helper {
 	}
 	
 	private static String colorize(Long text, Color color) {
-		if (color == null) {
+		if (color == null || text == 0) {
 			color = Colors.BLACK;
 		}
 		return "<font color='" + Colors.html(color) + "'>" + text + "</font>";
