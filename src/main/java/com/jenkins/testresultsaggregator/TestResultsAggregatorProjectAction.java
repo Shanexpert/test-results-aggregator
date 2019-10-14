@@ -12,7 +12,6 @@ import org.kohsuke.stapler.StaplerResponse;
 import com.jenkins.testresultsaggregator.helper.GraphHelper;
 
 import hudson.Functions;
-import hudson.model.AbstractBuild;
 import hudson.model.Job;
 import hudson.model.ProminentProjectAction;
 import hudson.model.Result;
@@ -114,20 +113,10 @@ public class TestResultsAggregatorProjectAction extends TestResultProjectAction 
 		}.doPng(req, rsp);
 	}
 	
-	/** Generalizes {@link AbstractBuild#getUpUrl} to {@link Run}. */
 	public String getUpUrl() {
 		return Functions.getNearestAncestorUrl(Stapler.getCurrentRequest(), job) + '/';
 	}
 	
-	/**
-	 * If the last build is the same, no need to regenerate the graph. Browser should reuse it's cached image
-	 *
-	 * @param req
-	 *            request
-	 * @param rsp
-	 *            response
-	 * @return true, if new image does NOT need to be generated, false otherwise
-	 */
 	private boolean newGraphNotNeeded(final StaplerRequest req, StaplerResponse rsp) {
 		Calendar t = getProject().getLastCompletedBuild().getTimestamp();
 		return req.checkIfModified(t, rsp);
@@ -229,20 +218,10 @@ public class TestResultsAggregatorProjectAction extends TestResultProjectAction 
 		}
 	}
 	
-	/**
-	 * Getter for property 'graphWidth'.
-	 *
-	 * @return Value for property 'graphWidth'.
-	 */
 	public int getGraphWidth() {
 		return 500;
 	}
 	
-	/**
-	 * Getter for property 'graphHeight'.
-	 *
-	 * @return Value for property 'graphHeight'.
-	 */
 	public int getGraphHeight() {
 		return 200;
 	}
