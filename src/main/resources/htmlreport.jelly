@@ -6,9 +6,9 @@
        </head>
        <body>
        	<table width='100%'>
-			<tr bgcolor='${headerColor}'>
+			<tr bgcolor='${headerColor}' style='text-align: center'>
 				<j:forEach items="${columns}" var="column">
-					<th style='text-align: center'><font color='white'>${column}</font></th>
+					<th><font color='white'>${column}</font></th>
 				</j:forEach>
 			</tr>
 			<j:set var="index" value="1"/>
