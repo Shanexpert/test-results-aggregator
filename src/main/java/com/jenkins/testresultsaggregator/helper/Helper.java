@@ -40,9 +40,9 @@ public class Helper {
 			long bDays = currentHours / 24;
 			if (d.getSeconds() > outOfDate) {
 				if (bDays > 0) {
-					return "<font color='" + Colors.htmlFAILED() + "'>" + bDays + "D:" + bDours + "h ago</font>";
+					return colorize(bDays + "D:" + bDours + "h ago", Colors.FAILED);
 				} else {
-					return "<font color='" + Colors.htmlFAILED() + "'>" + bDours + "h ago</font>";
+					return colorize(bDours + "h ago", Colors.FAILED);
 				}
 			}
 			if (bDays > 0) {
@@ -77,19 +77,19 @@ public class Helper {
 	
 	public static String colorizeResultStatus(String result) {
 		if (JobStatus.SUCCESS.name().equals(result)) {
-			return "<font color='" + Colors.htmlSUCCESS() + "'><b>" + result + "</b></font>";
+			return colorize(result, Colors.SUCCESS);
 		} else if (JobStatus.FAILURE.name().equals(result)) {
-			return "<font color='" + Colors.htmlFAILED() + "'><b><i>" + result + "</i></b></font>";
+			return colorize(result, Colors.FAILED);
 		} else if (JobStatus.STILL_FAILING.name().equals(result)) {
-			return "<font color='" + Colors.htmlFAILED() + "'><b><i>" + result + "</i></b></font>";
+			return colorize(result, Colors.FAILED);
 		} else if (JobStatus.FIXED.name().equals(result)) {
-			return "<font color='" + Colors.htmlSUCCESS() + "'><b>" + result + "</b></font>";
+			return colorize(result, Colors.SUCCESS);
 		} else if (JobStatus.UNSTABLE.name().equals(result)) {
-			return "<font color='" + Colors.htmlUNSTABLE() + "'><b><i>" + result + "</i></b></font>";
+			return colorize(result, Colors.UNSTABLE);
 		} else if (JobStatus.ABORTED.name().equals(result)) {
-			return "<font color='" + Colors.htmlABORTED() + "'><b><i>" + result + "</i></b></font>";
+			return colorize(result, Colors.ABORTED);
 		} else if (JobStatus.STILL_UNSTABLE.name().equals(result)) {
-			return "<font color='" + Colors.htmlUNSTABLE() + "'><b><i>" + result + "</i></b></font>";
+			return colorize(result, Colors.UNSTABLE);
 		}
 		return result;
 	}
@@ -107,13 +107,12 @@ public class Helper {
 		} catch (Exception ex) {
 			
 		}
-		
 		if (percentageDouble >= 100) {
-			percentage = prefixPercentage + "<font color='" + Colors.htmlSUCCESS() + "'>" + percentage + "%" + "</font>";
+			percentage = prefixPercentage + colorize(percentage + "%", Colors.SUCCESS);
 		} else if (percentageDouble >= 95) {
-			percentage = prefixPercentage + "<font color='" + Colors.htmlUNSTABLE() + "'>" + percentage + "%" + "</font>";
+			percentage = prefixPercentage + colorize(percentage + "%", Colors.UNSTABLE);
 		} else {
-			percentage = prefixPercentage + "<font color='" + Colors.htmlFAILED() + "'>" + percentage + "%" + "</font>";
+			percentage = prefixPercentage + colorize(percentage + "%", Colors.FAILED);
 		}
 		return percentage;
 	}
@@ -169,7 +168,7 @@ public class Helper {
 			namePrefix = name;
 		}
 		if (color != null) {
-			text = "<b><font color='" + Colors.html(color) + "'>" + namePrefix + "</font></b>";
+			text = colorize(namePrefix, color);
 		} else {
 			text = namePrefix;
 		}
@@ -177,17 +176,17 @@ public class Helper {
 			if (prev == curr) {
 				return "<li>" + text + curr + "</li>";
 			} else if (prev < curr) {
-				return "<li>" + text + curr + colorize("(+", Colors.BLACK) + colorize(curr - prev, Colors.BLACK) + colorize(")", Colors.BLACK) + "</li>";
+				return "<li>" + text + curr + colorize("(+" + (curr - prev) + ")", Colors.BLACK) + "</li>";
 			} else { // if (a < b)
-				return "<li>" + text + curr + colorize("(-", Colors.BLACK) + colorize(prev - curr, Colors.BLACK) + colorize(")", Colors.BLACK) + "</li>";
+				return "<li>" + text + curr + colorize("(-" + (prev - curr) + ")", Colors.BLACK) + "</li>";
 			}
 		} else {
 			if (prev == curr) {
 				return text + colorize(curr, Colors.BLACK) + "";
 			} else if (prev < curr) {
-				return text + colorize(curr, color) + colorize("(+", Colors.BLACK) + colorize(curr - prev, Colors.BLACK) + colorize(")", Colors.BLACK);
+				return text + colorize(curr, color) + colorize("(+" + (curr - prev) + ")", Colors.BLACK);
 			} else { // if (a < b)
-				return text + colorize(curr, color) + colorize("(-", Colors.BLACK) + colorize(prev - curr, Colors.BLACK) + colorize(")", Colors.BLACK);
+				return text + colorize(curr, color) + colorize("(-" + (prev - curr) + ")", Colors.BLACK);
 			}
 		}
 	}

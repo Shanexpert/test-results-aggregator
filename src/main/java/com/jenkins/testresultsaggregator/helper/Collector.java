@@ -48,44 +48,29 @@ public class Collector {
 		this.logger = logger;
 	}
 	
-	public void collectResults(List<DataDTO> dataJob) {
+	public void collectResults(List<DataDTO> dataJob) throws InterruptedException {
 		List<DataJobDTO> allDataJobDTO = new ArrayList<>();
 		for (DataDTO temp : dataJob) {
 			if (temp.getJobs() != null && !temp.getJobs().isEmpty()) {
 				allDataJobDTO.addAll(temp.getJobs());
 			}
 		}
+		ReportThread[] threads = new ReportThread[allDataJobDTO.size()];
+		int index = 0;
 		for (DataJobDTO tempDataJobDTO : allDataJobDTO) {
-			logger.print(LocalMessages.COLLECT_DATA.toString() + " '" + tempDataJobDTO.getJobName() + "'");
-			// Get Jenkins Job Info
-			tempDataJobDTO.setJenkinsJob(getJobInfo(tempDataJobDTO));
-			if (tempDataJobDTO.getJenkinsJob() == null) {
-				// Job Not Found
-				tempDataJobDTO.setJenkinsJob(new JenkinsJobDTO());
-				tempDataJobDTO.setResultsDTO(new ResultsDTO(JobStatus.NOT_FOUND.name(), null));
-				tempDataJobDTO.getResultsDTO().setUrl(null);
-				tempDataJobDTO.setAggregate(new AggregateJobDTO());
-				tempDataJobDTO.getAggregate().calculateReport(tempDataJobDTO.getResultsDTO());
-				logger.println(LocalMessages.JOB_NOT_FOUND.toString());
-			} else if (!tempDataJobDTO.getJenkinsJob().getBuildable()) {
-				// Job is Disabled/ Not Buildable
-				String tempUrl = tempDataJobDTO.getJenkinsJob().getUrl().toString();
-				tempDataJobDTO.setJenkinsJob(new JenkinsJobDTO());
-				tempDataJobDTO.setResultsDTO(new ResultsDTO(JobStatus.DISABLED.name(), null));
-				tempDataJobDTO.getResultsDTO().setUrl(tempUrl);
-				tempDataJobDTO.setAggregate(new AggregateJobDTO());
-				tempDataJobDTO.getAggregate().calculateReport(null);
-				logger.println(LocalMessages.JOB_IS_DISABLED.toString());
-			} else if (tempDataJobDTO.getJenkinsJob() != null) {
-				// Job Found and is Buildable
-				// Get Job Results
-				tempDataJobDTO.setJenkinsBuild(getJobResults(tempDataJobDTO));
-				// Get Actual Results
-				tempDataJobDTO.setResultsDTO(getResults(tempDataJobDTO));
-				logger.println(LocalMessages.FINISHED.toString());
-			} else {
-				logger.println("...");
+			threads[index] = new ReportThread(tempDataJobDTO);
+			index++;
+		}
+		index = 0;
+		for (ReportThread thread : threads) {
+			thread.start();
+			index++;
+			if (index % 3 == 0) {
+				Thread.sleep(2000);
 			}
+		}
+		for (ReportThread thread : threads) {
+			thread.join();
 		}
 	}
 	
@@ -229,4 +214,45 @@ public class Collector {
 		return null;
 	}
 	
+	public class ReportThread extends Thread {
+		
+		DataJobDTO dataJobDTO;
+		
+		public ReportThread(DataJobDTO dataJobDTO) {
+			this.dataJobDTO = dataJobDTO;
+		}
+		
+		@Override
+		public void run() {
+			// Get Jenkins Job Info
+			dataJobDTO.setJenkinsJob(getJobInfo(dataJobDTO));
+			if (dataJobDTO.getJenkinsJob() == null) {
+				// Job Not Found
+				dataJobDTO.setJenkinsJob(new JenkinsJobDTO());
+				dataJobDTO.setResultsDTO(new ResultsDTO(JobStatus.NOT_FOUND.name(), null));
+				dataJobDTO.getResultsDTO().setUrl(null);
+				dataJobDTO.setAggregate(new AggregateJobDTO());
+				dataJobDTO.getAggregate().calculateReport(dataJobDTO.getResultsDTO());
+				logger.println(LocalMessages.COLLECT_DATA.toString() + " '" + dataJobDTO.getJobName() + "' " + LocalMessages.JOB_NOT_FOUND.toString());
+			} else if (!dataJobDTO.getJenkinsJob().getBuildable()) {
+				// Job is Disabled/ Not Buildable
+				String tempUrl = dataJobDTO.getJenkinsJob().getUrl().toString();
+				dataJobDTO.setJenkinsJob(new JenkinsJobDTO());
+				dataJobDTO.setResultsDTO(new ResultsDTO(JobStatus.DISABLED.name(), null));
+				dataJobDTO.getResultsDTO().setUrl(tempUrl);
+				dataJobDTO.setAggregate(new AggregateJobDTO());
+				dataJobDTO.getAggregate().calculateReport(null);
+				logger.println(LocalMessages.COLLECT_DATA.toString() + " '" + dataJobDTO.getJobName() + "' " + LocalMessages.JOB_IS_DISABLED.toString());
+			} else if (dataJobDTO.getJenkinsJob() != null) {
+				// Job Found and is Buildable
+				// Get Job Results
+				dataJobDTO.setJenkinsBuild(getJobResults(dataJobDTO));
+				// Get Actual Results
+				dataJobDTO.setResultsDTO(getResults(dataJobDTO));
+				logger.println(LocalMessages.COLLECT_DATA.toString() + " '" + dataJobDTO.getJobName() + "' " + LocalMessages.FINISHED.toString());
+			} else {
+				logger.println("...");
+			}
+		}
+	}
 }
