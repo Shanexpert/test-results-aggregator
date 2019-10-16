@@ -3,6 +3,8 @@ It's a jenkins plugin that collects via api all Jenkins Jobs results and reports
 * in a single html view 
 * email
 
+Requires both global and job configuration. Check below 
+
 ### Global Configuration
 After installing test-results-aggregator plugin , navigate to Global Configuration. Scroll and search for Test Result Aggregator , see image : 
 
