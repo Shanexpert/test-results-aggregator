@@ -67,7 +67,7 @@ public class Collector {
 			thread.start();
 			index++;
 			if (index % 3 == 0) {
-				Thread.sleep(1000);
+				Thread.sleep(500);
 			}
 		}
 		for (ReportThread thread : threads) {
