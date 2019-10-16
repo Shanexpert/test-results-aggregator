@@ -1,4 +1,4 @@
-<?jelly escape-by-default='true'?>
+<?jelly escape-by-default='false'?>
 <j:jelly trim="false" xmlns:j="jelly:core" xmlns:x="jelly:xml" xmlns:html="jelly:html">
      <html>
        <head>
@@ -6,9 +6,9 @@
        </head>
        <body>
        	<table width='100%'>
-			<tr bgcolor='${headerColor}' style='text-align: center'>
+			<tr bgcolor='${headerColor}' style='text-align: center;color: white'>
 				<j:forEach items="${columns}" var="column">
-					<th><font color='white'>${column}</font></th>
+					<th>${column}</th>
 				</j:forEach>
 			</tr>
 			<j:set var="index" value="1"/>
@@ -39,15 +39,15 @@
 					</tr>
 				</j:forEach>
 			</j:forEach>
-			<tr bgcolor='${footerColor}'>
+			<tr bgcolor='${footerColor}' style='text-align: center;color: ${footerTextColor}'>
 				<j:if test="${showGroups == true}">
-					<th style='text-align: center' colspan='3'><font color='${footerTextColor}'>Summary</font></th>
+					<th style='text-align: center' colspan='3'>Summary</th>
 				</j:if>
 				<j:if test="${showGroups == false}">
-					<th style='text-align: center' colspan='2'><font color='${footerTextColor}'>Summary</font></th>
+					<th style='text-align: center' colspan='2'>Summary</th>
 				</j:if>
 				<th style='text-align: center'>${aggregated.getResults().getCalculatedFailColor()}</th>
-				<th style='text-align: center'><font color='${footerTextColor}'>${aggregated.getResults().getCalculatedTotal()}</font></th>
+				<th style='text-align: center'>${aggregated.getResults().getCalculatedTotal()}</th>
 				<th colspan='2'></th>
 			</tr>
 		</table>

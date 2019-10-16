@@ -156,7 +156,7 @@ public class Helper {
 		if (createDirectory) {
 			return theDir;
 		}
-		return null;
+		return theDir;
 	}
 	
 	public static String diff(long prev, long curr, boolean list) {

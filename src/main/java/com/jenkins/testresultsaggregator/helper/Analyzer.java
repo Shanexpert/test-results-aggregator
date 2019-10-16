@@ -26,7 +26,6 @@ public class Analyzer {
 	}
 	
 	public AggregatedDTO analyze(List<DataDTO> dataJob, Properties properties) throws Exception {
-		logger.print(LocalMessages.GENERATE.toString() + " " + LocalMessages.ANALYZE.toString());
 		// Resolve
 		String outOfDateResults = properties.getProperty(TestResultsAggregator.AggregatorProperties.OUT_OF_DATE_RESULTS_ARG.name());
 		// Check if Groups/Names are used
@@ -169,6 +168,7 @@ public class Analyzer {
 		// Set
 		aggregatedDTO.setData(dataJob);
 		aggregatedDTO.setResults(totalResults);
+		logger.print(LocalMessages.ANALYZE.toString() + " " + LocalMessages.FINISHED.toString());
 		return aggregatedDTO;
 	}
 }
