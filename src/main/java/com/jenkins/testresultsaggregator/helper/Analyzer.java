@@ -1,7 +1,6 @@
 package com.jenkins.testresultsaggregator.helper;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -27,17 +26,14 @@ public class Analyzer {
 	}
 	
 	public AggregatedDTO analyze(List<DataDTO> dataJob, Properties properties) throws Exception {
+		logger.print(LocalMessages.GENERATE.toString() + " " + LocalMessages.ANALYZE.toString());
 		// Resolve
 		String outOfDateResults = properties.getProperty(TestResultsAggregator.AggregatorProperties.OUT_OF_DATE_RESULTS_ARG.name());
 		// Check if Groups/Names are used
-		List<DataJobDTO> listDataJobDTO = new ArrayList<>();
 		boolean foundAtLeastOneGroupName = false;
 		for (DataDTO data : dataJob) {
 			if (!Strings.isNullOrEmpty(data.getGroupName())) {
 				foundAtLeastOneGroupName = true;
-			}
-			if (data.getJobs() != null && !data.getJobs().isEmpty()) {
-				listDataJobDTO.addAll(data.getJobs());
 			}
 		}
 		// Order List per Group Name
