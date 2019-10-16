@@ -168,7 +168,7 @@ public class Analyzer {
 		// Set
 		aggregatedDTO.setData(dataJob);
 		aggregatedDTO.setResults(totalResults);
-		logger.print(LocalMessages.ANALYZE.toString() + " " + LocalMessages.FINISHED.toString());
+		logger.println(LocalMessages.ANALYZE.toString() + " " + LocalMessages.FINISHED.toString());
 		return aggregatedDTO;
 	}
 }
