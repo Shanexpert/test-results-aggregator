@@ -1,8 +1,12 @@
 package com.jenkins.testresultsaggregator.data;
 
+import java.io.Serializable;
+
 import com.jenkins.testresultsaggregator.helper.Colors;
 
-public class AggregatedGroupDTO {
+public class AggregatedGroupDTO implements Serializable {
+	
+	private static final long serialVersionUID = 3491199923666L;
 	
 	private String calculatedGroupStatus;
 	private String calculatedGroupPercentage;

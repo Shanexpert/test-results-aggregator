@@ -1,5 +1,7 @@
 package com.jenkins.testresultsaggregator.data;
 
+import java.io.Serializable;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
@@ -8,7 +10,9 @@ import com.jenkins.testresultsaggregator.helper.Colors;
 
 import hudson.model.AbstractDescribableImpl;
 
-public class DataJobDTO extends AbstractDescribableImpl<DataJobDTO> {
+public class DataJobDTO extends AbstractDescribableImpl<DataJobDTO> implements Serializable {
+	
+	private static final long serialVersionUID = 34911974223666L;
 	
 	private String jobName;
 	private String jobFriendlyName;

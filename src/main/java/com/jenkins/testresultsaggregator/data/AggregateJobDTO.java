@@ -1,11 +1,15 @@
 package com.jenkins.testresultsaggregator.data;
 
+import java.io.Serializable;
+
 import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.helper.Colors;
 import com.jenkins.testresultsaggregator.helper.GetEnumFromString;
 import com.jenkins.testresultsaggregator.helper.Helper;
 
-public class AggregateJobDTO {
+public class AggregateJobDTO implements Serializable {
+	
+	private static final long serialVersionUID = 3491366L;
 	
 	private String calculatedJobStatus;
 	private String calculatedTimestamp;
@@ -95,9 +99,7 @@ public class AggregateJobDTO {
 	
 	public String getCalculatedJobStatusWithColor(boolean withLinktoResults) {
 		if (withLinktoResults) {
-			if (getReportURL() == null) {
-				getCalculatedJobStatusWithColor();
-			} else {
+			if (getReportURL() != null) {
 				return "<a href='" + getReportURL() + "' style='text-decoration:none;'>" + Helper.colorizeResultStatus(calculatedJobStatus) + "</a>";
 			}
 		}

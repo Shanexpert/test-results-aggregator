@@ -1,9 +1,13 @@
 package com.jenkins.testresultsaggregator.data;
 
+import java.io.Serializable;
+
 import com.jenkins.testresultsaggregator.helper.Colors;
 import com.jenkins.testresultsaggregator.helper.Helper;
 
-public class ResultsDTO {
+public class ResultsDTO implements Serializable {
+	
+	private static final long serialVersionUID = 3491974223667L;
 	
 	private String name;
 	

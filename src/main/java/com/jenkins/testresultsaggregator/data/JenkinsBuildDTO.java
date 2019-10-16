@@ -1,9 +1,12 @@
 package com.jenkins.testresultsaggregator.data;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
-public class JenkinsBuildDTO {
+public class JenkinsBuildDTO implements Serializable {
+	
+	private static final long serialVersionUID = 3491196L;
 	
 	private Boolean building;
 	private String description;

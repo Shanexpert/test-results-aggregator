@@ -1,8 +1,11 @@
 package com.jenkins.testresultsaggregator.data;
 
+import java.io.Serializable;
 import java.net.URL;
 
-public class BuildDTO {
+public class BuildDTO implements Serializable {
+	
+	private static final long serialVersionUID = 3491L;
 	
 	private URL url;
 	private Integer number;

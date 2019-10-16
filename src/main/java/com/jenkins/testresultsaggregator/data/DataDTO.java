@@ -1,5 +1,6 @@
 package com.jenkins.testresultsaggregator.data;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -7,7 +8,9 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 import hudson.model.AbstractDescribableImpl;
 
-public class DataDTO extends AbstractDescribableImpl<DataDTO> {
+public class DataDTO extends AbstractDescribableImpl<DataDTO> implements Serializable {
+	
+	private static final long serialVersionUID = 3491974223666L;
 	
 	private String groupName;
 	private List<DataJobDTO> jobs;
