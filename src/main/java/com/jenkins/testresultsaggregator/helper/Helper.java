@@ -105,7 +105,7 @@ public class Helper {
 	public static String countPercentage(ResultsDTO resultsDTO, String prefixPercentage) {
 		String percentage = "0";
 		try {
-			percentage = singDoubleSingle((resultsDTO.getPass() + resultsDTO.getSkip()) * 100 / resultsDTO.getTotal());
+			percentage = singDoubleSingle((double) (resultsDTO.getPass() + resultsDTO.getSkip()) * 100 / resultsDTO.getTotal());
 		} catch (Exception ex) {
 			
 		}
