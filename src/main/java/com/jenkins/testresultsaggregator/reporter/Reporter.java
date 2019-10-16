@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -78,7 +79,7 @@ public class Reporter {
 	
 	private String generateMailBody(String htmlReport) throws Exception {
 		InputStream is = new FileInputStream(htmlReport);
-		BufferedReader buf = new BufferedReader(new InputStreamReader(is));
+		BufferedReader buf = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
 		String line = buf.readLine();
 		StringBuilder sb = new StringBuilder();
 		while (line != null) {
