@@ -45,7 +45,7 @@ public class Http {
 			int responseCode = con.getResponseCode();
 			con.disconnect();
 			return responseCode;
-		} catch (Exception ex) {
+		} catch (IOException ex) {
 		}
 		return 0;
 	}
