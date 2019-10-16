@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?jelly escape-by-default='true'?>
 <j:jelly trim="false" xmlns:j="jelly:core" xmlns:x="jelly:xml" xmlns:html="jelly:html">
      <html>
        <head>
