@@ -12,8 +12,8 @@ After installing test-results-aggregator plugin , navigate to Global Configurati
 
 In this section you can define : 
 * Jenkins Base Url : The HTTP address of the Jenkins installation, such as http://yourhost.yourdomain/jenkins/. This value is used to access Jenkins API.
-* Jenkins Account Username : the username of the account that will be used to access Jenkins base url via API and fetch job results.
-* Jenkins Account password : the password of the account that will be used to access Jenkins base url via API and fetch job results.
+* Jenkins Account Username : the username of the account that will be used to access Jenkins API and fetch job results.
+* Jenkins Account password : the password of the account that will be used to access Jenkins API and fetch job results.
 * Mail Notification From : the e-mail address of the sender for the mail Notification. Default is Jenkins.
 
 ### Job Configuration
@@ -24,7 +24,7 @@ In this section you can define :
 **2**. Select Add Post Build Action and scroll to Aggregate Test Results action.
   ![Post Build Action](https://github.com/sdrss/test/blob/master/screenshots/PostBuildAction.png)
 
-**3**. Add Groups/Teams (optional) , add Jenkins Jobs : 
+**3**. Add Groups/Teams and Jenkins Jobs : 
   ![Jobs Configuraion](https://github.com/sdrss/test/blob/master/screenshots/FreeStyleProject_Jobs.png)
 * Group/Team : Group or Team Name it's optional and used in report to group Jenkins jobs per team or test types.
 * Job Name : Jenkins Job name it's mandatory , using this name this plugin will fetch results.
