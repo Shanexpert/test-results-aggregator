@@ -129,7 +129,7 @@ public class Helper {
 		if (value == 0) {
 			return "0";
 		} else {
-			DecimalFormat df = new DecimalFormat("#.####");
+			DecimalFormat df = new DecimalFormat("#.##");
 			String valueAsString = df.format(value);
 			value = Double.valueOf(valueAsString);
 			if (Math.abs(value) < 0.005) {
