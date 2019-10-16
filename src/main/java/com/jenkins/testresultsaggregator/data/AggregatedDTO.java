@@ -102,7 +102,6 @@ public class AggregatedDTO extends BaseResult implements Serializable {
 	
 	@Override
 	public Collection<? extends TestResult> getChildren() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
