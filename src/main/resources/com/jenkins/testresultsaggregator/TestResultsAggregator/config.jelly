@@ -28,23 +28,24 @@
             </table>
         </f:repeatable>
     </f:entry>
-    
+   
   <f:entry title="${%recipientsList}" field="recipientsList"><f:textarea /></f:entry>
+  <f:entry title="${%subject}" field="subject"><f:textbox /></f:entry>
   <f:entry title="${%beforebody}" field="beforebody"><f:textarea /></f:entry>
   <f:entry title="${%afterbody}" field="afterbody"><f:textarea /></f:entry>
   <f:entry name="goalType" title="${%theme}" field="theme">
   <select name="theme">
-    <option value="light" selected="${instance.theme.equals('light')? 'true':null}">Light</option>
-    <option value="dark" selected="${instance.theme.equals('dark')? 'true':null}">Dark</option>
+    <option value="light" selected="${instance.theme.equals('light')? 'true':null}">${%light}</option>
+    <option value="dark" selected="${instance.theme.equals('dark')? 'true':null}">${%dark}</option>
   </select>
   </f:entry>
   <f:entry name="goalType" title="${%sortresults}" field="sortresults">
   <select name="sortresults">
-    <option value="NAME" selected="${instance.sortresults.equals('NAME')? 'true':null}">Job Name</option>
-    <option value="STATUS" selected="${instance.sortresults.equals('STATUS')? 'true':null}">Job Status</option>
-    <option value="TOTAL_TEST" selected="${instance.sortresults.equals('TOTAL_TEST')? 'true':null}">Total Tests</option>
-    <option value="FAIL" selected="${instance.sortresults.equals('FAIL')? 'true':null}">Fail Tests</option>
-    <option value="LAST_RUN" selected="${instance.sortresults.equals('LAST_RUN')? 'true':null}">Time</option>
+    <option value="NAME" selected="${instance.sortresults.equals('NAME')? 'true':null}">${%jobName}</option>
+    <option value="STATUS" selected="${instance.sortresults.equals('STATUS')? 'true':null}">${%JobStatus}</option>
+    <option value="TOTAL_TEST" selected="${instance.sortresults.equals('TOTAL_TEST')? 'true':null}">${%totalTests}</option>
+    <option value="FAIL" selected="${instance.sortresults.equals('FAIL')? 'true':null}">${%failedTests}</option>
+    <option value="LAST_RUN" selected="${instance.sortresults.equals('LAST_RUN')? 'true':null}">${%time}</option>
   </select>
   </f:entry>
   <f:entry title="${%outOfDateResults}" field="outOfDateResults"><f:textbox /></f:entry>

@@ -94,6 +94,14 @@ public class Helper {
 		return result;
 	}
 	
+	public static String countPercentage(int pass, int total, String prefixPercentage) {
+		ResultsDTO resultsDTO = new ResultsDTO();
+		resultsDTO.setPass(pass);
+		resultsDTO.setSkip(0);
+		resultsDTO.setTotal(total);
+		return countPercentage(resultsDTO, prefixPercentage);
+	}
+	
 	public static String countPercentage(ResultsDTO resultsDTO, String prefixPercentage) {
 		String percentage = "0";
 		try {
@@ -118,19 +126,23 @@ public class Helper {
 	}
 	
 	private static String singDoubleSingle(double value) {
-		DecimalFormat df = new DecimalFormat("#.####");
-		String valueAsString = df.format(value);
-		value = Double.valueOf(valueAsString);
-		if (Math.abs(value) < 0.005) {
-			return "";
-		} else if (Math.abs(value) == 0) {
-			return "";
-		} else if (value < 0.00) {
-			return df.format(value);
-		} else if (value > 0) {
-			return df.format(value);
+		if (value == 0) {
+			return "0";
 		} else {
-			return "";
+			DecimalFormat df = new DecimalFormat("#.####");
+			String valueAsString = df.format(value);
+			value = Double.valueOf(valueAsString);
+			if (Math.abs(value) < 0.005) {
+				return "";
+			} else if (Math.abs(value) == 0) {
+				return "";
+			} else if (value < 0.00) {
+				return df.format(value);
+			} else if (value > 0) {
+				return df.format(value);
+			} else {
+				return "";
+			}
 		}
 	}
 	
@@ -182,11 +194,25 @@ public class Helper {
 			}
 		} else {
 			if (prev == curr) {
-				return text + colorize(curr, Colors.BLACK) + "";
+				if (curr == 0) {
+					return "";
+				} else {
+					return text + colorize(curr, Colors.BLACK) + "";
+				}
 			} else if (prev < curr) {
-				return text + colorize(curr, color) + colorize("(+" + (curr - prev) + ")", Colors.BLACK);
+				if (curr == 0) {
+					return text + colorize("+" + (curr - prev), Colors.BLACK);
+				} else if (prev == 0) {
+					return text + colorize(curr, color);
+				} else {
+					return text + colorize(curr, color) + colorize("(+" + (curr - prev) + ")", Colors.BLACK);
+				}
 			} else { // if (a < b)
-				return text + colorize(curr, color) + colorize("(-" + (prev - curr) + ")", Colors.BLACK);
+				if (curr == 0) {
+					return text + colorize("-" + (prev - curr), Colors.BLACK);
+				} else {
+					return text + colorize(curr, color) + colorize("(-" + (prev - curr) + ")", Colors.BLACK);
+				}
 			}
 		}
 	}

@@ -36,6 +36,7 @@ import net.sf.json.JSONObject;
 public class TestResultsAggregator extends Notifier {
 	
 	private final static String displayName = "Aggregate Test Results";
+	private String subject;
 	private String recipientsList;
 	private String beforebody;
 	private String afterbody;
@@ -54,12 +55,14 @@ public class TestResultsAggregator extends Notifier {
 	
 	public enum AggregatorProperties {
 		OUT_OF_DATE_RESULTS_ARG,
-		PERCENTAGE_PREFIX,
+		TEST_PERCENTAGE_PREFIX,
+		JOB_PERCENTAGE_PREFIX,
 		TEXT_BEFORE_MAIL_BODY,
 		TEXT_AFTER_MAIL_BODY,
 		THEME,
 		PRINT_GROUP_STATUS_IN_NEW_COLUMN,
-		SORT_JOBS_BY
+		SORT_JOBS_BY,
+		SUBJECT_PREFIX
 	}
 	
 	public enum SortResultsBy {
@@ -79,7 +82,7 @@ public class TestResultsAggregator extends Notifier {
 	}
 	
 	@DataBoundConstructor
-	public TestResultsAggregator(final String recipientsList, final String outOfDateResults, final List<DataDTO> dataJob, String beforebody, String afterbody, String theme, String sortresults) {
+	public TestResultsAggregator(final String subject, final String recipientsList, final String outOfDateResults, final List<DataDTO> dataJob, String beforebody, String afterbody, String theme, String sortresults) {
 		this.setRecipientsList(recipientsList);
 		this.setOutOfDateResults(outOfDateResults);
 		this.setDataJob(dataJob);
@@ -87,6 +90,7 @@ public class TestResultsAggregator extends Notifier {
 		this.setAfterbody(afterbody);
 		this.setTheme(theme);
 		this.setSortresults(sortresults);
+		this.setSubject(subject);
 	}
 	
 	@Override
@@ -98,12 +102,14 @@ public class TestResultsAggregator extends Notifier {
 			// Set up Properties
 			properties = new Properties();
 			properties.put(AggregatorProperties.OUT_OF_DATE_RESULTS_ARG.name(), outOfDateResults);
-			properties.put(AggregatorProperties.PERCENTAGE_PREFIX.name(), "");
+			properties.put(AggregatorProperties.TEST_PERCENTAGE_PREFIX.name(), "");
+			properties.put(AggregatorProperties.JOB_PERCENTAGE_PREFIX.name(), "");
 			properties.put(AggregatorProperties.THEME.name(), getTheme());
 			properties.put(AggregatorProperties.TEXT_BEFORE_MAIL_BODY.name(), getBeforebody());
 			properties.put(AggregatorProperties.TEXT_AFTER_MAIL_BODY.name(), getAfterbody());
 			properties.put(AggregatorProperties.PRINT_GROUP_STATUS_IN_NEW_COLUMN.name(), false);
 			properties.put(AggregatorProperties.SORT_JOBS_BY.name(), getSortresults());
+			properties.put(AggregatorProperties.SUBJECT_PREFIX.name(), getSubject());
 			// Validate Input Data
 			List<DataDTO> validatedData = validateInputData(getDataJob());
 			// Collect Data
@@ -302,6 +308,17 @@ public class TestResultsAggregator extends Notifier {
 	
 	public void setSortresults(String sortresults) {
 		this.sortresults = sortresults;
+	}
+	
+	public String getSubject() {
+		if (subject == null) {
+			subject = "";
+		}
+		return subject;
+	}
+	
+	public void setSubject(String subject) {
+		this.subject = subject;
 	}
 	
 }

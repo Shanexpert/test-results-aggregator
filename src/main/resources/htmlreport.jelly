@@ -32,8 +32,8 @@
 					</j:if>
 					<td style='border-bottom:1px solid ${lineSeperatorcolor}'>${job.getJobNameFromFriendlyName(true)}</td>
 					<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getAggregate().getCalculatedJobStatusWithColor(true)}</td>
-					<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getAggregate().getCalculatedFailedColor(true)}</td>
 					<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getAggregate().getCalculatedTotal(true)}</td>
+					<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getAggregate().getCalculatedFailedColor(true)}</td>
 					<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getAggregate().getCalculatedChanges()}</td>
 					<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getAggregate().getCalculatedTimestamp()}</td>
 					</tr>

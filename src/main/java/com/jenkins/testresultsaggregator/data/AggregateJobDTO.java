@@ -62,7 +62,11 @@ public class AggregateJobDTO {
 	}
 	
 	public void calculateTotal(ResultsDTO resultsDTO) {
-		setCalculatedTotal(Helper.diff(resultsDTO.getTotalDif(), resultsDTO.getTotal(), false));
+		if (resultsDTO != null) {
+			setCalculatedTotal(Helper.diff(resultsDTO.getTotalDif(), resultsDTO.getTotal(), false));
+		} else {
+			setCalculatedTotal("0");
+		}
 	}
 	
 	public void calculatePass(ResultsDTO resultsDTO) {
@@ -138,7 +142,11 @@ public class AggregateJobDTO {
 	
 	public String getCalculatedTotal(boolean withLinktoResults) {
 		if (withLinktoResults) {
-			return "<a href='" + getReportURL() + "' style='text-decoration:none;'>" + getCalculatedTotal() + "</a>";
+			if (!Strings.isNullOrEmpty(getCalculatedTotal()) && !"0".equals(getCalculatedTotal())) {
+				return "<a href='" + getReportURL() + "' style='text-decoration:none;'>" + getCalculatedTotal() + "</a>";
+			} else {
+				return "";
+			}
 		}
 		return calculatedTotal;
 	}

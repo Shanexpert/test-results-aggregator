@@ -57,6 +57,12 @@ public class Analyzer {
 			boolean foundRunning = false;
 			boolean foundSkip = false;
 			ResultsDTO totalResultsPerGroup = new ResultsDTO();
+			int jobFailed = 0;
+			int jobSkipped = 0;
+			int jobUnstable = 0;
+			int jobAborted = 0;
+			int jobSuccess = 0;
+			int jobRunning = 0;
 			tempDataJob.setAggregatedGroup(new AggregatedGroupDTO());
 			for (DataJobDTO job : tempDataJob.getJobs()) {
 				job.setAggregate(new AggregateJobDTO());
@@ -80,22 +86,29 @@ public class Analyzer {
 				if (JobStatus.SUCCESS.name().equals(job.getAggregate().getCalculatedJobStatus()) || JobStatus.FIXED.name().equals(job.getAggregate().getCalculatedJobStatus())) {
 					tempDataJob.getAggregatedGroup().setJobSuccess(tempDataJob.getAggregatedGroup().getJobSuccess() + 1);
 					aggregatedDTO.setCountJobSuccess(aggregatedDTO.getCountJobSuccess() + 1);
+					jobSuccess++;
 				} else if (JobStatus.RUNNING.name().equals(job.getAggregate().getCalculatedJobStatus())) {
 					foundRunning = true;
 					tempDataJob.getAggregatedGroup().setJobRunning(tempDataJob.getAggregatedGroup().getJobRunning() + 1);
 					aggregatedDTO.setCountJobRunning(aggregatedDTO.getCountJobRunning() + 1);
+					jobRunning++;
 				} else if (JobStatus.FAILURE.name().equals(job.getAggregate().getCalculatedJobStatus()) || JobStatus.STILL_FAILING.name().equals(job.getAggregate().getCalculatedJobStatus())) {
-					tempDataJob.getAggregatedGroup().setJobFailed(tempDataJob.getAggregatedGroup().getJobFailed() + 1);
 					foundFailure = true;
+					tempDataJob.getAggregatedGroup().setJobFailed(tempDataJob.getAggregatedGroup().getJobFailed() + 1);
 					aggregatedDTO.setCountJobFailures(aggregatedDTO.getCountJobFailures() + 1);
+					jobFailed++;
+					// Do not Check total Test
+					job.getAggregate().calculateTotal(null);
 				} else if (JobStatus.UNSTABLE.name().equals(job.getAggregate().getCalculatedJobStatus()) || JobStatus.STILL_UNSTABLE.name().equals(job.getAggregate().getCalculatedJobStatus())) {
+					foundSkip = true;
 					tempDataJob.getAggregatedGroup().setJobUnstable(tempDataJob.getAggregatedGroup().getJobUnstable() + 1);
-					foundSkip = true;
 					aggregatedDTO.setCountJobUnstable(aggregatedDTO.getCountJobUnstable() + 1);
+					jobUnstable++;
 				} else if (JobStatus.ABORTED.name().equals(job.getAggregate().getCalculatedJobStatus())) {
-					tempDataJob.getAggregatedGroup().setJobAborted(tempDataJob.getAggregatedGroup().getJobAborted() + 1);
 					foundSkip = true;
+					tempDataJob.getAggregatedGroup().setJobAborted(tempDataJob.getAggregatedGroup().getJobAborted() + 1);
 					aggregatedDTO.setCountJobAborted(aggregatedDTO.getCountJobAborted() + 1);
+					jobAborted++;
 				}
 				// Calculate Total Per Group
 				totalResultsPerGroup.setPass(totalResultsPerGroup.getPass() + job.getResultsDTO().getPass());
@@ -116,8 +129,13 @@ public class Analyzer {
 			} else {
 				tempDataJob.getAggregatedGroup().setCalculatedGroupStatus(JobStatus.SUCCESS.name());
 			}
-			// Calculate Percentage Per Group
-			tempDataJob.getAggregatedGroup().setCalculatedGroupPercentage(Helper.countPercentage(totalResultsPerGroup, properties.getProperty(AggregatorProperties.PERCENTAGE_PREFIX.toString())));
+			// Calculate Percentage Per Group based on Tests
+			// tempDataJob.getAggregatedGroup().setCalculatedGroupPercentage(Helper.countPercentage(totalResultsPerGroup,
+			// properties.getProperty(AggregatorProperties.TEST_PERCENTAGE_PREFIX.toString())));
+			// Calculate Percentage Per Group based on Jobs
+			tempDataJob.getAggregatedGroup().setCalculatedGroupPercentage(Helper.countPercentage(jobSuccess,
+					jobSuccess + jobRunning + jobAborted + jobUnstable + jobSkipped + jobFailed,
+					properties.getProperty(AggregatorProperties.JOB_PERCENTAGE_PREFIX.toString())));
 		}
 		// Order Jobs per
 		final String orderBy = (String) properties.get(TestResultsAggregator.AggregatorProperties.SORT_JOBS_BY.name());

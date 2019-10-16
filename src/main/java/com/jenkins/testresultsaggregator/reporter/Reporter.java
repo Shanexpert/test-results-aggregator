@@ -56,8 +56,8 @@ public class Reporter {
 		columns.addAll(new ArrayList<>(Arrays.asList(
 				LocalMessages.COLUMN_JOB.toString(),
 				LocalMessages.COLUMN_JOB_STATUS.toString(),
-				LocalMessages.COLUMN_FAIL.toString(),
 				LocalMessages.COLUMN_TESTS.toString(),
+				LocalMessages.COLUMN_FAIL.toString(),
 				// LocalMessages.COLUMN_PASS.toString(),
 				// LocalMessages.COLUMN_SKIP.toString(),
 				LocalMessages.COLUMN_COMMITS.toString(),
@@ -68,7 +68,7 @@ public class Reporter {
 		new MailNotification(logger, dataJob).send(
 				recipientsList,
 				mailNotificationFrom,
-				generateMailSubject(aggregated),
+				generateMailSubject(properties.getProperty(AggregatorProperties.SUBJECT_PREFIX.name()), aggregated),
 				generateMailBody(htmlReport),
 				properties.getProperty(AggregatorProperties.TEXT_BEFORE_MAIL_BODY.name()),
 				properties.getProperty(AggregatorProperties.TEXT_AFTER_MAIL_BODY.name()));
@@ -89,8 +89,8 @@ public class Reporter {
 		return sb.toString();
 	}
 	
-	private String generateMailSubject(AggregatedDTO aggregated) {
-		String subject = LocalMessages.TEST_RESULTS.toString();
+	private String generateMailSubject(String subjectPrefix, AggregatedDTO aggregated) {
+		String subject = subjectPrefix;
 		if (aggregated.getCountJobRunning() > 0) {
 			subject += " " + LocalMessages.RESULTS_RUNNING.toString() + " : " + aggregated.getCountJobRunning();
 		}
