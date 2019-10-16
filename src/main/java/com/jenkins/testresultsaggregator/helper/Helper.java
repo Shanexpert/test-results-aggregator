@@ -149,10 +149,14 @@ public class Helper {
 	public static File createFolder(FilePath filePath, String folder) {
 		File theDir = new File(filePath.getRemote(), folder);
 		// if the directory does not exist, create it
+		boolean createDirectory = false;
 		if (!theDir.exists()) {
-			theDir.mkdir();
+			createDirectory = theDir.mkdir();
 		}
-		return theDir;
+		if (createDirectory) {
+			return theDir;
+		}
+		return null;
 	}
 	
 	public static String diff(long prev, long curr, boolean list) {
