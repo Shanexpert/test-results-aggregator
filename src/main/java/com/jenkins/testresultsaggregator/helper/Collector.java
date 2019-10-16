@@ -3,6 +3,7 @@ package com.jenkins.testresultsaggregator.helper;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -76,7 +77,8 @@ public class Collector {
 	
 	private String authenticationString() {
 		if (!Strings.isNullOrEmpty(username) && !Strings.isNullOrEmpty(password.getPlainText())) {
-			return Base64.getEncoder().encodeToString(new String(username + ":" + new String(password.getPlainText())).getBytes());
+			byte[] encode = (username + ":" + password.getPlainText()).getBytes(Charset.forName("UTF-8"));
+			return Base64.getEncoder().encodeToString(encode);
 		}
 		return null;
 	}
@@ -124,13 +126,9 @@ public class Collector {
 			resultsDTO.setNumber(dataJobDTO.getJenkinsBuild().getNumber());
 			// Set TimeStamp
 			if (dataJobDTO.getJenkinsBuild().getTimestamp() != null) {
-				try {
-					DateFormat formatter = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss:SSS");
-					String dateFormatted = formatter.format(new Date(dataJobDTO.getJenkinsBuild().getTimestamp()));
-					resultsDTO.setTimestamp(dateFormatted);
-				} catch (Exception ex) {
-					
-				}
+				DateFormat formatter = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss:SSS");
+				String dateFormatted = formatter.format(new Date(dataJobDTO.getJenkinsBuild().getTimestamp()));
+				resultsDTO.setTimestamp(dateFormatted);
 			}
 			// Set Change Set
 			if (dataJobDTO.getJenkinsBuild().getChangeSets() != null) {
@@ -199,7 +197,7 @@ public class Collector {
 						}
 						// Calculate Pass Difference Results
 						resultsDTO.setPassDif(previouslyPass - Math.abs(previouslyFail) - Math.abs(previouslySkip));
-					} catch (Exception ex) {
+					} catch (IOException ex) {
 						
 					}
 				}
