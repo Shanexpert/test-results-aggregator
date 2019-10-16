@@ -3,6 +3,12 @@ It's a jenkins plugin that collects via api all Jenkins Jobs results and reports
 * in a single html view 
 * email
 
+It's advisable to be used as the last step in a CI/CD pipeline. Currently supports only 'free style project' but can be integrated in a groovy pipeline script just by using build action , example : 
+    
+    stage("Aggregate Report") {
+		  build job: 'My_aggregate_results_job'
+    }
+
 Requires both global and job configuration. Check below 
 
 ### Global Configuration
