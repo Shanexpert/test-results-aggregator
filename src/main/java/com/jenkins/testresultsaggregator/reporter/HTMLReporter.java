@@ -51,11 +51,12 @@ public class HTMLReporter {
 			context.setVariable("lineSeperatorcolor", Colors.htmlLINESEPERATOR());
 			XMLOutput xmlOutput = XMLOutput.createXMLOutput(output);
 			URL template = HTMLReporter.class.getResource("/" + REPORT);
-			context.runScript(template, xmlOutput);
+			JellyContext jellyContext = context.runScript(template, xmlOutput);
 			xmlOutput.endDocument();
 			xmlOutput.flush();
 			output.close();
 			xmlOutput.close();
+			jellyContext.clear();
 			logger.println(LocalMessages.FINISHED.toString() + " " + LocalMessages.HTML_REPORT.toString());
 			return file;
 		} catch (Exception e) {
