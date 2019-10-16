@@ -94,6 +94,10 @@ public class Analyzer {
 					jobFailed++;
 					// Do not Check total Test
 					job.getAggregate().calculateTotal(null);
+					job.getAggregate().calculatePass(null);
+					job.getAggregate().calculateFailed(null);
+					job.getAggregate().calculateFailedColor(null);
+					job.getAggregate().calculateSkipped(null);
 				} else if (JobStatus.UNSTABLE.name().equals(job.getAggregate().getCalculatedJobStatus()) || JobStatus.STILL_UNSTABLE.name().equals(job.getAggregate().getCalculatedJobStatus())) {
 					foundSkip = true;
 					tempDataJob.getAggregatedGroup().setJobUnstable(tempDataJob.getAggregatedGroup().getJobUnstable() + 1);

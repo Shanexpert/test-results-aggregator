@@ -74,19 +74,35 @@ public class AggregateJobDTO implements Serializable {
 	}
 	
 	public void calculatePass(ResultsDTO resultsDTO) {
-		setCalculatedPass(Helper.diff(resultsDTO.getPassDif(), resultsDTO.getPass(), false));
+		if (resultsDTO != null) {
+			setCalculatedPass(Helper.diff(resultsDTO.getPassDif(), resultsDTO.getPass(), false));
+		} else {
+			setCalculatedPass("0");
+		}
 	}
 	
 	public void calculateFailedColor(ResultsDTO resultsDTO) {
-		setCalculatedFailedColor(Helper.diff(resultsDTO.getFailDif(), resultsDTO.getFail(), null, Colors.FAILED, false));
+		if (resultsDTO != null) {
+			setCalculatedFailedColor(Helper.diff(resultsDTO.getFailDif(), resultsDTO.getFail(), null, Colors.FAILED, false));
+		} else {
+			setCalculatedFailedColor("0");
+		}
 	}
 	
 	public void calculateFailed(ResultsDTO resultsDTO) {
-		setCalculatedFailed(Helper.diff(resultsDTO.getFailDif(), resultsDTO.getFail(), false));
+		if (resultsDTO != null) {
+			setCalculatedFailed(Helper.diff(resultsDTO.getFailDif(), resultsDTO.getFail(), false));
+		} else {
+			setCalculatedFailed("0");
+		}
 	}
 	
 	public void calculateSkipped(ResultsDTO resultsDTO) {
-		setCalculatedSkipped(Helper.diff(resultsDTO.getSkipDif(), resultsDTO.getSkip(), false));
+		if (resultsDTO != null) {
+			setCalculatedSkipped(Helper.diff(resultsDTO.getSkipDif(), resultsDTO.getSkip(), false));
+		} else {
+			setCalculatedSkipped("0");
+		}
 	}
 	
 	public String getCalculatedJobStatus() {
@@ -203,7 +219,11 @@ public class AggregateJobDTO implements Serializable {
 	
 	public String getCalculatedFailedColor(boolean withLinktoResults) {
 		if (withLinktoResults) {
-			return "<a href='" + getReportURL() + "' style='text-decoration:none;'>" + getCalculatedFailedColor() + "</a>";
+			if (!Strings.isNullOrEmpty(getCalculatedFailedColor()) && !"0".equals(getCalculatedFailedColor())) {
+				return "<a href='" + getReportURL() + "' style='text-decoration:none;'>" + getCalculatedFailedColor() + "</a>";
+			} else {
+				return "";
+			}
 		}
 		return calculatedFailedColor;
 	}
