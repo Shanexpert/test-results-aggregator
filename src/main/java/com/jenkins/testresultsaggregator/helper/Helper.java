@@ -179,7 +179,7 @@ public class Helper {
 			name = "";
 		}
 		if (!Strings.isNullOrEmpty(name)) {
-			namePrefix = name + ":";
+			namePrefix = name + ": ";
 		} else {
 			namePrefix = name;
 		}
