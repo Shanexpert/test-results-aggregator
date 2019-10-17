@@ -46,8 +46,8 @@
 				<j:if test="${showGroups == false}">
 					<th style='text-align: center' colspan='2'>Summary</th>
 				</j:if>
-				<th style='text-align: center'>${aggregated.getResults().getCalculatedFailColor()}</th>
 				<th style='text-align: center'>${aggregated.getResults().getCalculatedTotal()}</th>
+				<th style='text-align: center'>${aggregated.getResults().getCalculatedFailColor()}</th>
 				<th colspan='2'></th>
 			</tr>
 		</table>
