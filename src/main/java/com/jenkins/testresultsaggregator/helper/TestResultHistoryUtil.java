@@ -32,11 +32,11 @@ public class TestResultHistoryUtil {
 		prevTotal = prevFailed + prevUnstable + prevSucces + prevAborted + prevRunning;
 		AggregatedDTO result = action.getResult();
 		int total = result.getCountJobAborted() + result.getCountJobFailures() + result.getCountJobRunning() + result.getCountJobSuccess() + result.getCountJobUnstable();
-		return "<ul>" + Helper.diff(prevTotal, total, "Total Jobs", true) +
-				Helper.diff(prevFailed, result.getCountJobFailures(), TestResultsAggregatorProjectAction.FAILED + " Jobs", true) +
-				Helper.diff(prevUnstable, result.getCountJobUnstable(), TestResultsAggregatorProjectAction.UNSTABLE + " Jobs", true) +
-				Helper.diff(prevAborted, result.getCountJobAborted(), TestResultsAggregatorProjectAction.ABORTED + " Jobs", true) +
-				Helper.diff(prevRunning, result.getCountJobRunning(), TestResultsAggregatorProjectAction.RUNNING + " Jobs", true) +
+		return "<ul>" + Helper.diff(prevTotal, total, "Total Jobs ", true) +
+				Helper.diff(prevFailed, result.getCountJobFailures(), TestResultsAggregatorProjectAction.FAILED + " Jobs ", true) +
+				Helper.diff(prevUnstable, result.getCountJobUnstable(), TestResultsAggregatorProjectAction.UNSTABLE + " Jobs ", true) +
+				Helper.diff(prevAborted, result.getCountJobAborted(), TestResultsAggregatorProjectAction.ABORTED + " Jobs ", true) +
+				Helper.diff(prevRunning, result.getCountJobRunning(), TestResultsAggregatorProjectAction.RUNNING + " Jobs ", true) +
 				"</ul>";
 	}
 	
@@ -54,10 +54,10 @@ public class TestResultHistoryUtil {
 			prevTotal = previousResult.getResults().getTotal();
 		}
 		AggregatedDTO result = action.getResult();
-		return "<ul>" + Helper.diff(prevTotal, result.getResults().getTotal(), "Total Tests", true) +
-				Helper.diff(prevFailed, result.getResults().getFail(), TestResultsAggregatorProjectAction.FAILED + " Tests", true) +
-				Helper.diff(prevUnstable, result.getResults().getSkip(), TestResultsAggregatorProjectAction.UNSTABLE + " Tests", true) +
-				Helper.diff(prevSucces, result.getResults().getPass(), TestResultsAggregatorProjectAction.SUCCESS + " Tests", true) +
+		return "<ul>" + Helper.diff(prevTotal, result.getResults().getTotal(), "Total Tests ", true) +
+				Helper.diff(prevFailed, result.getResults().getFail(), TestResultsAggregatorProjectAction.FAILED + " Tests ", true) +
+				Helper.diff(prevUnstable, result.getResults().getSkip(), TestResultsAggregatorProjectAction.UNSTABLE + " Tests ", true) +
+				Helper.diff(prevSucces, result.getResults().getPass(), TestResultsAggregatorProjectAction.SUCCESS + " Tests ", true) +
 				"</ul>";
 	}
 	
