@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.jenkins.testresultsaggregator.data.AggregatedDTO;
+import com.jenkins.testresultsaggregator.data.Aggregated;
 import com.jenkins.testresultsaggregator.helper.ResultsParser;
 import com.jenkins.testresultsaggregator.reporter.XMLReporter;
 
@@ -31,11 +31,14 @@ public class TestResultsAggregatorTestResultBuildAction extends AbstractTestResu
 	
 	private static final long serialVersionUID = 31415926L;
 	private static final Logger LOGGER = Logger.getLogger(TestResultsAggregatorTestResultBuildAction.class.getName());
-	private transient Reference<AggregatedDTO> aggregatedResults;
+	private transient Reference<Aggregated> aggregatedResults;
 	// Jobs
 	protected Integer success;
+	protected int fixed;
 	protected int failed;
+	protected int keepfailed;
 	protected int unstable;
+	protected int keepunstable;
 	protected int aborted;
 	protected int running;
 	// Tests
@@ -43,34 +46,42 @@ public class TestResultsAggregatorTestResultBuildAction extends AbstractTestResu
 	protected int failedTTests;
 	protected int skippedTTests;
 	
-	public TestResultsAggregatorTestResultBuildAction(AggregatedDTO aggregatedResults) {
+	public TestResultsAggregatorTestResultBuildAction(Aggregated aggregatedResults) {
 		if (aggregatedResults != null) {
-			this.aggregatedResults = new WeakReference<AggregatedDTO>(aggregatedResults);
+			this.aggregatedResults = new WeakReference<Aggregated>(aggregatedResults);
 			count(aggregatedResults);
 		}
 	}
 	
-	private void count(AggregatedDTO aggregated) {
+	private void count(Aggregated aggregated) {
 		// Job stats
-		this.success = aggregated.getCountJobSuccess();
-		this.failed = aggregated.getCountJobFailures();
-		this.aborted = aggregated.getCountJobAborted();
-		this.unstable = aggregated.getCountJobUnstable();
-		this.running = aggregated.getCountJobRunning();
+		this.success = aggregated.getSuccessJobs();
+		this.fixed = aggregated.getFixedJobs();
+		this.failed = aggregated.getFailedJobs();
+		this.keepfailed = aggregated.getKeepFailJobs();
+		this.aborted = aggregated.getAbortedJobs();
+		this.unstable = aggregated.getUnstableJobs();
+		this.keepunstable = aggregated.getKeepUnstableJobs();
+		this.running = aggregated.getRunningJobs();
 		// Tests stats
 		this.successTTests = aggregated.getResults().getPass();
 		this.failedTTests = aggregated.getResults().getFail();
 		this.skippedTTests = aggregated.getResults().getSkip();
 	}
 	
-	private void countAndSave(AggregatedDTO aggregatedDTO) {
+	private void countAndSave(Aggregated aggregatedDTO) {
 		int savedSuccessCount = success != null ? success : -1;
+		int savedFixedCount = fixed;
 		int savedFailedCount = failed;
+		int savedFailedKeepCount = keepfailed;
 		int savedUnstableCount = unstable;
+		int savedUnstableKeepCount = keepunstable;
 		int savedAbortedCount = aborted;
 		int savedRunningCount = running;
+		
 		count(aggregatedDTO);
-		if (success != savedSuccessCount || failed != savedFailedCount || unstable != savedUnstableCount || aborted != savedAbortedCount || running != savedRunningCount) {
+		if (success != savedSuccessCount || failed != savedFailedCount || unstable != savedUnstableCount || aborted != savedAbortedCount
+				|| running != savedRunningCount || fixed != savedFixedCount || keepfailed != savedFailedKeepCount || keepunstable != savedUnstableKeepCount) {
 			try {
 				owner.save();
 			} catch (IOException x) {
@@ -86,21 +97,21 @@ public class TestResultsAggregatorTestResultBuildAction extends AbstractTestResu
 	}
 	
 	@Override
-	public AggregatedDTO getResult() {
+	public Aggregated getResult() {
 		return getResult(super.run);
 	}
 	
-	public AggregatedDTO getResult(Run build) {
-		AggregatedDTO tr = aggregatedResults != null ? aggregatedResults.get() : null;
+	public Aggregated getResult(Run build) {
+		Aggregated tr = aggregatedResults != null ? aggregatedResults.get() : null;
 		if (tr == null) {
 			tr = loadResults(build);
 			countAndSave(tr);
-			aggregatedResults = new WeakReference<AggregatedDTO>(tr);
+			aggregatedResults = new WeakReference<Aggregated>(tr);
 		}
 		return tr;
 	}
 	
-	static AggregatedDTO loadResults(Run<?, ?> owner) {
+	static Aggregated loadResults(Run<?, ?> owner) {
 		FilePath resultDirectory = getAggregatedReport(owner);
 		FilePath[] paths = null;
 		try {
@@ -109,12 +120,12 @@ public class TestResultsAggregatorTestResultBuildAction extends AbstractTestResu
 			// do nothing
 		}
 		if (paths == null) {
-			AggregatedDTO aggregatedDTO = new AggregatedDTO();
+			Aggregated aggregatedDTO = new Aggregated();
 			aggregatedDTO.setRun(owner);
 			return aggregatedDTO;
 		}
 		ResultsParser parser = new ResultsParser();
-		AggregatedDTO aggregatedDTO = parser.parse(paths);
+		Aggregated aggregatedDTO = parser.parse(paths);
 		aggregatedDTO.setRun(owner);
 		return aggregatedDTO;
 	}
@@ -138,14 +149,29 @@ public class TestResultsAggregatorTestResultBuildAction extends AbstractTestResu
 		return failed;
 	}
 	
+	public int getFailKeepCount() {
+		countAsNeeded();
+		return keepfailed;
+	}
+	
 	public int getUnstableCount() {
 		countAsNeeded();
 		return unstable;
 	}
 	
+	public int getUnstableKeepCount() {
+		countAsNeeded();
+		return keepunstable;
+	}
+	
 	public int getSuccess() {
 		countAsNeeded();
 		return success;
+	}
+	
+	public int getFixed() {
+		countAsNeeded();
+		return fixed;
 	}
 	
 	public int getAborted() {

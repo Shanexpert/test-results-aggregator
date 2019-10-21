@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
-public class JenkinsBuildDTO implements Serializable {
+public class BuildInfo implements Serializable {
 	
 	private static final long serialVersionUID = 3491196L;
 	
@@ -13,18 +13,18 @@ public class JenkinsBuildDTO implements Serializable {
 	private Long duration;
 	private int number;
 	private String result;
-	private JenkinsPreviousBuildDTO previousBuild;
+	private PreviousBuildInfo previousBuild;
 	private List<HashMap<Object, Object>> actions;
 	private String fullDisplayName;
 	private String displayName;
-	private List<ChangeSetDTO> changeSets;
+	private List<ChangeSet> changeSets;
 	private Long timestamp;
 	
-	public JenkinsBuildDTO() {
+	public BuildInfo() {
 		
 	}
 	
-	public JenkinsBuildDTO(String result) {
+	public BuildInfo(String result) {
 		setResult(result);
 	}
 	
@@ -68,11 +68,11 @@ public class JenkinsBuildDTO implements Serializable {
 		this.result = result;
 	}
 	
-	public JenkinsPreviousBuildDTO getPreviousBuild() {
+	public PreviousBuildInfo getPreviousBuild() {
 		return previousBuild;
 	}
 	
-	public void setPreviousBuild(JenkinsPreviousBuildDTO previousBuild) {
+	public void setPreviousBuild(PreviousBuildInfo previousBuild) {
 		this.previousBuild = previousBuild;
 	}
 	
@@ -100,11 +100,11 @@ public class JenkinsBuildDTO implements Serializable {
 		this.displayName = displayName;
 	}
 	
-	public List<ChangeSetDTO> getChangeSets() {
+	public List<ChangeSet> getChangeSets() {
 		return changeSets;
 	}
 	
-	public void setChangeSets(List<ChangeSetDTO> changeSets) {
+	public void setChangeSets(List<ChangeSet> changeSets) {
 		this.changeSets = changeSets;
 	}
 	

@@ -24,15 +24,17 @@ import jenkins.model.lazy.LazyBuildMixIn.LazyLoadingJob;
 
 /**
  * Action to associate the TestNG reports with the project
- *
- * @author nullin
  */
-public class TestResultsAggregatorProjectAction extends TestResultProjectAction implements ProminentProjectAction {
+public class TestResultsAggregatorProjectAction extends TestResultProjectAction
+		implements ProminentProjectAction {
 	
 	// For Jobs
 	public static final String SUCCESS = "Success";
+	public static final String FIXED = "Fixed";
 	public static final String FAILED = "Failed";
+	public static final String FAILED_KEEP = "KeepFailling";
 	public static final String UNSTABLE = "Unstable";
+	public static final String UNSTABLE_KEEP = "KeepUnstable";
 	public static final String ABORTED = "Aborted";
 	public static final String RUNNING = "Running";
 	public static final String TOTAL = "Total";
@@ -108,7 +110,8 @@ public class TestResultsAggregatorProjectAction extends TestResultProjectAction 
 		populateDataSetBuilderTest(dataSetBuilder);
 		new hudson.util.Graph(-1, getGraphWidth(), getGraphHeight()) {
 			protected JFreeChart createGraph() {
-				return GraphHelper.createChartTests(req, dataSetBuilder.build());
+				return GraphHelper.createChartTests(req,
+						dataSetBuilder.build());
 			}
 		}.doPng(req, rsp);
 	}
@@ -188,9 +191,9 @@ public class TestResultsAggregatorProjectAction extends TestResultProjectAction 
 				continue;
 			}
 			if (action != null) {
-				dataset.add(action.getSuccess(), SUCCESS, label);
-				dataset.add(action.getFailCount(), FAILED, label);
-				dataset.add(action.getUnstableCount(), UNSTABLE, label);
+				dataset.add(action.getSuccess() + action.getFixed(), SUCCESS, label);
+				dataset.add(action.getFailCount() + action.getFailKeepCount(), FAILED, label);
+				dataset.add(action.getUnstableCount() + action.getUnstableKeepCount(), UNSTABLE, label);
 				dataset.add(action.getAborted(), ABORTED, label);
 				dataset.add(action.getRunning(), RUNNING, label);
 			}

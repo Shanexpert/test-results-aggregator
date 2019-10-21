@@ -15,11 +15,11 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.jenkins.testresultsaggregator.TestResultsAggregatorProjectAction;
-import com.jenkins.testresultsaggregator.data.AggregatedDTO;
-import com.jenkins.testresultsaggregator.data.DataDTO;
-import com.jenkins.testresultsaggregator.data.DataJobDTO;
-import com.jenkins.testresultsaggregator.data.JenkinsJobDTO;
-import com.jenkins.testresultsaggregator.data.ResultsDTO;
+import com.jenkins.testresultsaggregator.data.Aggregated;
+import com.jenkins.testresultsaggregator.data.Data;
+import com.jenkins.testresultsaggregator.data.Job;
+import com.jenkins.testresultsaggregator.data.JobInfo;
+import com.jenkins.testresultsaggregator.data.Results;
 import com.jenkins.testresultsaggregator.reporter.XMLReporter;
 
 import hudson.FilePath;
@@ -29,19 +29,20 @@ public class ResultsParser {
 	public ResultsParser() {
 	}
 	
-	public AggregatedDTO parse(FilePath[] paths) {
+	public Aggregated parse(FilePath[] paths) {
 		if (null == paths) {
-			return new AggregatedDTO();
+			return new Aggregated();
 		}
-		AggregatedDTO finalResults = new AggregatedDTO();
-		finalResults.setResults(new ResultsDTO());
+		Aggregated finalResults = new Aggregated();
+		finalResults.setResults(new Results());
 		for (FilePath path : paths) {
 			File file = new File(path.getRemote());
 			if (!file.isFile()) {
 				continue;
 			} else {
 				try {
-					DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+					DocumentBuilderFactory dbFactory = DocumentBuilderFactory
+							.newInstance();
 					DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 					org.w3c.dom.Document doc = dBuilder.parse(file);
 					doc.getDocumentElement().normalize();
@@ -49,7 +50,8 @@ public class ResultsParser {
 					Node aggregated = nList.item(0);
 					Node results = null, jobs = null;
 					// Resolve
-					for (int i = 0; i < aggregated.getChildNodes().getLength(); i++) {
+					for (int i = 0; i < aggregated.getChildNodes()
+							.getLength(); i++) {
 						if (aggregated.getChildNodes().item(i).getNodeType() == Node.ELEMENT_NODE) {
 							if (XMLReporter.RESULTS.equalsIgnoreCase(aggregated.getChildNodes().item(i).getNodeName())) {
 								results = aggregated.getChildNodes().item(i);
@@ -63,15 +65,21 @@ public class ResultsParser {
 							Node currentNodeResults = results.getChildNodes().item(i);
 							if (currentNodeResults.getNodeType() == Node.ELEMENT_NODE) {
 								if (currentNodeResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.ABORTED)) {
-									finalResults.setCountJobAborted(Integer.parseInt(currentNodeResults.getTextContent()));
+									finalResults.setAbortedJobs(Integer.parseInt(currentNodeResults.getTextContent()));
 								} else if (currentNodeResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.FAILED)) {
-									finalResults.setCountJobFailures(Integer.parseInt(currentNodeResults.getTextContent()));
+									finalResults.setFailedJobs(Integer.parseInt(currentNodeResults.getTextContent()));
+								} else if (currentNodeResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.FAILED_KEEP)) {
+									finalResults.setKeepFailJobs(Integer.parseInt(currentNodeResults.getTextContent()));
 								} else if (currentNodeResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.RUNNING)) {
-									finalResults.setCountJobRunning(Integer.parseInt(currentNodeResults.getTextContent()));
+									finalResults.setRunningJobs(Integer.parseInt(currentNodeResults.getTextContent()));
 								} else if (currentNodeResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.SUCCESS)) {
-									finalResults.setCountJobSuccess(Integer.parseInt(currentNodeResults.getTextContent()));
+									finalResults.setSuccessJobs(Integer.parseInt(currentNodeResults.getTextContent()));
+								} else if (currentNodeResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.FIXED)) {
+									finalResults.setFixedJobs(Integer.parseInt(currentNodeResults.getTextContent()));
 								} else if (currentNodeResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.UNSTABLE)) {
-									finalResults.setCountJobUnstable(Integer.parseInt(currentNodeResults.getTextContent()));
+									finalResults.setUnstableJobs(Integer.parseInt(currentNodeResults.getTextContent()));
+								} else if (currentNodeResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.UNSTABLE_KEEP)) {
+									finalResults.setKeepUnstableJobs(Integer.parseInt(currentNodeResults.getTextContent()));
 								} else if (currentNodeResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.TOTAL_TEST)) {
 									finalResults.getResults().setTotal(Integer.parseInt(currentNodeResults.getTextContent()));
 								} else if (currentNodeResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.TOTAL_P_TEST)) {
@@ -94,17 +102,19 @@ public class ResultsParser {
 					}
 					
 					if (jobs != null) {
-						List<DataJobDTO> dataJobs = new ArrayList<>();
-						List<DataDTO> data = new ArrayList<>();
-						data.add(new DataDTO("", dataJobs));
+						List<Job> dataJobs = new ArrayList<>();
+						List<Data> data = new ArrayList<>();
+						data.add(new Data("", dataJobs));
 						finalResults.setData(data);
-						for (int i = 0; i < jobs.getChildNodes().getLength(); i++) {
-							Node currentNodeResults = jobs.getChildNodes().item(i);
+						for (int i = 0; i < jobs.getChildNodes()
+								.getLength(); i++) {
+							Node currentNodeResults = jobs.getChildNodes()
+									.item(i);
 							if (XMLReporter.JOB.equalsIgnoreCase(currentNodeResults.getNodeName())) {
-								DataJobDTO dataJob = new DataJobDTO("", "");
+								Job dataJob = new Job("", "");
 								dataJobs.add(dataJob);
-								dataJob.setResultsDTO(new ResultsDTO(null, null));
-								dataJob.setJenkinsJob(new JenkinsJobDTO());
+								dataJob.setResults(new Results(null, null));
+								dataJob.setJobInfo(new JobInfo());
 								for (int j = 0; j < currentNodeResults.getChildNodes().getLength(); j++) {
 									Node jobResults = currentNodeResults.getChildNodes().item(j);
 									if (jobResults.getNodeName().equalsIgnoreCase(XMLReporter.NAME)) {
@@ -112,35 +122,38 @@ public class ResultsParser {
 									} else if (jobResults.getNodeName().equalsIgnoreCase(XMLReporter.FNAME)) {
 										dataJob.setJobFriendlyName(jobResults.getTextContent());
 									} else if (jobResults.getNodeName().equalsIgnoreCase(XMLReporter.STATUS)) {
-										dataJob.getResultsDTO().setCurrentResult(jobResults.getTextContent());
+										dataJob.getResults().setCurrentResult(jobResults.getTextContent());
 									} else if (jobResults.getNodeName().equalsIgnoreCase(XMLReporter.URL)) {
 										try {
-											dataJob.getJenkinsJob().setUrl(new URL(jobResults.getTextContent()));
+											dataJob.getJobInfo().setUrl(new URL(jobResults.getTextContent()));
 										} catch (Exception ex) {
 											
 										}
 									} else if (jobResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.SUCCESS)) {
-										dataJob.getResultsDTO().setPass(Integer.parseInt(jobResults.getTextContent()));
+										dataJob.getResults().setPass(Integer.parseInt(jobResults.getTextContent()));
 									} else if (jobResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.ABORTED)) {
-										dataJob.getResultsDTO().setSkip(Integer.parseInt(jobResults.getTextContent()));
+										dataJob.getResults().setSkip(Integer.parseInt(jobResults.getTextContent()));
 									} else if (jobResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.FAILED)) {
-										dataJob.getResultsDTO().setFail(Integer.parseInt(jobResults.getTextContent()));
+										dataJob.getResults().setFail(Integer.parseInt(jobResults.getTextContent()));
 									} else if (jobResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.TOTAL)) {
-										dataJob.getResultsDTO().setTotal(Integer.parseInt(jobResults.getTextContent()));
+										dataJob.getResults().setTotal(Integer.parseInt(jobResults.getTextContent()));
 									} else if (jobResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.SUCCESS_P)) {
-										dataJob.getResultsDTO().setPassDif(Integer.parseInt(jobResults.getTextContent()));
+										dataJob.getResults().setPassDif(Integer.parseInt(jobResults.getTextContent()));
 									} else if (jobResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.ABORTED_P)) {
-										dataJob.getResultsDTO().setSkipDif(Integer.parseInt(jobResults.getTextContent()));
+										dataJob.getResults().setSkipDif(Integer.parseInt(jobResults.getTextContent()));
 									} else if (jobResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.FAILED_P)) {
-										dataJob.getResultsDTO().setFailDif(Integer.parseInt(jobResults.getTextContent()));
-									} else if (jobResults.getNodeName().equalsIgnoreCase(TestResultsAggregatorProjectAction.TOTAL_P)) {
-										dataJob.getResultsDTO().setTotalDif(Integer.parseInt(jobResults.getTextContent()));
+										dataJob.getResults().setFailDif(Integer.parseInt(jobResults.getTextContent()));
+									} else if (jobResults.getNodeName()
+											.equalsIgnoreCase(
+													TestResultsAggregatorProjectAction.TOTAL_P)) {
+										dataJob.getResults().setTotalDif(Integer.parseInt(jobResults.getTextContent()));
 									}
 								}
 							}
 						}
 					}
-				} catch (ParserConfigurationException | SAXException | IOException ex) {
+				} catch (ParserConfigurationException | SAXException
+						| IOException ex) {
 					
 				}
 			}

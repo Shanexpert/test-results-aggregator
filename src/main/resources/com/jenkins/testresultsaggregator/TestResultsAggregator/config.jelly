@@ -2,12 +2,12 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"> 
 
 	<f:entry>
-        <f:repeatable var="dataJob" items="${instance.dataJob}" noAddButton="false" minimum="1">
+        <f:repeatable var="data" items="${instance.data}" noAddButton="false" minimum="1">
             <table width="100%">
-                    <f:entry title="${%groupName}" field="groupName"><f:textbox value="${dataJob.groupName}"/></f:entry>
+                    <f:entry title="${%groupName}" field="groupName"><f:textbox value="${data.groupName}"/></f:entry>
                     
                     <f:entry>
-        			<f:repeatable var="jobs" items="${dataJob.jobs}" noAddButton="false" minimum="1">
+        			<f:repeatable var="jobs" items="${data.jobs}" noAddButton="false" minimum="1">
             		<table width="100%">
                     <f:entry title="${%jobName}" field="jobName"><f:textbox value="${jobs.jobName}"/></f:entry>
                     <f:entry title="${%jobFriendlyName}" field="jobFriendlyName"><f:textbox value="${jobs.jobFriendlyName}"/></f:entry>
@@ -31,6 +31,7 @@
    
   <f:entry title="${%recipientsList}" field="recipientsList"><f:textarea /></f:entry>
   <f:entry title="${%subject}" field="subject"><f:textbox /></f:entry>
+  <f:entry title="${%selectedColumns}" field="selectedColumns"><f:textbox default="Status,Percentage,Total,Pass,Fail,Skip,Commits,LastRun,Duration,Description"/></f:entry>
   <f:entry title="${%beforebody}" field="beforebody"><f:textarea /></f:entry>
   <f:entry title="${%afterbody}" field="afterbody"><f:textarea /></f:entry>
   <f:entry name="goalType" title="${%theme}" field="theme">
@@ -43,9 +44,14 @@
   <select name="sortresults">
     <option value="NAME" selected="${instance.sortresults.equals('NAME')? 'true':null}">${%jobName}</option>
     <option value="STATUS" selected="${instance.sortresults.equals('STATUS')? 'true':null}">${%JobStatus}</option>
-    <option value="TOTAL_TEST" selected="${instance.sortresults.equals('TOTAL_TEST')? 'true':null}">${%totalTests}</option>
+    <option value="TOTAL" selected="${instance.sortresults.equals('TOTAL')? 'true':null}">${%totalTests}</option>
+    <option value="Pass" selected="${instance.sortresults.equals('PASS')? 'true':null}">${%passTests}</option>
     <option value="FAIL" selected="${instance.sortresults.equals('FAIL')? 'true':null}">${%failedTests}</option>
+    <option value="SKIP" selected="${instance.sortresults.equals('SKIP')? 'true':null}">${%skippedTests}</option>
+    <option value="PERCENTAGE" selected="${instance.sortresults.equals('PERCENTAGE')? 'true':null}">${%percentage}</option>
+    <option value="COMMITS" selected="${instance.sortresults.equals('COMMITS')? 'true':null}">${%commits}</option>
     <option value="LAST_RUN" selected="${instance.sortresults.equals('LAST_RUN')? 'true':null}">${%time}</option>
+    <option value="DURATION" selected="${instance.sortresults.equals('DURATION')? 'true':null}">${%duration}</option>
   </select>
   </f:entry>
   <f:entry title="${%outOfDateResults}" field="outOfDateResults"><f:textbox /></f:entry>

@@ -3,7 +3,7 @@ package com.jenkins.testresultsaggregator.data;
 import java.io.Serializable;
 import java.util.List;
 
-public class ChangeSetDTO implements Serializable {
+public class ChangeSet implements Serializable {
 	
 	private static final long serialVersionUID = 3121214223665L;
 	

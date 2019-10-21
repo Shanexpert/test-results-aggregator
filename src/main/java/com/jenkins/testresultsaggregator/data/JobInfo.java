@@ -3,7 +3,7 @@ package com.jenkins.testresultsaggregator.data;
 import java.io.Serializable;
 import java.net.URL;
 
-public class JenkinsJobDTO implements Serializable {
+public class JobInfo implements Serializable {
 	
 	private static final long serialVersionUID = 74223666L;
 	
@@ -13,10 +13,10 @@ public class JenkinsJobDTO implements Serializable {
 	private BuildDTO lastBuild;
 	private BuildDTO lastCompletedBuild;
 	
-	public JenkinsJobDTO() {
+	public JobInfo() {
 	}
 	
-	public JenkinsJobDTO(URL url) {
+	public JobInfo(URL url) {
 		setUrl(url);
 	}
 	

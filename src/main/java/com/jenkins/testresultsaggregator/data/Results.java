@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.jenkins.testresultsaggregator.helper.Colors;
 import com.jenkins.testresultsaggregator.helper.Helper;
 
-public class ResultsDTO implements Serializable {
+public class Results implements Serializable {
 	
 	private static final long serialVersionUID = 3491974223667L;
 	
@@ -29,9 +29,10 @@ public class ResultsDTO implements Serializable {
 	
 	private String currentResult;
 	private String previousResult;
+	private String status;
 	
 	private int number;
-	private long duration;
+	private Long duration;
 	private String description;
 	private boolean building;
 	
@@ -43,7 +44,9 @@ public class ResultsDTO implements Serializable {
 	private String changesUrl;
 	private String timestamp;
 	
-	public ResultsDTO() {
+	private Double percentage;
+	
+	public Results() {
 		setPass(0);
 		setPassDif(0);
 		
@@ -57,7 +60,7 @@ public class ResultsDTO implements Serializable {
 		setTotalDif(0);
 	}
 	
-	public ResultsDTO(String currentResult, String previousResult) {
+	public Results(String currentResult, String previousResult) {
 		setCurrentResult(currentResult);
 		setPreviousResult(previousResult);
 		
@@ -74,7 +77,7 @@ public class ResultsDTO implements Serializable {
 		setTotalDif(0);
 	}
 	
-	public ResultsDTO sub(ResultsDTO resultsDTO) {
+	public Results addResults(Results resultsDTO) {
 		this.setTotal(this.getTotal() + resultsDTO.getTotal());
 		this.setTotalDif(this.getTotalDif() + resultsDTO.getTotalDif());
 		
@@ -177,11 +180,11 @@ public class ResultsDTO implements Serializable {
 		this.number = number;
 	}
 	
-	public long getDuration() {
+	public Long getDuration() {
 		return duration;
 	}
 	
-	public void setDuration(long duration) {
+	public void setDuration(Long duration) {
 		this.duration = duration;
 	}
 	
@@ -291,6 +294,19 @@ public class ResultsDTO implements Serializable {
 	
 	public void setUrl(String url) {
 		this.url = url;
+	}
+	
+	public Double getPercentage() {
+		return percentage;
+	}
+	
+	public void setPercentage(Double percentage) {
+		this.percentage = percentage;
+	}
+	
+	public String getStatus() {
+		status = Helper.calculateStatus(currentResult, previousResult);
+		return status;
 	}
 	
 }

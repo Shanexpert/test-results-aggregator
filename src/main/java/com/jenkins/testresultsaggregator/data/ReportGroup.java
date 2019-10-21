@@ -2,63 +2,62 @@ package com.jenkins.testresultsaggregator.data;
 
 import java.io.Serializable;
 
-import com.jenkins.testresultsaggregator.helper.Colors;
+import com.jenkins.testresultsaggregator.helper.Helper;
 
-public class AggregatedGroupDTO implements Serializable {
+public class ReportGroup implements Serializable {
 	
 	private static final long serialVersionUID = 3491199923666L;
 	
-	private String calculatedGroupStatus;
-	private String calculatedGroupPercentage;
+	private String status;
+	private String percentage;
 	private int jobSuccess;
 	private int jobFailed;
 	private int jobUnstable;
 	private int jobRunning;
 	private int jobAborted;
-	private ResultsDTO resultsDTO;
+	private Results results;
 	
-	public AggregatedGroupDTO() {
+	public ReportGroup() {
 		this.jobSuccess = 0;
 		this.jobFailed = 0;
 		this.jobUnstable = 0;
 		this.jobRunning = 0;
 		this.jobAborted = 0;
-		this.setResultsDTO(new ResultsDTO());
+		this.setResults(new Results());
 	}
 	
-	public AggregatedGroupDTO(String calculatedGroupStatus, int jobSuccess, int jobFailed, int jobUnstable, int jobRunning, int jobAborted, ResultsDTO resultsDTO) {
+	public ReportGroup(String status, int jobSuccess, int jobFailed, int jobUnstable, int jobRunning, int jobAborted, Results resultsDTO) {
 		super();
-		this.calculatedGroupStatus = calculatedGroupStatus;
+		this.status = status;
 		this.jobSuccess = jobSuccess;
 		this.jobFailed = jobFailed;
 		this.jobUnstable = jobUnstable;
 		this.jobRunning = jobRunning;
 		this.jobAborted = jobAborted;
-		this.setResultsDTO(resultsDTO);
+		this.setResults(resultsDTO);
 	}
 	
-	public String getCalculatedGroupStatus() {
-		return calculatedGroupStatus;
+	public String getStatus() {
+		return status;
 	}
 	
-	public void setCalculatedGroupStatus(String calculatedGroupStatus) {
-		this.calculatedGroupStatus = calculatedGroupStatus;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	
-	public String getCalculatedGroupStatusWithColor() {
+	/*public String getStatusColor() {
 		final String SUCCESS = "<font color='" + Colors.htmlSUCCESS() + "'>SUCCESS</font>";
 		final String FAILED = "<font color='" + Colors.htmlFAILED() + "'>FAIL</font>";
 		final String UNSTABLE = "<font color='" + Colors.htmlUNSTABLE() + "'>UNSTABLE</font>";
-		if (JobStatus.FAILURE.name().equalsIgnoreCase(calculatedGroupStatus)) {
+		if (JobStatus.FAILURE.name().equalsIgnoreCase(status)) {
 			return FAILED;
-		} else if (JobStatus.UNSTABLE.name().equalsIgnoreCase(calculatedGroupStatus)) {
+		} else if (JobStatus.UNSTABLE.name().equalsIgnoreCase(status)) {
 			return UNSTABLE;
-		} else if (JobStatus.SUCCESS.name().equalsIgnoreCase(calculatedGroupStatus)) {
+		} else if (JobStatus.SUCCESS.name().equalsIgnoreCase(status)) {
 			return SUCCESS;
 		}
-		return calculatedGroupStatus;
-		
-	}
+		return status;
+	}*/
 	
 	public int getJobSuccess() {
 		return jobSuccess;
@@ -100,19 +99,22 @@ public class AggregatedGroupDTO implements Serializable {
 		this.jobAborted = jobAborted;
 	}
 	
-	public ResultsDTO getResultsDTO() {
-		return resultsDTO;
+	public Results getResults() {
+		return results;
 	}
 	
-	public void setResultsDTO(ResultsDTO resultsDTO) {
-		this.resultsDTO = resultsDTO;
+	public void setResults(Results results) {
+		this.results = results;
 	}
 	
-	public String getCalculatedGroupPercentage() {
-		return calculatedGroupPercentage;
+	public String getPercentage(boolean withColor) {
+		if (withColor) {
+			setPercentage(Helper.colorizePercentage(Double.valueOf(percentage)));
+		}
+		return percentage;
 	}
 	
-	public void setCalculatedGroupPercentage(String calculatedGroupPercentage) {
-		this.calculatedGroupPercentage = calculatedGroupPercentage;
+	public void setPercentage(String percentage) {
+		this.percentage = percentage;
 	}
 }

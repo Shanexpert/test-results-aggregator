@@ -37,6 +37,9 @@ public enum LocalMessages {
 	COLUMN_SKIP ("columnSkip"),
 	COLUMN_LAST_RUN ("columnLastRun"),
 	COLUMN_COMMITS ("columnCommits"),
+	COLUMN_DURATION ("columnDuration"),
+	COLUMN_DESCRIPTION ("columnDescription"),
+	COLUMN_PERCENTAGE ("columnPercentage"),
 	XML_REPORT ("xmlReport");
 	
 	private final static ResourceBundle MESSAGES = ResourceBundle.getBundle("com.jenkins.testresultsaggregator.Messages");

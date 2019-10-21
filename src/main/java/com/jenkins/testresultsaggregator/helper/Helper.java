@@ -6,10 +6,11 @@ import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.data.JobStatus;
-import com.jenkins.testresultsaggregator.data.ResultsDTO;
+import com.jenkins.testresultsaggregator.data.Results;
 
 import hudson.FilePath;
 
@@ -94,18 +95,10 @@ public class Helper {
 		return result;
 	}
 	
-	public static String countPercentage(int pass, int total, String prefixPercentage) {
-		ResultsDTO resultsDTO = new ResultsDTO();
-		resultsDTO.setPass(pass);
-		resultsDTO.setSkip(0);
-		resultsDTO.setTotal(total);
-		return countPercentage(resultsDTO, prefixPercentage);
-	}
-	
-	public static String countPercentage(ResultsDTO resultsDTO, String prefixPercentage) {
+	public static Double countPercentage(Results results) {
 		String percentage = "0";
 		try {
-			percentage = singDoubleSingle((double) (resultsDTO.getPass() + resultsDTO.getSkip()) * 100 / resultsDTO.getTotal());
+			percentage = singDoubleSingle((double) (results.getPass() + results.getSkip()) * 100 / results.getTotal());
 		} catch (Exception ex) {
 			
 		}
@@ -115,14 +108,33 @@ public class Helper {
 		} catch (Exception ex) {
 			
 		}
+		return percentageDouble;
+	}
+	
+	public static String countPercentage(int pass, int total) {
+		Results results = new Results();
+		results.setPass(pass);
+		results.setSkip(0);
+		results.setTotal(total);
+		return countPercentage(results).toString();
+	}
+	
+	public static Double countPercentageD(int pass, int total) {
+		Results results = new Results();
+		results.setPass(pass);
+		results.setSkip(0);
+		results.setTotal(total);
+		return countPercentage(results);
+	}
+	
+	public static String colorizePercentage(double percentageDouble) {
 		if (percentageDouble >= 100) {
-			percentage = prefixPercentage + colorize(percentage + "%", Colors.SUCCESS);
+			return colorize(percentageDouble + "%", Colors.SUCCESS);
 		} else if (percentageDouble >= 95) {
-			percentage = prefixPercentage + colorize(percentage + "%", Colors.UNSTABLE);
+			return colorize(percentageDouble + "%", Colors.UNSTABLE);
 		} else {
-			percentage = prefixPercentage + colorize(percentage + "%", Colors.FAILED);
+			return colorize(percentageDouble + "%", Colors.FAILED);
 		}
-		return percentage;
 	}
 	
 	private static String singDoubleSingle(double value) {
@@ -236,5 +248,59 @@ public class Helper {
 			color = Colors.BLACK;
 		}
 		return "<font color='" + Colors.html(color) + "'>" + text + "</font>";
+	}
+	
+	public static String duration(Long millis) {
+		Duration duration = Duration.of(millis, ChronoUnit.MILLIS);
+		long durationInSeconds = duration.getSeconds();
+		long hours = durationInSeconds / 3600;
+		long minutes = (durationInSeconds % 3600) / 60;
+		String hoursString = "";
+		String minString = "";
+		if (hours < 10) {
+			hoursString = "0" + hours;
+		} else {
+			hoursString = Long.toString(hours);
+		}
+		if (minutes < 10) {
+			minString = "0" + minutes;
+		} else {
+			minString = Long.toString(minutes);
+		}
+		if (hours == 0 && minutes == 0) {
+			return null;
+		} else if (hours == 0) {
+			return "00:" + minString;
+		} else {
+			return hoursString + ":" + minString;
+		}
+	}
+	
+	public static String calculateStatus(String currentResult, String previousResult) {
+		if (JobStatus.SUCCESS.name().equals(currentResult) && JobStatus.SUCCESS.name().equals(previousResult)) {
+			return JobStatus.SUCCESS.name();
+		} else if (JobStatus.SUCCESS.name().equals(currentResult) && JobStatus.FAILURE.name().equals(previousResult)) {
+			return JobStatus.FIXED.name();
+		} else if (JobStatus.SUCCESS.name().equals(currentResult) && JobStatus.UNSTABLE.name().equals(previousResult)) {
+			return JobStatus.FIXED.name();
+		} else if (JobStatus.SUCCESS.name().equals(currentResult) && previousResult == null) {
+			return JobStatus.SUCCESS.name();
+		} else if (JobStatus.UNSTABLE.name().equals(currentResult) && JobStatus.UNSTABLE.name().equals(previousResult)) {
+			return JobStatus.STILL_UNSTABLE.name();
+		} else if (JobStatus.FAILURE.name().equals(currentResult) && JobStatus.FAILURE.name().equals(previousResult)) {
+			return JobStatus.STILL_FAILING.name();
+		} else if (JobStatus.FAILURE.name().equals(currentResult)) {
+			return JobStatus.FAILURE.name();
+		} else if (JobStatus.UNSTABLE.name().equals(currentResult)) {
+			return JobStatus.UNSTABLE.name();
+		} else if (JobStatus.RUNNING.name().equals(currentResult)) {
+			return JobStatus.RUNNING.name();
+		} else if (JobStatus.ABORTED.name().equals(currentResult)) {
+			return JobStatus.ABORTED.name();
+		} else if (JobStatus.SUCCESS.name().equals(currentResult)) {
+			return JobStatus.SUCCESS.name();
+		} else {
+			return currentResult;
+		}
 	}
 }

@@ -96,16 +96,19 @@ public class GraphHelper {
 					// there are no results associated with this build
 					return "";
 				}
-				if (TestResultsAggregatorProjectAction.SUCCESS.equalsIgnoreCase(dataset.getRowKey(row).toString())) {
-					return String.valueOf(report.getSuccess()) + " " + TestResultsAggregatorProjectAction.SUCCESS;
+				if (TestResultsAggregatorProjectAction.SUCCESS.equalsIgnoreCase(dataset.getRowKey(row).toString())
+						|| TestResultsAggregatorProjectAction.FIXED.equalsIgnoreCase(dataset.getRowKey(row).toString())) {
+					return String.valueOf(report.getSuccess() + report.getFixed()) + " " + TestResultsAggregatorProjectAction.SUCCESS;
 				} else if (TestResultsAggregatorProjectAction.ABORTED.equalsIgnoreCase(dataset.getRowKey(row).toString())) {
 					return String.valueOf(report.getAborted()) + " " + TestResultsAggregatorProjectAction.ABORTED;
-				} else if (TestResultsAggregatorProjectAction.FAILED.equalsIgnoreCase(dataset.getRowKey(row).toString())) {
-					return String.valueOf(report.getFailCount()) + " " + TestResultsAggregatorProjectAction.FAILED;
+				} else if (TestResultsAggregatorProjectAction.FAILED.equalsIgnoreCase(dataset.getRowKey(row).toString())
+						|| TestResultsAggregatorProjectAction.FAILED_KEEP.equalsIgnoreCase(dataset.getRowKey(row).toString())) {
+					return String.valueOf(report.getFailCount() + report.getFailKeepCount()) + " " + TestResultsAggregatorProjectAction.FAILED;
 				} else if (TestResultsAggregatorProjectAction.RUNNING.equalsIgnoreCase(dataset.getRowKey(row).toString())) {
 					return String.valueOf(report.getRunning()) + " " + TestResultsAggregatorProjectAction.RUNNING;
-				} else if (TestResultsAggregatorProjectAction.UNSTABLE.equalsIgnoreCase(dataset.getRowKey(row).toString())) {
-					return String.valueOf(report.getUnstableCount()) + " " + TestResultsAggregatorProjectAction.UNSTABLE;
+				} else if (TestResultsAggregatorProjectAction.UNSTABLE.equalsIgnoreCase(dataset.getRowKey(row).toString())
+						|| TestResultsAggregatorProjectAction.UNSTABLE_KEEP.equalsIgnoreCase(dataset.getRowKey(row).toString())) {
+					return String.valueOf(report.getUnstableCount() + report.getUnstableKeepCount()) + " " + TestResultsAggregatorProjectAction.UNSTABLE;
 				} else {
 					return "";
 				}
@@ -114,15 +117,18 @@ public class GraphHelper {
 		plot.setRenderer(ar);
 		// Set Custom Colors
 		for (int i = 0; i < dataset.getRowCount(); i++) {
-			if (TestResultsAggregatorProjectAction.SUCCESS.equalsIgnoreCase(dataset.getRowKey(i).toString())) {
+			if (TestResultsAggregatorProjectAction.SUCCESS.equalsIgnoreCase(dataset.getRowKey(i).toString())
+					|| TestResultsAggregatorProjectAction.FIXED.equalsIgnoreCase(dataset.getRowKey(i).toString())) {
 				ar.setSeriesPaint(i, Colors.SUCCESS); // Success
 			} else if (TestResultsAggregatorProjectAction.ABORTED.equalsIgnoreCase(dataset.getRowKey(i).toString())) {
 				ar.setSeriesPaint(i, Colors.ABORTED); // Aborted
-			} else if (TestResultsAggregatorProjectAction.FAILED.equalsIgnoreCase(dataset.getRowKey(i).toString())) {
+			} else if (TestResultsAggregatorProjectAction.FAILED.equalsIgnoreCase(dataset.getRowKey(i).toString())
+					|| TestResultsAggregatorProjectAction.FAILED_KEEP.equalsIgnoreCase(dataset.getRowKey(i).toString())) {
 				ar.setSeriesPaint(i, Colors.FAILED); // Failed
 			} else if (TestResultsAggregatorProjectAction.RUNNING.equalsIgnoreCase(dataset.getRowKey(i).toString())) {
 				ar.setSeriesPaint(i, Colors.RUNNING); // Running
-			} else if (TestResultsAggregatorProjectAction.UNSTABLE.equalsIgnoreCase(dataset.getRowKey(i).toString())) {
+			} else if (TestResultsAggregatorProjectAction.UNSTABLE.equalsIgnoreCase(dataset.getRowKey(i).toString())
+					|| TestResultsAggregatorProjectAction.UNSTABLE_KEEP.equalsIgnoreCase(dataset.getRowKey(i).toString())) {
 				ar.setSeriesPaint(i, Colors.UNSTABLE); // Unstable
 			}
 		}

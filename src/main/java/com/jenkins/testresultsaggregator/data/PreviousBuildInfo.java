@@ -3,13 +3,13 @@ package com.jenkins.testresultsaggregator.data;
 import java.io.Serializable;
 import java.net.URL;
 
-public class JenkinsPreviousBuildDTO implements Serializable {
+public class PreviousBuildInfo implements Serializable {
 	
 	private static final long serialVersionUID = 3491188823666L;
 	private int number;
 	private URL url;
 	
-	public JenkinsPreviousBuildDTO() {
+	public PreviousBuildInfo() {
 		
 	}
 	

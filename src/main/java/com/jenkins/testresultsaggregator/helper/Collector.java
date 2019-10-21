@@ -13,14 +13,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.google.common.base.Strings;
-import com.jenkins.testresultsaggregator.data.AggregateJobDTO;
-import com.jenkins.testresultsaggregator.data.ChangeSetDTO;
-import com.jenkins.testresultsaggregator.data.DataDTO;
-import com.jenkins.testresultsaggregator.data.DataJobDTO;
-import com.jenkins.testresultsaggregator.data.JenkinsBuildDTO;
-import com.jenkins.testresultsaggregator.data.JenkinsJobDTO;
+import com.jenkins.testresultsaggregator.data.BuildInfo;
+import com.jenkins.testresultsaggregator.data.ChangeSet;
+import com.jenkins.testresultsaggregator.data.Data;
+import com.jenkins.testresultsaggregator.data.Job;
+import com.jenkins.testresultsaggregator.data.JobInfo;
 import com.jenkins.testresultsaggregator.data.JobStatus;
-import com.jenkins.testresultsaggregator.data.ResultsDTO;
+import com.jenkins.testresultsaggregator.data.ReportJob;
+import com.jenkins.testresultsaggregator.data.Results;
 
 import hudson.util.Secret;
 
@@ -49,16 +49,16 @@ public class Collector {
 		this.logger = logger;
 	}
 	
-	public void collectResults(List<DataDTO> dataJob) throws InterruptedException {
-		List<DataJobDTO> allDataJobDTO = new ArrayList<>();
-		for (DataDTO temp : dataJob) {
+	public void collectResults(List<Data> dataJob) throws InterruptedException {
+		List<Job> allDataJobDTO = new ArrayList<>();
+		for (Data temp : dataJob) {
 			if (temp.getJobs() != null && !temp.getJobs().isEmpty()) {
 				allDataJobDTO.addAll(temp.getJobs());
 			}
 		}
 		ReportThread[] threads = new ReportThread[allDataJobDTO.size()];
 		int index = 0;
-		for (DataJobDTO tempDataJobDTO : allDataJobDTO) {
+		for (Job tempDataJobDTO : allDataJobDTO) {
 			threads[index] = new ReportThread(tempDataJobDTO);
 			index++;
 		}
@@ -88,166 +88,170 @@ public class Collector {
 		return Http.get(jobUrlAPI, authenticationString());
 	}
 	
-	public JenkinsJobDTO getJobInfo(DataJobDTO dataJobDTO) {
+	public JobInfo getJobInfo(Job job) {
 		try {
-			URL jobUrlAPI = new URL(jenkinsUrl + "/" + JOB + "/" + dataJobDTO.getJobName() + "/" + API_JSON_URL);
+			URL jobUrlAPI = new URL(jenkinsUrl + "/" + JOB + "/" + job.getJobName() + "/" + API_JSON_URL);
 			String reply = Http.get(jobUrlAPI, authenticationString());
-			return Deserialize.initializeObjectMapper().readValue(reply, JenkinsJobDTO.class);
+			return Deserialize.initializeObjectMapper().readValue(reply, JobInfo.class);
 		} catch (IOException e) {
 		}
 		return null;
 	}
 	
-	public JenkinsBuildDTO getJobResults(DataJobDTO dataJobDTO) {
+	public BuildInfo getJobInfoLastBuild(Job dataJobDTO) {
 		try {
-			URL jobUrlAPILastBuild = new URL(dataJobDTO.getJenkinsJob().getUrl() + "/" + LASTBUILD + "/" + API_JSON_URL);
+			URL jobUrlAPILastBuild = new URL(dataJobDTO.getJobInfo().getUrl() + "/" + LASTBUILD + "/" + API_JSON_URL);
 			// Get Latest
 			String reply = Http.get(jobUrlAPILastBuild, authenticationString());
-			return Deserialize.initializeObjectMapper().readValue(reply, JenkinsBuildDTO.class);
+			return Deserialize.initializeObjectMapper().readValue(reply, BuildInfo.class);
 		} catch (IOException e) {
 		}
 		return null;
 	}
 	
-	public ResultsDTO getResults(DataJobDTO dataJobDTO) {
-		if (dataJobDTO.getJenkinsBuild() != null) {
-			ResultsDTO resultsDTO = new ResultsDTO();
+	public Results calculateResults(Job job) {
+		if (job.getBuildInfo() != null) {
+			Results results = new Results();
 			// Set Url
-			resultsDTO.setUrl(dataJobDTO.getJenkinsJob().getUrl().toString());
+			results.setUrl(job.getJobInfo().getUrl().toString());
 			// Set Building status
-			resultsDTO.setBuilding(dataJobDTO.getJenkinsBuild().getBuilding());
+			results.setBuilding(job.getBuildInfo().getBuilding());
 			// Set Current Result
-			resultsDTO.setCurrentResult(dataJobDTO.getJenkinsBuild().getResult());
+			results.setCurrentResult(job.getBuildInfo().getResult());
 			// Set Description
-			resultsDTO.setDescription(dataJobDTO.getJenkinsBuild().getDescription());
+			results.setDescription(job.getBuildInfo().getDescription());
 			// Set Duration
-			resultsDTO.setDuration(dataJobDTO.getJenkinsBuild().getDuration());
+			results.setDuration(job.getBuildInfo().getDuration());
 			// Set Number
-			resultsDTO.setNumber(dataJobDTO.getJenkinsBuild().getNumber());
+			results.setNumber(job.getBuildInfo().getNumber());
+			// Set Duration
+			results.setDuration(job.getBuildInfo().getDuration());
 			// Set TimeStamp
-			if (dataJobDTO.getJenkinsBuild().getTimestamp() != null) {
+			if (job.getBuildInfo().getTimestamp() != null) {
 				DateFormat formatter = new SimpleDateFormat("dd/MM/YYYY HH:mm:ss:SSS");
-				String dateFormatted = formatter.format(new Date(dataJobDTO.getJenkinsBuild().getTimestamp()));
-				resultsDTO.setTimestamp(dateFormatted);
+				String dateFormatted = formatter.format(new Date(job.getBuildInfo().getTimestamp()));
+				results.setTimestamp(dateFormatted);
 			}
 			// Set Change Set
-			if (dataJobDTO.getJenkinsBuild().getChangeSets() != null) {
+			if (job.getBuildInfo().getChangeSets() != null) {
 				int changes = 0;
-				for (ChangeSetDTO tempI : dataJobDTO.getJenkinsBuild().getChangeSets()) {
+				for (ChangeSet tempI : job.getBuildInfo().getChangeSets()) {
 					changes += tempI.getItems().size();
 				}
-				resultsDTO.setNumberOfChanges(changes);
+				results.setNumberOfChanges(changes);
 			} else {
-				resultsDTO.setNumberOfChanges(0);
+				results.setNumberOfChanges(0);
 			}
 			// Set Changes URL
-			resultsDTO.setChangesUrl(dataJobDTO.getJenkinsJob().getUrl() + "/" + dataJobDTO.getJenkinsBuild().getNumber() + "/" + CHANGES);
+			results.setChangesUrl(job.getJobInfo().getUrl() + "/" + job.getBuildInfo().getNumber() + "/" + CHANGES);
 			
 			// If Job is not running get results
-			if (!resultsDTO.isBuilding()) {
+			if (!results.isBuilding()) {
 				// Calculate FAIL,SKIP and TOTAL Test Results
-				for (HashMap<Object, Object> temp : dataJobDTO.getJenkinsBuild().getActions()) {
+				for (HashMap<Object, Object> temp : job.getBuildInfo().getActions()) {
 					if (temp.containsKey(FAILCOUNT)) {
-						resultsDTO.setFail((Integer) temp.get(FAILCOUNT));
+						results.setFail((Integer) temp.get(FAILCOUNT));
 					}
 					if (temp.containsKey(SKIPCOUNT)) {
-						resultsDTO.setSkip((Integer) temp.get(SKIPCOUNT));
+						results.setSkip((Integer) temp.get(SKIPCOUNT));
 					}
 					if (temp.containsKey(TOTALCOUNT)) {
-						resultsDTO.setTotal((Integer) temp.get(TOTALCOUNT));
+						results.setTotal((Integer) temp.get(TOTALCOUNT));
 					}
 				}
 				// Calculate Pass Results
-				resultsDTO.setPass(resultsDTO.getTotal() - Math.abs(resultsDTO.getFail()) - Math.abs(resultsDTO.getSkip()));
+				results.setPass(results.getTotal() - Math.abs(results.getFail()) - Math.abs(results.getSkip()));
+				// Calculate Percentage
+				results.setPercentage(Helper.countPercentage(results));
 				// Add Url
-				resultsDTO.setConsoleUrl(dataJobDTO.getJenkinsJob().getUrl().toString() + dataJobDTO.getJenkinsBuild().getNumber() + "/" + CONSOLE_OUTPUT);
-				String testNGUrl = dataJobDTO.getJenkinsJob().getUrl().toString() + dataJobDTO.getJenkinsBuild().getNumber() + "/" + TESTNG_REPORT;
-				String junitsUrl = dataJobDTO.getJenkinsJob().getUrl().toString() + dataJobDTO.getJenkinsBuild().getNumber() + "/" + JUNIT_REPORT;
+				results.setConsoleUrl(job.getJobInfo().getUrl().toString() + job.getBuildInfo().getNumber() + "/" + CONSOLE_OUTPUT);
+				String testNGUrl = job.getJobInfo().getUrl().toString() + job.getBuildInfo().getNumber() + "/" + TESTNG_REPORT;
+				String junitsUrl = job.getJobInfo().getUrl().toString() + job.getBuildInfo().getNumber() + "/" + JUNIT_REPORT;
 				if (Http.getResponseCode(testNGUrl, authenticationString()) == 200) {
-					resultsDTO.setReportUrl(testNGUrl);
+					results.setReportUrl(testNGUrl);
 				} else if (Http.getResponseCode(junitsUrl, authenticationString()) == 200) {
-					resultsDTO.setReportUrl(junitsUrl);
+					results.setReportUrl(junitsUrl);
 				} else {
-					resultsDTO.setReportUrl(resultsDTO.getConsoleUrl());
+					results.setReportUrl(results.getConsoleUrl());
 				}
 				// Calculate Previous Results
-				if (dataJobDTO.getJenkinsBuild().getPreviousBuild() != null) {
+				if (job.getBuildInfo().getPreviousBuild() != null) {
 					// Get Previous
 					try {
-						JenkinsBuildDTO jenkinsPreviousBuildDTO = Deserialize.initializeObjectMapper()
-								.readValue(Http.get(dataJobDTO.getJenkinsBuild().getPreviousBuild().getUrl() + "/" + API_JSON_URL, authenticationString()), JenkinsBuildDTO.class);
-						resultsDTO.setPreviousResult(jenkinsPreviousBuildDTO.getResult());
+						BuildInfo jenkinsPreviousBuildDTO = Deserialize.initializeObjectMapper().readValue(Http.get(job.getBuildInfo().getPreviousBuild().getUrl() + "/" + API_JSON_URL, authenticationString()),
+								BuildInfo.class);
+						results.setPreviousResult(jenkinsPreviousBuildDTO.getResult());
 						// Calculate FAIL,SKIP and TOTAL of the Previous Test
 						int previouslyFail = 0;
 						int previouslyPass = 0;
 						int previouslySkip = 0;
 						for (HashMap<Object, Object> temp : jenkinsPreviousBuildDTO.getActions()) {
 							if (temp.containsKey(FAILCOUNT)) {
-								resultsDTO.setFailDif((Integer) temp.get(FAILCOUNT));
+								results.setFailDif((Integer) temp.get(FAILCOUNT));
 								previouslyFail += (Integer) temp.get(FAILCOUNT);
 							}
 							if (temp.containsKey(SKIPCOUNT)) {
-								resultsDTO.setSkipDif((Integer) temp.get(SKIPCOUNT));
+								results.setSkipDif((Integer) temp.get(SKIPCOUNT));
 								previouslySkip += (Integer) temp.get(SKIPCOUNT);
 							}
 							if (temp.containsKey(TOTALCOUNT)) {
-								resultsDTO.setTotalDif((Integer) temp.get(TOTALCOUNT));
+								results.setTotalDif((Integer) temp.get(TOTALCOUNT));
 								previouslyPass += (Integer) temp.get(TOTALCOUNT);
 							}
 						}
 						// Calculate Pass Difference Results
-						resultsDTO.setPassDif(previouslyPass - Math.abs(previouslyFail) - Math.abs(previouslySkip));
+						results.setPassDif(previouslyPass - Math.abs(previouslyFail) - Math.abs(previouslySkip));
 					} catch (IOException ex) {
 						
 					}
 				}
 			} else {
-				resultsDTO.setCurrentResult(JobStatus.RUNNING.name());
+				results.setCurrentResult(JobStatus.RUNNING.name());
 				// Add Url
-				resultsDTO.setConsoleUrl(dataJobDTO.getJenkinsJob().getUrl() + "/" + dataJobDTO.getJenkinsBuild().getNumber() + "/" + CONSOLE_OUTPUT);
-				resultsDTO.setReportUrl(resultsDTO.getConsoleUrl());
+				results.setConsoleUrl(job.getJobInfo().getUrl() + "/" + job.getBuildInfo().getNumber() + "/" + CONSOLE_OUTPUT);
+				results.setReportUrl(results.getConsoleUrl());
 			}
-			return resultsDTO;
+			return results;
 		}
 		return null;
 	}
 	
 	public class ReportThread extends Thread {
 		
-		DataJobDTO dataJobDTO;
+		Job job;
 		
-		public ReportThread(DataJobDTO dataJobDTO) {
-			this.dataJobDTO = dataJobDTO;
+		public ReportThread(Job job) {
+			this.job = job;
 		}
 		
 		@Override
 		public void run() {
 			// Get Jenkins Job Info
-			dataJobDTO.setJenkinsJob(getJobInfo(dataJobDTO));
-			if (dataJobDTO.getJenkinsJob() == null) {
+			job.setJobInfo(getJobInfo(job));
+			if (job.getJobInfo() == null) {
 				// Job Not Found
-				dataJobDTO.setJenkinsJob(new JenkinsJobDTO());
-				dataJobDTO.setResultsDTO(new ResultsDTO(JobStatus.NOT_FOUND.name(), null));
-				dataJobDTO.getResultsDTO().setUrl(null);
-				dataJobDTO.setAggregate(new AggregateJobDTO());
-				dataJobDTO.getAggregate().calculateReport(dataJobDTO.getResultsDTO());
-				logger.println(LocalMessages.COLLECT_DATA.toString() + " '" + dataJobDTO.getJobName() + "' " + LocalMessages.JOB_NOT_FOUND.toString());
-			} else if (!dataJobDTO.getJenkinsJob().getBuildable()) {
+				job.setJobInfo(new JobInfo());
+				job.setResults(new Results(JobStatus.NOT_FOUND.name(), null));
+				job.getResults().setUrl(null);
+				job.setReport(new ReportJob());
+				job.getReport().calculateReport(job.getResults());
+				logger.println(LocalMessages.COLLECT_DATA.toString() + " '" + job.getJobName() + "' " + LocalMessages.JOB_NOT_FOUND.toString());
+			} else if (!job.getJobInfo().getBuildable()) {
 				// Job is Disabled/ Not Buildable
-				String tempUrl = dataJobDTO.getJenkinsJob().getUrl().toString();
-				dataJobDTO.setJenkinsJob(new JenkinsJobDTO());
-				dataJobDTO.setResultsDTO(new ResultsDTO(JobStatus.DISABLED.name(), null));
-				dataJobDTO.getResultsDTO().setUrl(tempUrl);
-				dataJobDTO.setAggregate(new AggregateJobDTO());
-				dataJobDTO.getAggregate().calculateReport(null);
-				logger.println(LocalMessages.COLLECT_DATA.toString() + " '" + dataJobDTO.getJobName() + "' " + LocalMessages.JOB_IS_DISABLED.toString());
-			} else if (dataJobDTO.getJenkinsJob() != null) {
+				String tempUrl = job.getJobInfo().getUrl().toString();
+				job.setJobInfo(new JobInfo());
+				job.setResults(new Results(JobStatus.DISABLED.name(), null));
+				job.getResults().setUrl(tempUrl);
+				job.setReport(new ReportJob());
+				job.getReport().calculateReport(null);
+				logger.println(LocalMessages.COLLECT_DATA.toString() + " '" + job.getJobName() + "' " + LocalMessages.JOB_IS_DISABLED.toString());
+			} else if (job.getJobInfo() != null) {
 				// Job Found and is Buildable
 				// Get Job Results
-				dataJobDTO.setJenkinsBuild(getJobResults(dataJobDTO));
+				job.setBuildInfo(getJobInfoLastBuild(job));
 				// Get Actual Results
-				dataJobDTO.setResultsDTO(getResults(dataJobDTO));
-				logger.println(LocalMessages.COLLECT_DATA.toString() + " '" + dataJobDTO.getJobName() + "' " + LocalMessages.FINISHED.toString());
+				job.setResults(calculateResults(job));
+				logger.println(LocalMessages.COLLECT_DATA.toString() + " '" + job.getJobName() + "' " + LocalMessages.FINISHED.toString());
 			} else {
 				logger.println("...");
 			}

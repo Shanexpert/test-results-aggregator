@@ -10,8 +10,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import com.google.common.base.Strings;
-import com.jenkins.testresultsaggregator.data.DataDTO;
-import com.jenkins.testresultsaggregator.data.DataJobDTO;
+import com.jenkins.testresultsaggregator.data.Data;
+import com.jenkins.testresultsaggregator.data.Job;
 import com.jenkins.testresultsaggregator.data.JobStatus;
 import com.jenkins.testresultsaggregator.helper.LocalMessages;
 
@@ -20,18 +20,18 @@ import jenkins.plugins.mailer.tasks.MimeMessageBuilder;
 public class MailNotification {
 	
 	private PrintStream logger;
-	private List<DataDTO> dataJob;
+	private List<Data> dataJob;
 	
-	public MailNotification(PrintStream logger, List<DataDTO> dataJob) {
+	public MailNotification(PrintStream logger, List<Data> dataJob) {
 		this.logger = logger;
 		this.dataJob = dataJob;
 	}
 	
 	private boolean validateResults() {
 		boolean allJobsNotFound = true;
-		for (DataDTO tempDataDTO : dataJob) {
-			for (DataJobDTO tempDataJobDTO : tempDataDTO.getJobs()) {
-				if (tempDataJobDTO.getJenkinsBuild() != null && !JobStatus.NOT_FOUND.name().equals(tempDataJobDTO.getJenkinsBuild().getResult())) {
+		for (Data tempDataDTO : dataJob) {
+			for (Job tempDataJobDTO : tempDataDTO.getJobs()) {
+				if (tempDataJobDTO.getBuildInfo() != null && !JobStatus.NOT_FOUND.name().equals(tempDataJobDTO.getBuildInfo().getResult())) {
 					allJobsNotFound = false;
 					break;
 				}

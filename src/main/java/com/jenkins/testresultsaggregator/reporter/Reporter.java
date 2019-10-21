@@ -7,15 +7,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
 import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.TestResultsAggregator.AggregatorProperties;
-import com.jenkins.testresultsaggregator.data.AggregatedDTO;
-import com.jenkins.testresultsaggregator.data.DataDTO;
+import com.jenkins.testresultsaggregator.data.Aggregated;
+import com.jenkins.testresultsaggregator.data.Data;
 import com.jenkins.testresultsaggregator.helper.LocalMessages;
 
 import hudson.FilePath;
@@ -37,32 +35,19 @@ public class Reporter {
 		this.mailNotificationFrom = mailNotificationFrom;
 	}
 	
-	public void publishResuts(String recipientsList, AggregatedDTO aggregated, Properties properties) throws Exception {
-		List<DataDTO> dataJob = aggregated.getData();
+	public void publishResuts(String recipientsList, Aggregated aggregated, Properties properties, List<LocalMessages> columns) throws Exception {
+		List<Data> dataJob = aggregated.getData();
 		foundAtLeastOneGroupName = false;
-		for (DataDTO data : dataJob) {
+		for (Data data : dataJob) {
 			if (!Strings.isNullOrEmpty(data.getGroupName())) {
 				foundAtLeastOneGroupName = true;
 				break;
 			}
 		}
 		// Calculate and Generate Columns
-		columns = new ArrayList<>();
-		if (foundAtLeastOneGroupName) {
-			columns = new ArrayList<>(Arrays.asList(LocalMessages.COLUMN_GROUP.toString()));
+		if (!foundAtLeastOneGroupName) {
+			columns.remove(LocalMessages.COLUMN_GROUP);
 		}
-		if (Boolean.valueOf(properties.getProperty(AggregatorProperties.PRINT_GROUP_STATUS_IN_NEW_COLUMN.name()))) {
-			columns.add(LocalMessages.COLUMN_GROUP_STATUS.toString());
-		}
-		columns.addAll(new ArrayList<>(Arrays.asList(
-				LocalMessages.COLUMN_JOB.toString(),
-				LocalMessages.COLUMN_JOB_STATUS.toString(),
-				LocalMessages.COLUMN_TESTS.toString(),
-				LocalMessages.COLUMN_FAIL.toString(),
-				// LocalMessages.COLUMN_PASS.toString(),
-				// LocalMessages.COLUMN_SKIP.toString(),
-				LocalMessages.COLUMN_COMMITS.toString(),
-				LocalMessages.COLUMN_LAST_RUN.toString())));
 		// Generate HTML Report
 		String htmlReport = new HTMLReporter(logger, workspace).createOverview(aggregated, columns, properties.getProperty(AggregatorProperties.THEME.name()), foundAtLeastOneGroupName);
 		// Generate and Send Mail report
@@ -90,22 +75,22 @@ public class Reporter {
 		return sb.toString();
 	}
 	
-	private String generateMailSubject(String subjectPrefix, AggregatedDTO aggregated) {
+	private String generateMailSubject(String subjectPrefix, Aggregated aggregated) {
 		String subject = subjectPrefix;
-		if (aggregated.getCountJobRunning() > 0) {
-			subject += " " + LocalMessages.RESULTS_RUNNING.toString() + " : " + aggregated.getCountJobRunning();
+		if (aggregated.getRunningJobs() > 0) {
+			subject += " " + LocalMessages.RESULTS_RUNNING.toString() + " : " + aggregated.getRunningJobs();
 		}
-		if (aggregated.getCountJobSuccess() > 0) {
-			subject += " " + LocalMessages.RESULTS_SUCCESS.toString() + " : " + aggregated.getCountJobSuccess();
+		if (aggregated.getSuccessJobs() > 0 || aggregated.getFixedJobs() > 0) {
+			subject += " " + LocalMessages.RESULTS_SUCCESS.toString() + " : " + (aggregated.getSuccessJobs() + aggregated.getFixedJobs());
 		}
-		if (aggregated.getCountJobFailures() > 0) {
-			subject += " " + LocalMessages.RESULTS_FAILED.toString() + " : " + aggregated.getCountJobFailures();
+		if (aggregated.getFailedJobs() > 0 || aggregated.getKeepFailJobs() > 0) {
+			subject += " " + LocalMessages.RESULTS_FAILED.toString() + " : " + (aggregated.getFailedJobs() + aggregated.getKeepFailJobs());
 		}
-		if (aggregated.getCountJobUnstable() > 0) {
-			subject += " " + LocalMessages.RESULTS_UNSTABLE.toString() + " : " + aggregated.getCountJobUnstable();
+		if (aggregated.getUnstableJobs() > 0 || aggregated.getKeepUnstableJobs() > 0) {
+			subject += " " + LocalMessages.RESULTS_UNSTABLE.toString() + " : " + (aggregated.getUnstableJobs() + aggregated.getKeepUnstableJobs());
 		}
-		if (aggregated.getCountJobAborted() > 0) {
-			subject += " " + LocalMessages.RESULTS_ABORTED.toString() + " : " + aggregated.getCountJobAborted();
+		if (aggregated.getAbortedJobs() > 0) {
+			subject += " " + LocalMessages.RESULTS_ABORTED.toString() + " : " + aggregated.getAbortedJobs();
 		}
 		return subject;
 	}

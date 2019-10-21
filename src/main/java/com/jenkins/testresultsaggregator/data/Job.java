@@ -10,20 +10,20 @@ import com.jenkins.testresultsaggregator.helper.Colors;
 
 import hudson.model.AbstractDescribableImpl;
 
-public class DataJobDTO extends AbstractDescribableImpl<DataJobDTO> implements Serializable {
+public class Job extends AbstractDescribableImpl<Job> implements Serializable {
 	
 	private static final long serialVersionUID = 34911974223666L;
 	
 	private String jobName;
 	private String jobFriendlyName;
 	//
-	private JenkinsJobDTO jenkinsJob;
-	private JenkinsBuildDTO JenkinsBuild;
-	private ResultsDTO resultsDTO;
-	private AggregateJobDTO aggregate;
+	private JobInfo jobInfo;
+	private BuildInfo buildInfo;
+	private Results results;
+	private ReportJob report;
 	
 	@DataBoundConstructor
-	public DataJobDTO(String jobName, String jobFriendlyName) {
+	public Job(String jobName, String jobFriendlyName) {
 		setJobName(jobName);
 		setJobFriendlyName(jobFriendlyName);
 	}
@@ -52,28 +52,28 @@ public class DataJobDTO extends AbstractDescribableImpl<DataJobDTO> implements S
 		this.jobFriendlyName = jonFriendlyName;
 	}
 	
-	public JenkinsJobDTO getJenkinsJob() {
-		return jenkinsJob;
+	public JobInfo getJobInfo() {
+		return jobInfo;
 	}
 	
-	public void setJenkinsJob(JenkinsJobDTO jenkinsJob) {
-		this.jenkinsJob = jenkinsJob;
+	public void setJobInfo(JobInfo jobInfo) {
+		this.jobInfo = jobInfo;
 	}
 	
-	public JenkinsBuildDTO getJenkinsBuild() {
-		return JenkinsBuild;
+	public BuildInfo getBuildInfo() {
+		return buildInfo;
 	}
 	
-	public void setJenkinsBuild(JenkinsBuildDTO jenkinsBuild) {
-		JenkinsBuild = jenkinsBuild;
+	public void setBuildInfo(BuildInfo buildInfo) {
+		this.buildInfo = buildInfo;
 	}
 	
-	public ResultsDTO getResultsDTO() {
-		return resultsDTO;
+	public Results getResults() {
+		return results;
 	}
 	
-	public void setResultsDTO(ResultsDTO resultsDTO) {
-		this.resultsDTO = resultsDTO;
+	public void setResults(Results results) {
+		this.results = results;
 	}
 	
 	public String getJobNameFromFriendlyName() {
@@ -86,25 +86,25 @@ public class DataJobDTO extends AbstractDescribableImpl<DataJobDTO> implements S
 	public String getJobNameFromFriendlyName(boolean withLinktoResults) {
 		if (withLinktoResults) {
 			String reportUrl = null;
-			if (resultsDTO == null) {
+			if (results == null) {
 				reportUrl = null;
-			} else if (Strings.isNullOrEmpty(resultsDTO.getUrl())) {
+			} else if (Strings.isNullOrEmpty(results.getUrl())) {
 				reportUrl = null;
-			} else if (JobStatus.DISABLED.name().equalsIgnoreCase(resultsDTO.getCurrentResult())) {
-				reportUrl = resultsDTO.getUrl();
+			} else if (JobStatus.DISABLED.name().equalsIgnoreCase(results.getCurrentResult())) {
+				reportUrl = results.getUrl();
 			} else {
-				reportUrl = resultsDTO.getReportUrl();
+				reportUrl = results.getReportUrl();
 			}
 			return "<a href='" + reportUrl + "' style='text-decoration:none;'><font color='" + Colors.htmlJOB_NAME_URL() + "'>" + getJobNameFromFriendlyName() + "</font></a>";
 		}
 		return getJobNameFromFriendlyName();
 	}
 	
-	public AggregateJobDTO getAggregate() {
-		return aggregate;
+	public ReportJob getReport() {
+		return report;
 	}
 	
-	public void setAggregate(AggregateJobDTO aggregate) {
-		this.aggregate = aggregate;
+	public void setReport(ReportJob report) {
+		this.report = report;
 	}
 }

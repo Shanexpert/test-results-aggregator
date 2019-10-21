@@ -10,7 +10,7 @@ import java.util.List;
 import org.apache.commons.jelly.JellyContext;
 import org.apache.commons.jelly.XMLOutput;
 
-import com.jenkins.testresultsaggregator.data.AggregatedDTO;
+import com.jenkins.testresultsaggregator.data.Aggregated;
 import com.jenkins.testresultsaggregator.helper.Colors;
 import com.jenkins.testresultsaggregator.helper.Helper;
 import com.jenkins.testresultsaggregator.helper.LocalMessages;
@@ -30,13 +30,14 @@ public class HTMLReporter {
 		this.workspace = workspace;
 	}
 	
-	public String createOverview(AggregatedDTO aggregated, List<String> columns, String theme, boolean showGroups) {
+	public String createOverview(Aggregated aggregated, List<LocalMessages> columns, String theme, boolean showGroups) {
 		try {
 			logger.print(LocalMessages.GENERATE.toString() + " " + LocalMessages.HTML_REPORT.toString());
 			File directory = Helper.createFolder(workspace, FOLDER);
 			String file = directory + System.getProperty("file.separator") + OVERVIEW_FILE;
 			OutputStream output = new FileOutputStream(file);
 			JellyContext context = new JellyContext();
+			// Variables
 			context.setVariable("name", "Test Result Aggregator");
 			context.setVariable("showGroups", showGroups);
 			context.setVariable("columns", columns);

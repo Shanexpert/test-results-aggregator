@@ -8,14 +8,13 @@ import java.util.Properties;
 
 import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.TestResultsAggregator;
-import com.jenkins.testresultsaggregator.TestResultsAggregator.AggregatorProperties;
-import com.jenkins.testresultsaggregator.data.AggregateJobDTO;
-import com.jenkins.testresultsaggregator.data.AggregatedDTO;
-import com.jenkins.testresultsaggregator.data.AggregatedGroupDTO;
-import com.jenkins.testresultsaggregator.data.DataDTO;
-import com.jenkins.testresultsaggregator.data.DataJobDTO;
+import com.jenkins.testresultsaggregator.data.Aggregated;
+import com.jenkins.testresultsaggregator.data.Data;
+import com.jenkins.testresultsaggregator.data.Job;
 import com.jenkins.testresultsaggregator.data.JobStatus;
-import com.jenkins.testresultsaggregator.data.ResultsDTO;
+import com.jenkins.testresultsaggregator.data.ReportGroup;
+import com.jenkins.testresultsaggregator.data.ReportJob;
+import com.jenkins.testresultsaggregator.data.Results;
 
 public class Analyzer {
 	
@@ -25,142 +24,169 @@ public class Analyzer {
 		this.logger = logger;
 	}
 	
-	public AggregatedDTO analyze(List<DataDTO> dataJob, Properties properties) throws Exception {
+	public Aggregated analyze(List<Data> listData, Properties properties) throws Exception {
 		// Resolve
 		String outOfDateResults = properties.getProperty(TestResultsAggregator.AggregatorProperties.OUT_OF_DATE_RESULTS_ARG.name());
 		// Check if Groups/Names are used
 		boolean foundAtLeastOneGroupName = false;
-		for (DataDTO data : dataJob) {
+		for (Data data : listData) {
 			if (!Strings.isNullOrEmpty(data.getGroupName())) {
 				foundAtLeastOneGroupName = true;
 			}
 		}
 		// Order List per Group Name
 		if (foundAtLeastOneGroupName) {
-			Collections.sort(dataJob, new Comparator<DataDTO>() {
+			Collections.sort(listData, new Comparator<Data>() {
 				@Override
-				public int compare(DataDTO dataDTO1, DataDTO dataDTO2) {
+				public int compare(Data dataDTO1, Data dataDTO2) {
 					return dataDTO1.getGroupName().compareTo(dataDTO2.getGroupName());
 				}
 			});
 		}
-		AggregatedDTO aggregatedDTO = new AggregatedDTO();
+		Aggregated aggregated = new Aggregated();
 		// Calculate Aggregated Results for Reporting
-		ResultsDTO totalResults = new ResultsDTO();
-		for (DataDTO tempDataJob : dataJob) {
+		Results totalResults = new Results();
+		for (Data data : listData) {
 			boolean foundFailure = false;
 			boolean foundRunning = false;
 			boolean foundSkip = false;
-			ResultsDTO totalResultsPerGroup = new ResultsDTO();
+			Results resultsPerGroup = new Results();
 			int jobFailed = 0;
 			int jobSkipped = 0;
 			int jobUnstable = 0;
 			int jobAborted = 0;
 			int jobSuccess = 0;
 			int jobRunning = 0;
-			tempDataJob.setAggregatedGroup(new AggregatedGroupDTO());
-			for (DataJobDTO job : tempDataJob.getJobs()) {
-				job.setAggregate(new AggregateJobDTO());
+			data.setReportGroup(new ReportGroup());
+			for (Job job : data.getJobs()) {
+				job.setReport(new ReportJob());
 				// Calculate Job Status
-				job.getAggregate().calculateJobStatus(job.getResultsDTO());
+				job.getReport().calculateStatus(job.getResults());
 				// Calculate Total
-				job.getAggregate().calculateTotal(job.getResultsDTO());
+				job.getReport().calculateTotal(job.getResults());
 				// Calculate Pass
-				job.getAggregate().calculatePass(job.getResultsDTO());
+				job.getReport().calculatePass(job.getResults());
 				// Calculate Fail
-				job.getAggregate().calculateFailedColor(job.getResultsDTO());
+				job.getReport().calculateFailedColor(job.getResults());
 				// Calculate Skipped
-				job.getAggregate().calculateSkipped(job.getResultsDTO());
+				job.getReport().calculateSkipped(job.getResults());
 				// Calculate timestamp
-				job.getAggregate().calculateTimestamp(job.getResultsDTO(), outOfDateResults);
+				job.getReport().calculateTimestamp(job.getResults(), outOfDateResults);
 				// Calculate Changes
-				job.getAggregate().calculateChanges(job.getResultsDTO());
+				job.getReport().calculateChanges(job.getResults());
 				// Calculate Report
-				job.getAggregate().calculateReport(job.getResultsDTO());
+				job.getReport().calculateReport(job.getResults());
+				// Calculate Duration
+				job.getReport().calculateDuration(job.getBuildInfo().getDuration());
+				// Total Duration
+				aggregated.setTotalDuration(aggregated.getTotalDuration() + job.getBuildInfo().getDuration());
+				// Calculate Description
+				job.getReport().calculateDescription(job.getBuildInfo().getDescription());
+				// Calculate Percentage
+				job.getReport().calculatePercentage(job.getResults());
 				// Calculate Group
-				if (JobStatus.SUCCESS.name().equals(job.getAggregate().getCalculatedJobStatus()) || JobStatus.FIXED.name().equals(job.getAggregate().getCalculatedJobStatus())) {
-					tempDataJob.getAggregatedGroup().setJobSuccess(tempDataJob.getAggregatedGroup().getJobSuccess() + 1);
-					aggregatedDTO.setCountJobSuccess(aggregatedDTO.getCountJobSuccess() + 1);
+				if (JobStatus.SUCCESS.name().equals(job.getReport().getStatus())) {
+					data.getReportGroup().setJobSuccess(data.getReportGroup().getJobSuccess() + 1);
+					aggregated.setSuccessJobs(aggregated.getSuccessJobs() + 1);
 					jobSuccess++;
-				} else if (JobStatus.RUNNING.name().equals(job.getAggregate().getCalculatedJobStatus())) {
+				} else if (JobStatus.FIXED.name().equals(job.getReport().getStatus())) {
+					data.getReportGroup().setJobSuccess(data.getReportGroup().getJobSuccess() + 1);
+					aggregated.setFixedJobs(aggregated.getFixedJobs() + 1);
+					jobSuccess++;
+				} else if (JobStatus.RUNNING.name().equals(job.getReport().getStatus())) {
 					foundRunning = true;
-					tempDataJob.getAggregatedGroup().setJobRunning(tempDataJob.getAggregatedGroup().getJobRunning() + 1);
-					aggregatedDTO.setCountJobRunning(aggregatedDTO.getCountJobRunning() + 1);
+					data.getReportGroup().setJobRunning(data.getReportGroup().getJobRunning() + 1);
+					aggregated.setRunningJobs(aggregated.getRunningJobs() + 1);
 					jobRunning++;
-				} else if (JobStatus.FAILURE.name().equals(job.getAggregate().getCalculatedJobStatus()) || JobStatus.STILL_FAILING.name().equals(job.getAggregate().getCalculatedJobStatus())) {
+				} else if (JobStatus.FAILURE.name().equals(job.getReport().getStatus())) {
 					foundFailure = true;
-					tempDataJob.getAggregatedGroup().setJobFailed(tempDataJob.getAggregatedGroup().getJobFailed() + 1);
-					aggregatedDTO.setCountJobFailures(aggregatedDTO.getCountJobFailures() + 1);
+					data.getReportGroup().setJobFailed(data.getReportGroup().getJobFailed() + 1);
+					aggregated.setFailedJobs(aggregated.getFailedJobs() + 1);
 					jobFailed++;
 					// Do not Check total Test
-					job.getAggregate().calculateTotal(null);
-					job.getAggregate().calculatePass(null);
-					job.getAggregate().calculateFailed(null);
-					job.getAggregate().calculateFailedColor(null);
-					job.getAggregate().calculateSkipped(null);
-				} else if (JobStatus.UNSTABLE.name().equals(job.getAggregate().getCalculatedJobStatus()) || JobStatus.STILL_UNSTABLE.name().equals(job.getAggregate().getCalculatedJobStatus())) {
+					job.getReport().calculateTotal(null);
+					job.getReport().calculatePass(null);
+					job.getReport().calculateFailed(null);
+					job.getReport().calculateFailedColor(null);
+					job.getReport().calculateSkipped(null);
+				} else if (JobStatus.STILL_FAILING.name().equals(job.getReport().getStatus())) {
+					foundFailure = true;
+					data.getReportGroup().setJobFailed(data.getReportGroup().getJobFailed() + 1);
+					aggregated.setKeepFailJobs(aggregated.getKeepFailJobs() + 1);
+					jobFailed++;
+					// Do not Check total Test
+					job.getReport().calculateTotal(null);
+					job.getReport().calculatePass(null);
+					job.getReport().calculateFailed(null);
+					job.getReport().calculateFailedColor(null);
+					job.getReport().calculateSkipped(null);
+				} else if (JobStatus.UNSTABLE.name().equals(job.getReport().getStatus())) {
 					foundSkip = true;
-					tempDataJob.getAggregatedGroup().setJobUnstable(tempDataJob.getAggregatedGroup().getJobUnstable() + 1);
-					aggregatedDTO.setCountJobUnstable(aggregatedDTO.getCountJobUnstable() + 1);
+					data.getReportGroup().setJobUnstable(data.getReportGroup().getJobUnstable() + 1);
+					aggregated.setUnstableJobs(aggregated.getUnstableJobs() + 1);
 					jobUnstable++;
-				} else if (JobStatus.ABORTED.name().equals(job.getAggregate().getCalculatedJobStatus())) {
+				} else if (JobStatus.STILL_UNSTABLE.name().equals(job.getReport().getStatus())) {
 					foundSkip = true;
-					tempDataJob.getAggregatedGroup().setJobAborted(tempDataJob.getAggregatedGroup().getJobAborted() + 1);
-					aggregatedDTO.setCountJobAborted(aggregatedDTO.getCountJobAborted() + 1);
+					data.getReportGroup().setJobUnstable(data.getReportGroup().getJobUnstable() + 1);
+					aggregated.setKeepUnstableJobs(aggregated.getKeepUnstableJobs() + 1);
+					jobUnstable++;
+				} else if (JobStatus.ABORTED.name().equals(job.getReport().getStatus())) {
+					foundSkip = true;
+					data.getReportGroup().setJobAborted(data.getReportGroup().getJobAborted() + 1);
+					aggregated.setAbortedJobs(aggregated.getAbortedJobs() + 1);
 					jobAborted++;
 				}
 				// Calculate Total Per Group
-				totalResultsPerGroup.setPass(totalResultsPerGroup.getPass() + job.getResultsDTO().getPass());
-				totalResultsPerGroup.setSkip(totalResultsPerGroup.getSkip() + job.getResultsDTO().getSkip());
-				totalResultsPerGroup.setTotal(totalResultsPerGroup.getTotal() + job.getResultsDTO().getTotal());
+				resultsPerGroup.setPass(resultsPerGroup.getPass() + job.getResults().getPass());
+				resultsPerGroup.setSkip(resultsPerGroup.getSkip() + job.getResults().getSkip());
+				resultsPerGroup.setTotal(resultsPerGroup.getTotal() + job.getResults().getTotal());
 				// Calculate Total for Summary Column
-				totalResults.sub(job.getResultsDTO());
+				totalResults.addResults(job.getResults());
 			}
 			// Set Results Per Group
-			tempDataJob.getAggregatedGroup().setResultsDTO(totalResultsPerGroup);
+			data.getReportGroup().setResults(resultsPerGroup);
 			// Calculate Group Status
 			if (foundFailure) {
-				tempDataJob.getAggregatedGroup().setCalculatedGroupStatus(JobStatus.FAILURE.name());
+				data.getReportGroup().setStatus(JobStatus.FAILURE.name());
 			} else if (foundRunning) {
-				tempDataJob.getAggregatedGroup().setCalculatedGroupStatus(JobStatus.RUNNING.name());
+				data.getReportGroup().setStatus(JobStatus.RUNNING.name());
 			} else if (foundSkip) {
-				tempDataJob.getAggregatedGroup().setCalculatedGroupStatus(JobStatus.UNSTABLE.name());
+				data.getReportGroup().setStatus(JobStatus.UNSTABLE.name());
 			} else {
-				tempDataJob.getAggregatedGroup().setCalculatedGroupStatus(JobStatus.SUCCESS.name());
+				data.getReportGroup().setStatus(JobStatus.SUCCESS.name());
 			}
-			// Calculate Percentage Per Group based on Tests
-			// tempDataJob.getAggregatedGroup().setCalculatedGroupPercentage(Helper.countPercentage(totalResultsPerGroup,
-			// properties.getProperty(AggregatorProperties.TEST_PERCENTAGE_PREFIX.toString())));
 			// Calculate Percentage Per Group based on Jobs
-			tempDataJob.getAggregatedGroup().setCalculatedGroupPercentage(Helper.countPercentage(jobSuccess,
-					jobSuccess + jobRunning + jobAborted + jobUnstable + jobSkipped + jobFailed,
-					properties.getProperty(AggregatorProperties.JOB_PERCENTAGE_PREFIX.toString())));
+			data.getReportGroup().setPercentage(Helper.countPercentageD(jobSuccess, jobSuccess + jobRunning + jobAborted + jobUnstable + jobSkipped + jobFailed).toString());
 		}
 		// Order Jobs per
 		final String orderBy = (String) properties.get(TestResultsAggregator.AggregatorProperties.SORT_JOBS_BY.name());
-		for (DataDTO data : dataJob) {
-			Collections.sort(data.getJobs(), new Comparator<DataJobDTO>() {
+		for (Data data : listData) {
+			Collections.sort(data.getJobs(), new Comparator<Job>() {
 				@Override
-				public int compare(DataJobDTO dataJobDTO1, DataJobDTO dataJobDTO2) {
+				public int compare(Job dataJobDTO1, Job dataJobDTO2) {
 					try {
 						if (TestResultsAggregator.SortResultsBy.NAME.name().equalsIgnoreCase(orderBy)) {
 							return dataJobDTO1.getJobNameFromFriendlyName().compareTo(dataJobDTO2.getJobNameFromFriendlyName());
 						} else if (TestResultsAggregator.SortResultsBy.STATUS.name().equalsIgnoreCase(orderBy)) {
-							return dataJobDTO1.getAggregate().getCalculatedJobStatusEnum().getPriority() - dataJobDTO2.getAggregate().getCalculatedJobStatusEnum().getPriority();
+							return dataJobDTO1.getReport().getStatusFromEnum().getPriority() - dataJobDTO2.getReport().getStatusFromEnum().getPriority();
 						} else if (TestResultsAggregator.SortResultsBy.TOTAL_TEST.name().equalsIgnoreCase(orderBy)) {
-							return dataJobDTO2.getResultsDTO().getTotal() - dataJobDTO1.getResultsDTO().getTotal();
+							return dataJobDTO2.getResults().getTotal() - dataJobDTO1.getResults().getTotal();
 						} else if (TestResultsAggregator.SortResultsBy.PASS.name().equalsIgnoreCase(orderBy)) {
-							return dataJobDTO2.getResultsDTO().getPass() - dataJobDTO1.getResultsDTO().getPass();
+							return dataJobDTO2.getResults().getPass() - dataJobDTO1.getResults().getPass();
 						} else if (TestResultsAggregator.SortResultsBy.FAIL.name().equalsIgnoreCase(orderBy)) {
-							return dataJobDTO2.getResultsDTO().getFail() - dataJobDTO1.getResultsDTO().getFail();
+							return dataJobDTO2.getResults().getFail() - dataJobDTO1.getResults().getFail();
 						} else if (TestResultsAggregator.SortResultsBy.SKIP.name().equalsIgnoreCase(orderBy)) {
-							return dataJobDTO2.getResultsDTO().getSkip() - dataJobDTO1.getResultsDTO().getSkip();
+							return dataJobDTO2.getResults().getSkip() - dataJobDTO1.getResults().getSkip();
 						} else if (TestResultsAggregator.SortResultsBy.LAST_RUN.name().equalsIgnoreCase(orderBy)) {
-							return dataJobDTO1.getResultsDTO().getTimestamp().compareTo(dataJobDTO2.getResultsDTO().getTimestamp());
+							return dataJobDTO1.getResults().getTimestamp().compareTo(dataJobDTO2.getResults().getTimestamp());
 						} else if (TestResultsAggregator.SortResultsBy.COMMITS.name().equalsIgnoreCase(orderBy)) {
-							return dataJobDTO1.getResultsDTO().getNumberOfChanges() - dataJobDTO2.getResultsDTO().getNumberOfChanges();
+							return dataJobDTO1.getResults().getNumberOfChanges() - dataJobDTO2.getResults().getNumberOfChanges();
+						} else if (TestResultsAggregator.SortResultsBy.DURATION.name().equalsIgnoreCase(orderBy)) {
+							return dataJobDTO1.getResults().getDuration().compareTo(dataJobDTO2.getResults().getDuration());
+						} else if (TestResultsAggregator.SortResultsBy.PERCENTAGE.name().equalsIgnoreCase(orderBy)) {
+							return dataJobDTO1.getResults().getPercentage().compareTo(dataJobDTO2.getResults().getPercentage());
 						} else {
-							// Dafault
+							// Default
 							return dataJobDTO1.getJobNameFromFriendlyName().compareTo(dataJobDTO2.getJobNameFromFriendlyName());
 						}
 					} catch (NullPointerException ex) {
@@ -170,9 +196,9 @@ public class Analyzer {
 			});
 		}
 		// Set
-		aggregatedDTO.setData(dataJob);
-		aggregatedDTO.setResults(totalResults);
+		aggregated.setData(listData);
+		aggregated.setResults(totalResults);
 		logger.println(LocalMessages.ANALYZE.toString() + " " + LocalMessages.FINISHED.toString());
-		return aggregatedDTO;
+		return aggregated;
 	}
 }

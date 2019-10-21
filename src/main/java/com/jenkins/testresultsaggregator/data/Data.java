@@ -8,16 +8,16 @@ import org.kohsuke.stapler.DataBoundSetter;
 
 import hudson.model.AbstractDescribableImpl;
 
-public class DataDTO extends AbstractDescribableImpl<DataDTO> implements Serializable {
+public class Data extends AbstractDescribableImpl<Data> implements Serializable {
 	
 	private static final long serialVersionUID = 3491974223666L;
 	
 	private String groupName;
-	private List<DataJobDTO> jobs;
-	private AggregatedGroupDTO aggregatedGroup;
+	private List<Job> jobs;
+	private ReportGroup reportGroup;
 	
 	@DataBoundConstructor
-	public DataDTO(String groupName, List<DataJobDTO> jobs) {
+	public Data(String groupName, List<Job> jobs) {
 		setGroupName(groupName);
 		setJobs(jobs);
 	}
@@ -34,21 +34,21 @@ public class DataDTO extends AbstractDescribableImpl<DataDTO> implements Seriali
 		this.groupName = groupName;
 	}
 	
-	public List<DataJobDTO> getJobs() {
+	public List<Job> getJobs() {
 		return jobs;
 	}
 	
 	@DataBoundSetter
-	public void setJobs(List<DataJobDTO> jobs) {
+	public void setJobs(List<Job> jobs) {
 		this.jobs = jobs;
 	}
 	
-	public AggregatedGroupDTO getAggregatedGroup() {
-		return aggregatedGroup;
+	public ReportGroup getReportGroup() {
+		return reportGroup;
 	}
 	
-	public void setAggregatedGroup(AggregatedGroupDTO aggregatedGroup) {
-		this.aggregatedGroup = aggregatedGroup;
+	public void setReportGroup(ReportGroup reportGroup) {
+		this.reportGroup = reportGroup;
 	}
 	
 }

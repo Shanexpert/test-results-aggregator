@@ -2,7 +2,7 @@ package com.jenkins.testresultsaggregator.helper;
 
 import com.jenkins.testresultsaggregator.TestResultsAggregatorProjectAction;
 import com.jenkins.testresultsaggregator.TestResultsAggregatorTestResultBuildAction;
-import com.jenkins.testresultsaggregator.data.AggregatedDTO;
+import com.jenkins.testresultsaggregator.data.Aggregated;
 
 import hudson.model.Run;
 
@@ -11,32 +11,39 @@ public class TestResultHistoryUtil {
 	private TestResultHistoryUtil() {
 	}
 	
-	public static AggregatedDTO getPreviousBuildTestResults(Run<?, ?> owner) {
+	public static Aggregated getPreviousBuildTestResults(Run<?, ?> owner) {
 		Run<?, ?> previousBuild = owner.getPreviousCompletedBuild();
 		if (previousBuild != null && previousBuild.getAction(TestResultsAggregatorTestResultBuildAction.class) != null) {
 			return previousBuild.getAction(TestResultsAggregatorTestResultBuildAction.class).getResult();
 		} else {
-			return new AggregatedDTO();
+			return new Aggregated();
 		}
 	}
 	
 	public static String toSummary(TestResultsAggregatorTestResultBuildAction action) {
 		int prevFailed, prevUnstable, prevSucces, prevAborted, prevRunning, prevTotal;
 		Run<?, ?> run = action.run;
-		AggregatedDTO previousResult = TestResultHistoryUtil.getPreviousBuildTestResults(run);
-		prevFailed = previousResult.getCountJobFailures();
-		prevUnstable = previousResult.getCountJobUnstable();
-		prevSucces = previousResult.getCountJobSuccess();
-		prevAborted = previousResult.getCountJobAborted();
-		prevRunning = previousResult.getCountJobRunning();
+		Aggregated previousResult = TestResultHistoryUtil.getPreviousBuildTestResults(run);
+		prevFailed = previousResult.getFailedJobs() + previousResult.getKeepFailJobs();
+		prevUnstable = previousResult.getUnstableJobs() + previousResult.getKeepUnstableJobs();
+		prevSucces = previousResult.getSuccessJobs() + previousResult.getFixedJobs();
+		prevAborted = previousResult.getAbortedJobs();
+		prevRunning = previousResult.getRunningJobs();
 		prevTotal = prevFailed + prevUnstable + prevSucces + prevAborted + prevRunning;
-		AggregatedDTO result = action.getResult();
-		int total = result.getCountJobAborted() + result.getCountJobFailures() + result.getCountJobRunning() + result.getCountJobSuccess() + result.getCountJobUnstable();
+		Aggregated result = action.getResult();
+		int total = result.getAbortedJobs() +
+				result.getFailedJobs() +
+				result.getKeepFailJobs() +
+				result.getRunningJobs() +
+				result.getSuccessJobs() +
+				result.getFixedJobs() +
+				result.getUnstableJobs() +
+				result.getKeepUnstableJobs();
 		return "<ul>" + Helper.diff(prevTotal, total, "Total Jobs ", true) +
-				Helper.diff(prevFailed, result.getCountJobFailures(), TestResultsAggregatorProjectAction.FAILED + " Jobs ", true) +
-				Helper.diff(prevUnstable, result.getCountJobUnstable(), TestResultsAggregatorProjectAction.UNSTABLE + " Jobs ", true) +
-				Helper.diff(prevAborted, result.getCountJobAborted(), TestResultsAggregatorProjectAction.ABORTED + " Jobs ", true) +
-				Helper.diff(prevRunning, result.getCountJobRunning(), TestResultsAggregatorProjectAction.RUNNING + " Jobs ", true) +
+				Helper.diff(prevFailed, result.getFailedJobs() + result.getKeepFailJobs(), TestResultsAggregatorProjectAction.FAILED + " Jobs ", true) +
+				Helper.diff(prevUnstable, result.getUnstableJobs() + result.getKeepUnstableJobs(), TestResultsAggregatorProjectAction.UNSTABLE + " Jobs ", true) +
+				Helper.diff(prevAborted, result.getAbortedJobs(), TestResultsAggregatorProjectAction.ABORTED + " Jobs ", true) +
+				Helper.diff(prevRunning, result.getRunningJobs(), TestResultsAggregatorProjectAction.RUNNING + " Jobs ", true) +
 				"</ul>";
 	}
 	
@@ -46,14 +53,14 @@ public class TestResultHistoryUtil {
 		int prevSucces = 0;
 		int prevTotal = 0;
 		Run<?, ?> run = action.run;
-		AggregatedDTO previousResult = TestResultHistoryUtil.getPreviousBuildTestResults(run);
+		Aggregated previousResult = TestResultHistoryUtil.getPreviousBuildTestResults(run);
 		if (previousResult != null && previousResult.getResults() != null) {
 			prevFailed = previousResult.getResults().getFail();
 			prevUnstable = previousResult.getResults().getSkip();
 			prevSucces = previousResult.getResults().getPass();
 			prevTotal = previousResult.getResults().getTotal();
 		}
-		AggregatedDTO result = action.getResult();
+		Aggregated result = action.getResult();
 		return "<ul>" + Helper.diff(prevTotal, result.getResults().getTotal(), "Total Tests ", true) +
 				Helper.diff(prevFailed, result.getResults().getFail(), TestResultsAggregatorProjectAction.FAILED + " Tests ", true) +
 				Helper.diff(prevUnstable, result.getResults().getSkip(), TestResultsAggregatorProjectAction.UNSTABLE + " Tests ", true) +

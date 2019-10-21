@@ -2,6 +2,7 @@ package com.jenkins.testresultsaggregator;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -10,9 +11,9 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
 import com.google.common.base.Strings;
-import com.jenkins.testresultsaggregator.data.AggregatedDTO;
-import com.jenkins.testresultsaggregator.data.DataDTO;
-import com.jenkins.testresultsaggregator.data.DataJobDTO;
+import com.jenkins.testresultsaggregator.data.Aggregated;
+import com.jenkins.testresultsaggregator.data.Data;
+import com.jenkins.testresultsaggregator.data.Job;
 import com.jenkins.testresultsaggregator.helper.Analyzer;
 import com.jenkins.testresultsaggregator.helper.Collector;
 import com.jenkins.testresultsaggregator.helper.LocalMessages;
@@ -43,8 +44,10 @@ public class TestResultsAggregator extends Notifier {
 	private String theme;
 	private String sortresults;
 	private String outOfDateResults;
+	private String selectedColumns;
+	private List<LocalMessages> columns;
 	
-	private List<DataDTO> dataJob;
+	private List<Data> data;
 	
 	private Properties properties;
 	public static final String DISPLAY_NAME = "Job Results Aggregated";
@@ -56,11 +59,9 @@ public class TestResultsAggregator extends Notifier {
 	public enum AggregatorProperties {
 		OUT_OF_DATE_RESULTS_ARG,
 		TEST_PERCENTAGE_PREFIX,
-		JOB_PERCENTAGE_PREFIX,
 		TEXT_BEFORE_MAIL_BODY,
 		TEXT_AFTER_MAIL_BODY,
 		THEME,
-		PRINT_GROUP_STATUS_IN_NEW_COLUMN,
 		SORT_JOBS_BY,
 		SUBJECT_PREFIX
 	}
@@ -73,7 +74,9 @@ public class TestResultsAggregator extends Notifier {
 		FAIL,
 		SKIP,
 		LAST_RUN,
-		COMMITS
+		COMMITS,
+		DURATION,
+		PERCENTAGE
 	}
 	
 	public enum Theme {
@@ -82,15 +85,17 @@ public class TestResultsAggregator extends Notifier {
 	}
 	
 	@DataBoundConstructor
-	public TestResultsAggregator(final String subject, final String recipientsList, final String outOfDateResults, final List<DataDTO> dataJob, String beforebody, String afterbody, String theme, String sortresults) {
+	public TestResultsAggregator(final String subject, final String recipientsList, final String outOfDateResults, final List<Data> data, String beforebody, String afterbody, String theme, String sortresults,
+			String selectedColumns) {
 		this.setRecipientsList(recipientsList);
 		this.setOutOfDateResults(outOfDateResults);
-		this.setDataJob(dataJob);
+		this.setData(data);
 		this.setBeforebody(beforebody);
 		this.setAfterbody(afterbody);
 		this.setTheme(theme);
 		this.setSortresults(sortresults);
 		this.setSubject(subject);
+		this.setSelectedColumns(selectedColumns);
 	}
 	
 	@Override
@@ -103,23 +108,22 @@ public class TestResultsAggregator extends Notifier {
 			properties = new Properties();
 			properties.put(AggregatorProperties.OUT_OF_DATE_RESULTS_ARG.name(), outOfDateResults);
 			properties.put(AggregatorProperties.TEST_PERCENTAGE_PREFIX.name(), "");
-			properties.put(AggregatorProperties.JOB_PERCENTAGE_PREFIX.name(), "");
 			properties.put(AggregatorProperties.THEME.name(), getTheme());
 			properties.put(AggregatorProperties.TEXT_BEFORE_MAIL_BODY.name(), getBeforebody());
 			properties.put(AggregatorProperties.TEXT_AFTER_MAIL_BODY.name(), getAfterbody());
-			properties.put(AggregatorProperties.PRINT_GROUP_STATUS_IN_NEW_COLUMN.name(), false);
 			properties.put(AggregatorProperties.SORT_JOBS_BY.name(), getSortresults());
 			properties.put(AggregatorProperties.SUBJECT_PREFIX.name(), getSubject());
+			columns = calculateColumns(selectedColumns);
 			// Validate Input Data
-			List<DataDTO> validatedData = validateInputData(getDataJob());
+			List<Data> validatedData = validateInputData(getData());
 			// Collect Data
 			Collector collector = new Collector(logger, desc.getUsername(), desc.getPassword(), desc.getJenkinsUrl());
 			collector.collectResults(validatedData);
 			// Analyze Results
-			AggregatedDTO aggregated = new Analyzer(logger).analyze(validatedData, properties);
+			Aggregated aggregated = new Analyzer(logger).analyze(validatedData, properties);
 			// Reporter for HTML and mail
 			Reporter reporter = new Reporter(logger, build.getProject().getSomeWorkspace(), build.getRootDir(), desc.getMailNotificationFrom());
-			reporter.publishResuts(getRecipientsList(), aggregated, properties);
+			reporter.publishResuts(getRecipientsList(), aggregated, properties, columns);
 			// Add Build Action
 			build.addAction(new TestResultsAggregatorTestResultBuildAction(aggregated));
 		} catch (Exception e) {
@@ -127,6 +131,38 @@ public class TestResultsAggregator extends Notifier {
 		}
 		logger.println(LocalMessages.FINISHED_AGGREGATE.toString());
 		return true;
+	}
+	
+	private List<LocalMessages> calculateColumns(String selectedColumns) {
+		List<LocalMessages> columns = new ArrayList<>(Arrays.asList(LocalMessages.COLUMN_GROUP, LocalMessages.COLUMN_JOB));
+		if (!Strings.isNullOrEmpty(selectedColumns)) {
+			String[] splitter = selectedColumns.split(",");
+			for (String temp : splitter) {
+				if (temp.equalsIgnoreCase("Status")) {
+					columns.add(LocalMessages.COLUMN_JOB_STATUS);
+				} else if (temp.equalsIgnoreCase("Percentage")) {
+					columns.add(LocalMessages.COLUMN_PERCENTAGE);
+				} else if (temp.equalsIgnoreCase("Total")) {
+					columns.add(LocalMessages.COLUMN_TESTS);
+				} else if (temp.equalsIgnoreCase("Pass")) {
+					columns.add(LocalMessages.COLUMN_PASS);
+				} else if (temp.equalsIgnoreCase("Fail")) {
+					columns.add(LocalMessages.COLUMN_FAIL);
+				} else if (temp.equalsIgnoreCase("Skip")) {
+					columns.add(LocalMessages.COLUMN_SKIP);
+				} else if (temp.equalsIgnoreCase("Commits")) {
+					columns.add(LocalMessages.COLUMN_COMMITS);
+				} else if (temp.equalsIgnoreCase("LastRun")) {
+					columns.add(LocalMessages.COLUMN_LAST_RUN);
+				} else if (temp.equalsIgnoreCase("Duration")) {
+					columns.add(LocalMessages.COLUMN_DURATION);
+				} else if (temp.equalsIgnoreCase("Description")) {
+					columns.add(LocalMessages.COLUMN_DESCRIPTION);
+				}
+			}
+		}
+		
+		return columns;
 	}
 	
 	@Override
@@ -229,13 +265,13 @@ public class TestResultsAggregator extends Notifier {
 		}
 	}
 	
-	private List<DataDTO> validateInputData(List<DataDTO> data) {
-		List<DataDTO> validateData = new ArrayList<DataDTO>();
-		for (DataDTO tempDataDTO : data) {
+	private List<Data> validateInputData(List<Data> data) {
+		List<Data> validateData = new ArrayList<Data>();
+		for (Data tempDataDTO : data) {
 			if (tempDataDTO.getJobs() != null && !tempDataDTO.getJobs().isEmpty()) {
 				boolean allJobsareEmpty = true;
-				List<DataJobDTO> validateDataJobs = new ArrayList<>();
-				for (DataJobDTO temp : tempDataDTO.getJobs()) {
+				List<Job> validateDataJobs = new ArrayList<>();
+				for (Job temp : tempDataDTO.getJobs()) {
 					if (!Strings.isNullOrEmpty(temp.getJobName())) {
 						allJobsareEmpty = false;
 						validateDataJobs.add(temp);
@@ -262,12 +298,12 @@ public class TestResultsAggregator extends Notifier {
 		return outOfDateResults;
 	}
 	
-	public List<DataDTO> getDataJob() {
-		return dataJob;
+	public List<Data> getData() {
+		return data;
 	}
 	
-	public void setDataJob(List<DataDTO> dataJob) {
-		this.dataJob = dataJob;
+	public void setData(List<Data> data) {
+		this.data = data;
 	}
 	
 	public void setRecipientsList(String recipientsList) {
@@ -319,6 +355,22 @@ public class TestResultsAggregator extends Notifier {
 	
 	public void setSubject(String subject) {
 		this.subject = subject;
+	}
+	
+	public List<LocalMessages> getColumns() {
+		return columns;
+	}
+	
+	public void setColumns(List<LocalMessages> columns) {
+		this.columns = columns;
+	}
+	
+	public String getSelectedColumns() {
+		return selectedColumns;
+	}
+	
+	public void setSelectedColumns(String selectedColumns) {
+		this.selectedColumns = selectedColumns;
 	}
 	
 }
