@@ -138,26 +138,31 @@ public class TestResultsAggregator extends Notifier {
 		if (!Strings.isNullOrEmpty(selectedColumns)) {
 			String[] splitter = selectedColumns.split(",");
 			for (String temp : splitter) {
-				if (temp.equalsIgnoreCase("Status")) {
-					columns.add(LocalMessages.COLUMN_JOB_STATUS);
-				} else if (temp.equalsIgnoreCase("Percentage")) {
-					columns.add(LocalMessages.COLUMN_PERCENTAGE);
-				} else if (temp.equalsIgnoreCase("Total")) {
-					columns.add(LocalMessages.COLUMN_TESTS);
-				} else if (temp.equalsIgnoreCase("Pass")) {
-					columns.add(LocalMessages.COLUMN_PASS);
-				} else if (temp.equalsIgnoreCase("Fail")) {
-					columns.add(LocalMessages.COLUMN_FAIL);
-				} else if (temp.equalsIgnoreCase("Skip")) {
-					columns.add(LocalMessages.COLUMN_SKIP);
-				} else if (temp.equalsIgnoreCase("Commits")) {
-					columns.add(LocalMessages.COLUMN_COMMITS);
-				} else if (temp.equalsIgnoreCase("LastRun")) {
-					columns.add(LocalMessages.COLUMN_LAST_RUN);
-				} else if (temp.equalsIgnoreCase("Duration")) {
-					columns.add(LocalMessages.COLUMN_DURATION);
-				} else if (temp.equalsIgnoreCase("Description")) {
-					columns.add(LocalMessages.COLUMN_DESCRIPTION);
+				if (temp != null) {
+					temp = temp.trim();
+					if (temp.equalsIgnoreCase("Status")) {
+						columns.add(LocalMessages.COLUMN_JOB_STATUS);
+					} else if (temp.equalsIgnoreCase("Percentage")) {
+						columns.add(LocalMessages.COLUMN_PERCENTAGE);
+					} else if (temp.equalsIgnoreCase("Total")) {
+						columns.add(LocalMessages.COLUMN_TESTS);
+					} else if (temp.equalsIgnoreCase("Pass")) {
+						columns.add(LocalMessages.COLUMN_PASS);
+					} else if (temp.equalsIgnoreCase("Fail")) {
+						columns.add(LocalMessages.COLUMN_FAIL);
+					} else if (temp.equalsIgnoreCase("Skip")) {
+						columns.add(LocalMessages.COLUMN_SKIP);
+					} else if (temp.equalsIgnoreCase("Commits")) {
+						columns.add(LocalMessages.COLUMN_COMMITS);
+					} else if (temp.equalsIgnoreCase("LastRun")) {
+						columns.add(LocalMessages.COLUMN_LAST_RUN);
+					} else if (temp.equalsIgnoreCase("Duration")) {
+						columns.add(LocalMessages.COLUMN_DURATION);
+					} else if (temp.equalsIgnoreCase("Description")) {
+						columns.add(LocalMessages.COLUMN_DESCRIPTION);
+					} else if (temp.equalsIgnoreCase("Health")) {
+						columns.add(LocalMessages.COLUMN_HEALTH);
+					}
 				}
 			}
 		}

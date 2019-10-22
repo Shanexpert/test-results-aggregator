@@ -2,6 +2,7 @@ package com.jenkins.testresultsaggregator.data;
 
 import java.io.Serializable;
 import java.net.URL;
+import java.util.List;
 
 public class JobInfo implements Serializable {
 	
@@ -12,6 +13,7 @@ public class JobInfo implements Serializable {
 	private Boolean inQueue;
 	private BuildDTO lastBuild;
 	private BuildDTO lastCompletedBuild;
+	private List<HealthReport> healthReport;
 	
 	public JobInfo() {
 	}
@@ -60,4 +62,45 @@ public class JobInfo implements Serializable {
 		this.url = url;
 	}
 	
+	public List<HealthReport> getHealthReport() {
+		return healthReport;
+	}
+	
+	public String getHealthReport(boolean icon) {
+		if (icon) {
+			for (HealthReport temp : healthReport) {
+				if (temp.getDescription().startsWith("Build stability")) {
+					return ImagesMap.getImage(temp.getScore());
+				}
+			}
+		}
+		return null;
+	}
+	
+	public void setHealthReport(List<HealthReport> healthReport) {
+		this.healthReport = healthReport;
+	}
+	
+	public static class HealthReport {
+		
+		private int score;
+		private String description;
+		
+		public String getDescription() {
+			return description;
+		}
+		
+		public void setDescription(String description) {
+			this.description = description;
+		}
+		
+		public int getScore() {
+			return score;
+		}
+		
+		public void setScore(int score) {
+			this.score = score;
+		}
+		
+	}
 }

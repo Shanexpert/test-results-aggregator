@@ -2,15 +2,19 @@ package com.jenkins.testresultsaggregator.reporter;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URL;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.jelly.JellyContext;
 import org.apache.commons.jelly.XMLOutput;
 
 import com.jenkins.testresultsaggregator.data.Aggregated;
+import com.jenkins.testresultsaggregator.data.ImagesMap;
 import com.jenkins.testresultsaggregator.helper.Colors;
 import com.jenkins.testresultsaggregator.helper.Helper;
 import com.jenkins.testresultsaggregator.helper.LocalMessages;
@@ -58,6 +62,7 @@ public class HTMLReporter {
 			output.close();
 			xmlOutput.close();
 			jellyContext.clear();
+			copyImages();
 			logger.println(LocalMessages.FINISHED.toString() + " " + LocalMessages.HTML_REPORT.toString());
 			return file;
 		} catch (Exception e) {
@@ -67,4 +72,17 @@ public class HTMLReporter {
 		return null;
 	}
 	
+	private void copyImages() throws IOException {
+		File directory = Helper.createFolder(workspace, FOLDER);
+		Set<String> setImageID = ImagesMap.getImages().keySet();
+		for (String contentId : setImageID) {
+			copyStream(ImagesMap.getImages().get(contentId).getSourceInPlugin(), ImagesMap.getImages().get(contentId).getFileName(), directory.getAbsoluteFile());
+		}
+	}
+	
+	protected void copyStream(String sourceFile, String destinationFile, File outputDirectory) throws IOException {
+		URL inputUrl = HTMLReporter.class.getResource(sourceFile);
+		File dest = new File(outputDirectory.getAbsolutePath() + "/" + destinationFile);
+		FileUtils.copyURLToFile(inputUrl, dest);
+	}
 }

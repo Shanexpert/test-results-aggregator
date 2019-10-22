@@ -28,7 +28,6 @@ public enum LocalMessages {
 	RESULTS_UNSTABLE ("resultsUnstable"),
 	RESULTS_ABORTED ("resultsAborted"),
 	COLUMN_GROUP ("columnGroup"),
-	COLUMN_GROUP_STATUS ("columnGroupStatus"),
 	COLUMN_JOB ("columnJob"),
 	COLUMN_JOB_STATUS ("columnJobStatus"),
 	COLUMN_TESTS ("columnTests"),
@@ -40,6 +39,7 @@ public enum LocalMessages {
 	COLUMN_DURATION ("columnDuration"),
 	COLUMN_DESCRIPTION ("columnDescription"),
 	COLUMN_PERCENTAGE ("columnPercentage"),
+	COLUMN_HEALTH ("columnHealth"),
 	XML_REPORT ("xmlReport");
 	
 	private final static ResourceBundle MESSAGES = ResourceBundle.getBundle("com.jenkins.testresultsaggregator.Messages");

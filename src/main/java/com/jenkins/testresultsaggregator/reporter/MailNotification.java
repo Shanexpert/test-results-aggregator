@@ -1,16 +1,24 @@
 package com.jenkins.testresultsaggregator.reporter;
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.data.Data;
+import com.jenkins.testresultsaggregator.data.ImagesMap;
+import com.jenkins.testresultsaggregator.data.ImagesMap.ImageData;
 import com.jenkins.testresultsaggregator.data.Job;
 import com.jenkins.testresultsaggregator.data.JobStatus;
 import com.jenkins.testresultsaggregator.helper.LocalMessages;
@@ -40,7 +48,7 @@ public class MailNotification {
 		return allJobsNotFound;
 	}
 	
-	public void send(String mailTo, String mailFrom, String subject, String body, String preBodyText, String afterBodyText) throws UnsupportedEncodingException, MessagingException {
+	public void send(String mailTo, String mailFrom, String subject, String body, Map<String, ImageData> images, String preBodyText, String afterBodyText) throws UnsupportedEncodingException, MessagingException {
 		logger.print(LocalMessages.GENERATE.toString() + " " + LocalMessages.EMAIL_REPORT.toString());
 		MimeMessageBuilder mimeMessageBuilder = new MimeMessageBuilder();
 		if (validateResults()) {
@@ -75,7 +83,22 @@ public class MailNotification {
 				// Build
 				MimeMessage message = mimeMessageBuilder.buildMimeMessage();
 				message.setFrom(new InternetAddress(mailFrom));
+				
+				MimeBodyPart messageBodyPart = new MimeBodyPart();
+				messageBodyPart.setContent(messageBody.toString(), "text/html");
+				Multipart multipart = new MimeMultipart();
+				multipart.addBodyPart(messageBodyPart);
+				
+				if (images != null & !images.isEmpty()) {
+					Set<String> setImageID = images.keySet();
+					for (String contentId : setImageID) {
+						multipart.addBodyPart(addImagePart(contentId));
+					}
+					message.setContent(multipart);
+				}
+				// Save Message
 				message.saveChanges();
+				// Send Message
 				Transport.send(message);
 				logger.println(LocalMessages.SEND_MAIL_TO.toString());
 				logger.println("" + mailTo);
@@ -85,5 +108,19 @@ public class MailNotification {
 				logger.println("");
 			}
 		}
+	}
+	
+	private MimeBodyPart addImagePart(String contentId) throws MessagingException {
+		MimeBodyPart imagePart = new MimeBodyPart();
+		imagePart.setHeader("Content-ID", "<" + contentId + ">");
+		imagePart.setDisposition(MimeBodyPart.INLINE);
+		String imageFilePath = ImagesMap.getImages().get(contentId).sourcePath();
+		try {
+			imagePart.attachFile(imageFilePath);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+		
+		return imagePart;
 	}
 }

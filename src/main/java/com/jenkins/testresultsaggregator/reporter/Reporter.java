@@ -7,13 +7,18 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.TestResultsAggregator.AggregatorProperties;
 import com.jenkins.testresultsaggregator.data.Aggregated;
 import com.jenkins.testresultsaggregator.data.Data;
+import com.jenkins.testresultsaggregator.data.ImagesMap;
+import com.jenkins.testresultsaggregator.data.ImagesMap.ImageData;
 import com.jenkins.testresultsaggregator.helper.LocalMessages;
 
 import hudson.FilePath;
@@ -50,12 +55,17 @@ public class Reporter {
 		}
 		// Generate HTML Report
 		String htmlReport = new HTMLReporter(logger, workspace).createOverview(aggregated, columns, properties.getProperty(AggregatorProperties.THEME.name()), foundAtLeastOneGroupName);
+		// Generate Body message
+		String bodyText = generateMailBody(htmlReport);
+		// Calculate attachments
+		Map<String, ImageData> images = resolveImages(bodyText);
 		// Generate and Send Mail report
 		new MailNotification(logger, dataJob).send(
 				recipientsList,
 				mailNotificationFrom,
 				generateMailSubject(properties.getProperty(AggregatorProperties.SUBJECT_PREFIX.name()), aggregated),
-				generateMailBody(htmlReport),
+				bodyText,
+				images,
 				properties.getProperty(AggregatorProperties.TEXT_BEFORE_MAIL_BODY.name()),
 				properties.getProperty(AggregatorProperties.TEXT_AFTER_MAIL_BODY.name()));
 		// Generate XML Report
@@ -72,7 +82,24 @@ public class Reporter {
 			line = buf.readLine();
 		}
 		buf.close();
-		return sb.toString();
+		String body = sb.toString();
+		// Fix Images
+		Set<String> setImageID = ImagesMap.getImages().keySet();
+		for (String contentId : setImageID) {
+			body = body.replaceAll(ImagesMap.getImages().get(contentId).getFileName(), ImagesMap.getImages().get(contentId).getCid());
+		}
+		return body;
+	}
+	
+	private Map<String, ImageData> resolveImages(String bodyText) {
+		Map<String, ImageData> images = new HashMap<>();
+		Set<String> setImageID = ImagesMap.getImages().keySet();
+		for (String contentId : setImageID) {
+			if (bodyText.contains(ImagesMap.getImages().get(contentId).getCid())) {
+				images.put(contentId, ImagesMap.getImages().get(contentId));
+			}
+		}
+		return images;
 	}
 	
 	private String generateMailSubject(String subjectPrefix, Aggregated aggregated) {

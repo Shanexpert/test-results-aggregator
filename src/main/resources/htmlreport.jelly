@@ -4,8 +4,11 @@
        <head>
          <title>${name}</title>
        </head>
+       <style>
+       	.hoverTable tr:hover {background-color: #F5F5F5;}
+	   </style>
        <body>
-       	<table width='100%'>
+       	<table width='100%' class='hovertable'>
 			<tr bgcolor='${headerColor}' style='text-align: center;color: white' height='40'>
 				<j:forEach items="${columns}" var="column">
 					<th>${column.toString()}</th>
@@ -34,6 +37,9 @@
 						<j:forEach items="${columns}" var="column">
 							<j:if test="${column.name() == 'COLUMN_JOB_STATUS'}">
 								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getReport().getStatusColor(true)}</td>
+							</j:if>
+							<j:if test="${column.name() == 'COLUMN_HEALTH'}">
+								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getJobInfo().getHealthReport(true)}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_PERCENTAGE'}">
 								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getReport().getPercentage(true)}</td>
@@ -68,15 +74,18 @@
 			</j:forEach>
 			<tr bgcolor='${footerColor}' style='text-align: center;color: ${footerTextColor}' height='40'>
 				<j:if test="${showGroups == true}">
-					<th style='text-align: center' colspan='2'>Summary</th>
+					<td style='border-bottom:1px solid ${lineSeperatorcolor};text-align: center' colspan='2'>Summary</td>
 				</j:if>
 				<j:if test="${showGroups == false}">
-					<th style='text-align: center' colspan='1'>Summary</th>
+					<td style='border-bottom:1px solid ${lineSeperatorcolor};text-align: center' colspan='1'>Summary</td>
 				</j:if>
 				
 				
 				<j:forEach items="${columns}" var="column">
 							<j:if test="${column.name() == 'COLUMN_JOB_STATUS'}">
+								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center"></td>
+							</j:if>
+							<j:if test="${column.name() == 'COLUMN_HEALTH'}">
 								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center"></td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_PERCENTAGE'}">
@@ -108,10 +117,9 @@
 							</j:if>
 				</j:forEach>
 						
-						
-				<th style='text-align: center'></th>
-				<th style='text-align: center'></th>
-				<th colspan='2'></th>
+				<td style='text-align: center'></td>
+				<td style='text-align: center'></td>
+				<td colspan='2'></td>
 			</tr>
 		</table>
        </body>
