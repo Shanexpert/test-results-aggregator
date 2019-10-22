@@ -104,7 +104,7 @@
 								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${aggregated.getResults().getCalculatedSkip()}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_COMMITS'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${aggregated.getResults().getNumberOfChanges()}</td>
+								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${aggregated.getResults().getTotalNumberOfChanges()}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_LAST_RUN'}">
 								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center"></td>

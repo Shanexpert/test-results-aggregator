@@ -81,6 +81,8 @@ public class Analyzer {
 					job.getReport().calculateDuration(job.getBuildInfo().getDuration());
 					// Total Duration
 					aggregated.setTotalDuration(aggregated.getTotalDuration() + job.getBuildInfo().getDuration());
+					// Total Changes
+					aggregated.setTotalNumberOfChanges(aggregated.getTotalNumberOfChanges() + job.getResults().getNumberOfChanges());
 					// Calculate Description
 					job.getReport().calculateDescription(job.getBuildInfo().getDescription());
 				}

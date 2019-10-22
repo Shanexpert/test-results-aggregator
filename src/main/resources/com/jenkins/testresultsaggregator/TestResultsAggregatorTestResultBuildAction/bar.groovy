@@ -1,8 +1,8 @@
 package com.jenkins.testresultsaggregator.TestResultsAggregatorTestResultBuildAction
 
 import hudson.Functions
+import com.jenkins.testresultsaggregator.helper.Colors
 import com.jenkins.testresultsaggregator.helper.TestResultHistoryUtil
-import com.jenkins.testresultsaggregator.helper.Colors;
 
 f = namespace(lib.FormTagLib)
 l = namespace(lib.LayoutTagLib)
@@ -16,14 +16,14 @@ div() {
 		text("No Job Results")
 	} else {
 		div(id: "fail-skip") {
-			text("${my.result.failedJobs} failure${my.result.failedJobs != 1 ? "s" : ""}")
+			text("${my.result.getFailed()} failure${my.result.getFailed() != 1 ? "s" : ""}")
 			if (prevResult) {
-				text("(${Functions.getDiffString(my.result.failedJobs - prevResult.failedJobs)})")
+				text("(${Functions.getDiffString(my.result.getFailed() - prevResult.getFailed())})")
 			}
-			if (my.result.unstableJobs > 0) {
-				text(", ${my.result.unstableJobs} unstable")
+			if (my.result.getUnstable() > 0) {
+				text(", ${my.result.getUnstable()} unstable")
 				if (prevResult) {
-					text("(${Functions.getDiffString(my.result.unstableJobs - prevResult.unstableJobs)})")
+					text("(${Functions.getDiffString(my.result.getUnstable() - prevResult.getUnstable())})")
 				}
 			}
 			if (my.result.abortedJobs > 0) {
@@ -41,8 +41,8 @@ div() {
 		}
 		
 		div(style: "width:100%; height:1em; background-color: ${Colors.htmlSUCCESS()}") {
-			def failpc = my.result.failedJobs * 100 / my.result.getTotalJobs()
-			def skippc = my.result.unstableJobs * 100 / my.result.getTotalJobs()
+			def failpc = my.result.getFailed() * 100 / my.result.getTotalJobs()
+			def skippc = my.result.getUnstable() * 100 / my.result.getTotalJobs()
 			def abortpc = my.result.abortedJobs * 100 / my.result.getTotalJobs()
 			def runnpc = my.result.runningJobs * 100 / my.result.getTotalJobs()
 			div(style: "width:${failpc}%; height: 1em; background-color: ${Colors.htmlFAILED()}; float: left")

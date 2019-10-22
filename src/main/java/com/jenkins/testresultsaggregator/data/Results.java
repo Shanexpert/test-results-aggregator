@@ -40,7 +40,9 @@ public class Results implements Serializable {
 	private String reportUrl;
 	private String consoleUrl;
 	
+	private int calculatedNumberOfChanges;
 	private int numberOfChanges;
+	
 	private String changesUrl;
 	private String timestamp;
 	
@@ -307,6 +309,14 @@ public class Results implements Serializable {
 	public String getStatus() {
 		status = Helper.calculateStatus(currentResult, previousResult);
 		return status;
+	}
+	
+	public int getCalculatedNumberOfChanges() {
+		return calculatedNumberOfChanges;
+	}
+	
+	public void setCalculatedNumberOfChanges(int calculatedNumberOfChanges) {
+		this.calculatedNumberOfChanges = calculatedNumberOfChanges;
 	}
 	
 }

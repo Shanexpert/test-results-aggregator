@@ -26,6 +26,7 @@ public class Aggregated extends BaseResult implements Serializable {
 	private int abortedJobs = 0;
 	private int totalJobs = 0;
 	private Long totalDuration = 0L;
+	private int totalNumberOfChanges = 0;
 	
 	private Run<?, ?> owner;
 	
@@ -157,6 +158,22 @@ public class Aggregated extends BaseResult implements Serializable {
 	
 	public void setTotalDuration(Long totalDuration) {
 		this.totalDuration = totalDuration;
+	}
+	
+	public int getTotalNumberOfChanges() {
+		return totalNumberOfChanges;
+	}
+	
+	public void setTotalNumberOfChanges(int totalNumberOfChanges) {
+		this.totalNumberOfChanges = totalNumberOfChanges;
+	}
+	
+	public int getFailed() {
+		return failedJobs + keepFailJobs;
+	}
+	
+	public int getUnstable() {
+		return unstableJobs + keepUnstableJobs;
 	}
 	
 }
