@@ -77,11 +77,13 @@ public class Analyzer {
 				// Calculate Report
 				job.getReport().calculateReport(job.getResults());
 				// Calculate Duration
-				job.getReport().calculateDuration(job.getBuildInfo().getDuration());
-				// Total Duration
-				aggregated.setTotalDuration(aggregated.getTotalDuration() + job.getBuildInfo().getDuration());
-				// Calculate Description
-				job.getReport().calculateDescription(job.getBuildInfo().getDescription());
+				if (job.getBuildInfo() != null) {
+					job.getReport().calculateDuration(job.getBuildInfo().getDuration());
+					// Total Duration
+					aggregated.setTotalDuration(aggregated.getTotalDuration() + job.getBuildInfo().getDuration());
+					// Calculate Description
+					job.getReport().calculateDescription(job.getBuildInfo().getDescription());
+				}
 				// Calculate Percentage
 				job.getReport().calculatePercentage(job.getResults());
 				// Calculate Group
