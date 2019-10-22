@@ -67,7 +67,7 @@ public class JobInfo implements Serializable {
 	}
 	
 	public String getHealthReport(boolean icon) {
-		if (icon) {
+		if (icon && healthReport != null) {
 			for (HealthReport temp : healthReport) {
 				if (temp.getDescription().startsWith("Build stability")) {
 					return ImagesMap.getImage(temp.getScore());
