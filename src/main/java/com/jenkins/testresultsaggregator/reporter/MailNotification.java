@@ -2,7 +2,6 @@ package com.jenkins.testresultsaggregator.reporter;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,16 +22,19 @@ import com.jenkins.testresultsaggregator.data.Job;
 import com.jenkins.testresultsaggregator.data.JobStatus;
 import com.jenkins.testresultsaggregator.helper.LocalMessages;
 
+import hudson.FilePath;
 import jenkins.plugins.mailer.tasks.MimeMessageBuilder;
 
 public class MailNotification {
 	
 	private PrintStream logger;
 	private List<Data> dataJob;
+	private FilePath workspace;
 	
-	public MailNotification(PrintStream logger, List<Data> dataJob) {
+	public MailNotification(PrintStream logger, List<Data> dataJob, FilePath workspace) {
 		this.logger = logger;
 		this.dataJob = dataJob;
+		this.workspace = workspace;
 	}
 	
 	private boolean validateResults() {
@@ -48,7 +50,7 @@ public class MailNotification {
 		return allJobsNotFound;
 	}
 	
-	public void send(String mailTo, String mailFrom, String subject, String body, Map<String, ImageData> images, String preBodyText, String afterBodyText) throws UnsupportedEncodingException, MessagingException {
+	public void send(String mailTo, String mailFrom, String subject, String body, Map<String, ImageData> images, String preBodyText, String afterBodyText) throws MessagingException, IOException {
 		logger.print(LocalMessages.GENERATE.toString() + " " + LocalMessages.EMAIL_REPORT.toString());
 		MimeMessageBuilder mimeMessageBuilder = new MimeMessageBuilder();
 		if (validateResults()) {
@@ -110,17 +112,12 @@ public class MailNotification {
 		}
 	}
 	
-	private MimeBodyPart addImagePart(String contentId) throws MessagingException {
+	private MimeBodyPart addImagePart(String contentId) throws MessagingException, IOException {
 		MimeBodyPart imagePart = new MimeBodyPart();
 		imagePart.setHeader("Content-ID", "<" + contentId + ">");
 		imagePart.setDisposition(MimeBodyPart.INLINE);
-		String imageFilePath = ImagesMap.getImages().get(contentId).sourcePath();
-		try {
-			imagePart.attachFile(imageFilePath);
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-		
+		String imageFilePath = workspace + "/" + ImagesMap.getImages().get(contentId).getSourcePath();
+		imagePart.attachFile(imageFilePath);
 		return imagePart;
 	}
 }

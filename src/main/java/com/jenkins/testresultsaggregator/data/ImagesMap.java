@@ -16,11 +16,11 @@ public class ImagesMap {
 	}
 	
 	public static Map<String, ImageData> getImages() {
-		images.put(Images.image0.name(), new ImageData("src/main/resources/icons/health-00to19.png", "/icons/health-00to19.png", "health-00to19.png", "cid:image0", "Project health is 20% or less"));
-		images.put(Images.image1.name(), new ImageData("src/main/resources/icons/health-20to39.png", "/icons/health-20to39.png", "health-20to39.png", "cid:image1", "Project health is over 20% and up to 40%"));
-		images.put(Images.image2.name(), new ImageData("src/main/resources/icons/health-40to59.png", "/icons/health-40to59.png", "health-40to59.png", "cid:image2", "Project health is over 40% and up to 60%"));
-		images.put(Images.image3.name(), new ImageData("src/main/resources/icons/health-60to79.png", "/icons/health-60to79.png", "health-60to79.png", "cid:image3", "Project health is over 60% and up to 80%"));
-		images.put(Images.image4.name(), new ImageData("src/main/resources/icons/health-80plus.png", "/icons/health-80plus.png", "health-80plus.png", "cid:image4", "Project health is over 80%"));
+		images.put(Images.image0.name(), new ImageData("html/health-00to19.png", "/icons/health-00to19.png", "health-00to19.png", "cid:image0", "Project health is 20% or less"));
+		images.put(Images.image1.name(), new ImageData("html/health-20to39.png", "/icons/health-20to39.png", "health-20to39.png", "cid:image1", "Project health is over 20% and up to 40%"));
+		images.put(Images.image2.name(), new ImageData("html/health-40to59.png", "/icons/health-40to59.png", "health-40to59.png", "cid:image2", "Project health is over 40% and up to 60%"));
+		images.put(Images.image3.name(), new ImageData("html/health-60to79.png", "/icons/health-60to79.png", "health-60to79.png", "cid:image3", "Project health is over 60% and up to 80%"));
+		images.put(Images.image4.name(), new ImageData("html/health-80plus.png", "/icons/health-80plus.png", "health-80plus.png", "cid:image4", "Project health is over 80%"));
 		return images;
 	}
 	
@@ -53,7 +53,7 @@ public class ImagesMap {
 			setAlt(alt);
 		}
 		
-		public String sourcePath() {
+		public String getSourcePath() {
 			return sourcePath;
 		}
 		

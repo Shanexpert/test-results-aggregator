@@ -60,7 +60,7 @@ public class Reporter {
 		// Calculate attachments
 		Map<String, ImageData> images = resolveImages(bodyText);
 		// Generate and Send Mail report
-		new MailNotification(logger, dataJob).send(
+		new MailNotification(logger, dataJob, workspace).send(
 				recipientsList,
 				mailNotificationFrom,
 				generateMailSubject(properties.getProperty(AggregatorProperties.SUBJECT_PREFIX.name()), aggregated),
