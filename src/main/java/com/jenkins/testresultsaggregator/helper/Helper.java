@@ -225,7 +225,7 @@ public class Helper {
 				}
 			} else { // if (a < b)
 				if (curr == 0) {
-					return text + colorize("-" + (prev - curr), Colors.SUCCESS);
+					return text + colorize("-" + (prev - curr), Colors.BLACK);
 				} else {
 					return text + colorize(curr, color) + colorize("(-" + (prev - curr) + ")", Colors.BLACK);
 				}
