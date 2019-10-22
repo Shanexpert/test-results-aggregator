@@ -154,6 +154,17 @@ public class ReportJob implements Serializable {
 		this.total = total;
 	}
 	
+	public String getPass(boolean withLinktoResults) {
+		if (withLinktoResults) {
+			if (!Strings.isNullOrEmpty(getPass()) && !"0".equals(getPass())) {
+				return "<a href='" + getReportURL() + "' style='text-decoration:none;'>" + getPass() + "</a>";
+			} else {
+				return "";
+			}
+		}
+		return pass;
+	}
+	
 	public String getPass() {
 		return pass;
 	}
@@ -168,6 +179,17 @@ public class ReportJob implements Serializable {
 	
 	public void setFailed(String failed) {
 		this.failed = failed;
+	}
+	
+	public String getSkipped(boolean withLinktoResults) {
+		if (withLinktoResults) {
+			if (!Strings.isNullOrEmpty(getSkipped()) && !"0".equals(getSkipped())) {
+				return "<a href='" + getReportURL() + "' style='text-decoration:none;'>" + getSkipped() + "</a>";
+			} else {
+				return "";
+			}
+		}
+		return skipped;
 	}
 	
 	public String getSkipped() {
@@ -260,9 +282,13 @@ public class ReportJob implements Serializable {
 		return percentage;
 	}
 	
-	public String getPercentage(boolean withColor) {
+	public String getPercentage(boolean withColor, boolean withLink) {
 		if (withColor && !Strings.isNullOrEmpty(percentage)) {
-			return Helper.colorizePercentage(Double.valueOf(percentage));
+			String temp = Helper.colorizePercentage(Double.valueOf(percentage));
+			if (withLink) {
+				return "<a href='" + getReportURL() + "' style='text-decoration:none;'>" + temp + "</a>";
+			}
+			return temp;
 		}
 		return percentage;
 	}

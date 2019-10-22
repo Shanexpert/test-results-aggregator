@@ -42,19 +42,19 @@
 								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getJobInfo().getHealthReport(true)}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_PERCENTAGE'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getReport().getPercentage(true)}</td>
+								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getReport().getPercentage(true,true)}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_TESTS'}">
 								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getReport().getTotal(true)}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_PASS'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getReport().getPass()}</td>
+								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getReport().getPass(true)}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_FAIL'}">
 								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getReport().getFailedColor(true)}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_SKIP'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getReport().getSkipped()}</td>
+								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getReport().getSkipped(true)}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_COMMITS'}">
 								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getReport().getChanges()}</td>
