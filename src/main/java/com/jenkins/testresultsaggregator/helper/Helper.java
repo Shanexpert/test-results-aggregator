@@ -41,16 +41,16 @@ public class Helper {
 			long bDays = currentHours / 24;
 			if (d.getSeconds() > outOfDate) {
 				if (bDays > 0) {
-					return colorize(bDays + "D:" + bDours + "h ago", Colors.FAILED);
+					return colorize(bDays + "d:" + bDours + "h ago", Colors.FAILED);
 				} else {
 					return colorize(bDours + "h ago", Colors.FAILED);
 				}
 			}
 			if (bDays > 0) {
 				if (bDays == 1) {
-					return bDays + "D:" + bDours + "h ago";
+					return bDays + "d:" + bDours + "h ago";
 				}
-				return bDays + "D:" + bDours + "h ago";
+				return bDays + "d:" + bDours + "h ago";
 			} else if (bDours == 0) {
 				return currentMin + "m ago";
 			} else {
@@ -97,18 +97,23 @@ public class Helper {
 	
 	public static Double countPercentage(Results results) {
 		String percentage = "0";
-		try {
-			percentage = singDoubleSingle((double) (results.getPass() + results.getSkip()) * 100 / results.getTotal());
-		} catch (Exception ex) {
-			
+		if (results != null && results.getTotal() != 0) {
+			try {
+				percentage = singDoubleSingle((double) (results.getPass() + results.getSkip()) * 100 / results.getTotal());
+				double percentageDouble = 0;
+				try {
+					percentageDouble = Double.parseDouble(percentage);
+				} catch (Exception ex) {
+					
+				}
+				return percentageDouble;
+			} catch (Exception ex) {
+				
+			}
+		} else {
+			percentage = null;
 		}
-		double percentageDouble = 0;
-		try {
-			percentageDouble = Double.parseDouble(percentage);
-		} catch (Exception ex) {
-			
-		}
-		return percentageDouble;
+		return -1D;
 	}
 	
 	public static String countPercentage(int pass, int total) {

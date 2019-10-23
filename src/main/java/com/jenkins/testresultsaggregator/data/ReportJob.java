@@ -277,7 +277,12 @@ public class ReportJob implements Serializable {
 				results.getCurrentResult().equalsIgnoreCase(JobStatus.RUNNING.name())) {
 			setPercentage(null);
 		} else {
-			setPercentage(Double.toString(Helper.countPercentage(results)));
+			Double calculatedPercentage = Helper.countPercentage(results);
+			if (calculatedPercentage > 0) {
+				setPercentage(Double.toString(Helper.countPercentage(results)));
+			} else {
+				setPercentage(null);
+			}
 		}
 		return percentage;
 	}
