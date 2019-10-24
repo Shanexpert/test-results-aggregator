@@ -56,8 +56,6 @@ Otherwise (if blank or empty) then column 'Last Run' will just have the timestam
   ![Main View](https://github.com/sdrss/test/blob/master/screenshots/MainView.png)
 
 2. HTML Report , sample :
-  ![html1](https://github.com/sdrss/test/blob/master/screenshots/htmlView.png)
-  
   ![html2](https://github.com/sdrss/test/blob/master/screenshots/htmlView2.png)
     * the html report is generated under workspace/html/index.html and can be published also via HTML Publisher Plugin
     * the same report is send via mail.
