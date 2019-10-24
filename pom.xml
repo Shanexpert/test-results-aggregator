@@ -35,6 +35,13 @@
 		<url>https://github.com/jenkinsci/test-results-aggregator-plugin</url>
 		<tag>HEAD</tag>
 	</scm>
+	<developers>
+		<developer>
+			<id>sdrss</id>
+			<name>Socrates Sidereas</name>
+			<email>socrates.sidereas@gmail.com</email>
+		</developer>
+	</developers>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>repo.jenkins-ci.org</id>
