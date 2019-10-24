@@ -38,6 +38,8 @@ In this section you can define :
 **4**. Add Recipients List , Before,After Body text, theme and Sort by option : 
   ![Recipients](https://github.com/sdrss/test/blob/master/screenshots/ReceipientsList.png)
 * **Recipients List** : comma separated recipients list , ex : nick@some.com,mairy@some.com .if empty or blank no email will be triggered.
+* **Subject prefix** : prefix for mail subject.
+* **Columns** : html & email report columns and the order of them, comma separated.
 * **Before body** : plain text or html code to add before report table.
 * **After body** : plain text or html code to add after report table.
 * **Mail Theme** : Ligth or dark mail theme.
