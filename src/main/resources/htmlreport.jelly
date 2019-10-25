@@ -17,6 +17,7 @@
 			<j:set var="index" value="1"/>
 			<j:forEach items="${aggregated.getData()}" var="dataJob">
 				<j:set var="groupadded" value="false"/>
+				<j:set var="indexGroup" value="1"/>
 				<j:set var="bgcolor" value="#DFDEDE"/>
 					<j:if test="${index % 2 == 0}">
 						<j:set var="bgcolor" value="#EEEEEE"/>
@@ -29,44 +30,49 @@
 					<tr bgcolor='${bgcolor}' height='35'>
 						<j:if test="${groupadded == false}">
 							<j:if test="${showGroups == true}">
-								<th rowspan='${dataJob.getJobs().size()}' style='border-bottom:1px solid ${lineSeperatorcolor}'>${dataJob.getGroupName()}<br>${dataJob.getReportGroup().getPercentage(true)}</br></th>
+								<th rowspan='${dataJob.getJobs().size()}' style='border-bottom:2px solid ${lineSeperatorcolor}'>${dataJob.getGroupName()}<br>${dataJob.getReportGroup().getPercentage(true)}</br></th>
 							</j:if>
 							<j:set var="groupadded" value="true"/>
 						</j:if>
-						<td style='border-bottom:1px solid ${lineSeperatorcolor}'>${job.getJobNameFromFriendlyName(true)}</td>
+						<j:set var="line" value="1px"/>
+						<j:if test="${indexGroup == dataJob.getJobs().size()}">
+							<j:set var="line" value="2px"/>
+						</j:if>
+						<j:set var="indexGroup" value="${indexGroup+1}"/>
+						<td style='border-bottom:${line} solid ${lineSeperatorcolor}'>${job.getJobNameFromFriendlyName(true)}</td>
 						<j:forEach items="${columns}" var="column">
 							<j:if test="${column.name() == 'COLUMN_JOB_STATUS'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getReport().getStatusColor(true)}</td>
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getStatusColor(true)}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_HEALTH'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getJobInfo().getHealthReport(true)}</td>
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getJobInfo().getHealthReport(true)}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_PERCENTAGE'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getReport().getPercentage(true,true)}</td>
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getPercentage(true,true)}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_TESTS'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getReport().getTotal(true)}</td>
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getTotal(true)}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_PASS'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getReport().getPass(true)}</td>
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getPass(true)}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_FAIL'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getReport().getFailedColor(true)}</td>
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getFailedColor(true)}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_SKIP'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getReport().getSkipped(true)}</td>
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getSkipped(true)}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_COMMITS'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getReport().getChanges()}</td>
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getChanges()}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_LAST_RUN'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getReport().getTimestamp()}</td>
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getTimestamp()}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_DURATION'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${job.getReport().getDuration()}</td>
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getDuration()}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_DESCRIPTION'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: left">${job.getReport().getDescription()}</td>
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: left">${job.getReport().getDescription()}</td>
 							</j:if>
 						</j:forEach>
 					</tr>
@@ -74,49 +80,47 @@
 			</j:forEach>
 			<tr bgcolor='${footerColor}' style='text-align: center;color: ${footerTextColor}' height='40'>
 				<j:if test="${showGroups == true}">
-					<td style='border-bottom:1px solid ${lineSeperatorcolor};text-align: center' colspan='2'>Summary</td>
+					<td style='border-bottom:2px solid ${lineSeperatorcolor};text-align: center' colspan='2'>Summary</td>
 				</j:if>
 				<j:if test="${showGroups == false}">
-					<td style='border-bottom:1px solid ${lineSeperatorcolor};text-align: center' colspan='1'>Summary</td>
+					<td style='border-bottom:2px solid ${lineSeperatorcolor};text-align: center' colspan='1'>Summary</td>
 				</j:if>
-				
 				
 				<j:forEach items="${columns}" var="column">
 							<j:if test="${column.name() == 'COLUMN_JOB_STATUS'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center"></td>
+								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center"></td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_HEALTH'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center"></td>
+								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center"></td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_PERCENTAGE'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${aggregated.calculatePercentage(true)}</td>
+								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center">${aggregated.calculatePercentage(true)}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_TESTS'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${aggregated.getResults().getCalculatedTotal()}</td>
+								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center">${aggregated.getResults().getCalculatedTotal()}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_PASS'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${aggregated.getResults().getCalculatedPass()}</td>
+								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center">${aggregated.getResults().getCalculatedPass()}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_FAIL'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${aggregated.getResults().getCalculatedFailColor()}</td>
+								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center">${aggregated.getResults().getCalculatedFailColor()}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_SKIP'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${aggregated.getResults().getCalculatedSkip()}</td>
+								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center">${aggregated.getResults().getCalculatedSkip()}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_COMMITS'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${aggregated.getResults().getTotalNumberOfChanges()}</td>
+								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center">${aggregated.getResults().getTotalNumberOfChanges()}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_LAST_RUN'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center"></td>
+								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center"></td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_DURATION'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center">${aggregated.calculateTotalDuration()}</td>
+								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center">${aggregated.calculateTotalDuration()}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_DESCRIPTION'}">
-								<td style="border-bottom:1px solid ${lineSeperatorcolor};text-align: center"></td>
+								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center"></td>
 							</j:if>
 				</j:forEach>
-						
 				<td style='text-align: center'></td>
 				<td style='text-align: center'></td>
 				<td colspan='2'></td>
