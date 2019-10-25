@@ -1,6 +1,5 @@
 package com.jenkins.testresultsaggregator.data;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -10,9 +9,7 @@ import com.jenkins.testresultsaggregator.helper.Helper;
 import hudson.model.Run;
 import hudson.tasks.test.TestResult;
 
-public class Aggregated extends BaseResult implements Serializable {
-	
-	private static final long serialVersionUID = 3491974223665L;
+public class Aggregated extends BaseResult {
 	
 	private List<Data> data;
 	private Results results;
