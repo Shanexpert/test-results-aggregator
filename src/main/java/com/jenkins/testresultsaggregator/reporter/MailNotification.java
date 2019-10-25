@@ -91,7 +91,7 @@ public class MailNotification {
 				Multipart multipart = new MimeMultipart();
 				multipart.addBodyPart(messageBodyPart);
 				
-				if (images != null & !images.isEmpty()) {
+				if (images != null && !images.isEmpty()) {
 					Set<String> setImageID = images.keySet();
 					for (String contentId : setImageID) {
 						multipart.addBodyPart(addImagePart(contentId));
