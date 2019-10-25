@@ -31,7 +31,6 @@ public class Reporter {
 	private String mailNotificationFrom;
 	
 	private boolean foundAtLeastOneGroupName;
-	private List<String> columns;
 	
 	public Reporter(PrintStream logger, FilePath workspace, File rootDir, String mailNotificationFrom) {
 		this.logger = logger;
