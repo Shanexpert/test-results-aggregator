@@ -32,7 +32,6 @@ import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
 import hudson.util.Secret;
-import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 
 public class TestResultsAggregator extends Notifier {
@@ -257,38 +256,31 @@ public class TestResultsAggregator extends Notifier {
 		}
 		
 		public FormValidation doCheckOutOfDateResults(@QueryParameter final String outOfDateResults) {
-			if (Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER)) {
-				if (!Strings.isNullOrEmpty(outOfDateResults)) {
-					try {
-						int hours = Integer.parseInt(outOfDateResults);
-						if (hours < 0) {
-							return FormValidation.error(LocalMessages.VALIDATION_POSITIVE_NUMBER.toString());
-						} else {
-							return FormValidation.ok();
-						}
-					} catch (NumberFormatException e) {
-						return FormValidation.error(LocalMessages.VALIDATION_INTEGER_NUMBER.toString());
+			if (!Strings.isNullOrEmpty(outOfDateResults)) {
+				try {
+					int hours = Integer.parseInt(outOfDateResults);
+					if (hours < 0) {
+						return FormValidation.error(LocalMessages.VALIDATION_POSITIVE_NUMBER.toString());
+					} else {
+						return FormValidation.ok();
 					}
-				} else {
-					// No OutOfDate
-					return FormValidation.ok();
+				} catch (NumberFormatException e) {
+					return FormValidation.error(LocalMessages.VALIDATION_INTEGER_NUMBER.toString());
 				}
 			} else {
-				return FormValidation.error(LocalMessages.ERROR_OCCURRED.toString() + " no permissions");
+				// No OutOfDate
+				return FormValidation.ok();
 			}
 		}
 		
 		public FormValidation doTestApiConnection(@QueryParameter final String jenkinsUrl, @QueryParameter final String username, @QueryParameter final Secret password) {
-			if (Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER)) {
-				try {
-					new Collector(null, username, password, jenkinsUrl).getAPIConnection();
-					return FormValidation.ok(LocalMessages.SUCCESS.toString());
-				} catch (Exception e) {
-					return FormValidation.error(LocalMessages.ERROR_OCCURRED.toString() + ": " + e.getMessage());
-				}
-			} else {
-				return FormValidation.error(LocalMessages.ERROR_OCCURRED.toString() + " no permissions");
+			try {
+				new Collector(null, username, password, jenkinsUrl).getAPIConnection();
+				return FormValidation.ok(LocalMessages.SUCCESS.toString());
+			} catch (Exception e) {
+				return FormValidation.error(LocalMessages.ERROR_OCCURRED.toString() + ": " + e.getMessage());
 			}
+			
 		}
 	}
 	
