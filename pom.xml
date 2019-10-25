@@ -13,7 +13,7 @@
 	<packaging>hpi</packaging>
 	<version>1.0.0</version>
 	<name>Test Results Aggregator Plugin</name>
-	<description>Aggregate Junit and TestNG Results in a single HTML/email report</description>
+	<description>Aggregate Test and Job Results in a single HTML/email report</description>
 	<url></url>
 	<licenses>
 		<license>
@@ -30,8 +30,8 @@
 		</repository>
 	</repositories>
 	<scm>
-		<connection>https://github.com/jenkinsci/test-results-aggregator-plugin.git</connection>
-		<developerConnection>https://github.com/jenkinsci/test-results-aggregator-plugin.git</developerConnection>
+		<connection>scm:git:https://github.com/jenkinsci/test-results-aggregator-plugin.git</connection>
+		<developerConnection>scm:git:https://github.com/jenkinsci/test-results-aggregator-plugin.git</developerConnection>
 		<url>https://github.com/jenkinsci/test-results-aggregator-plugin</url>
 		<tag>HEAD</tag>
 	</scm>
