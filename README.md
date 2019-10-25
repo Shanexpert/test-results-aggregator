@@ -1,5 +1,5 @@
 # test-results-aggregator
-It's a jenkins plugin that collects via Jenkins API all junit/testNG results and reports them : 
+It's a jenkins plugin that collects via API all job and test results and reports them : 
 * in a single html view, 
 * email
 
