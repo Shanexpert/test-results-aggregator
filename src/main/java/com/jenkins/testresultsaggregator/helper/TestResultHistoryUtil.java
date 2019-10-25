@@ -11,6 +11,17 @@ public class TestResultHistoryUtil {
 	private TestResultHistoryUtil() {
 	}
 	
+	public static Aggregated getTestResults(Run<?, ?> owner) {
+		if (owner != null) {
+			if (owner != null && owner.getAction(TestResultsAggregatorTestResultBuildAction.class) != null) {
+				return owner.getAction(TestResultsAggregatorTestResultBuildAction.class).getResult();
+			} else {
+				return new Aggregated();
+			}
+		}
+		return null;
+	}
+	
 	public static Aggregated getPreviousBuildTestResults(Run<?, ?> owner) {
 		Run<?, ?> previousBuild = owner.getPreviousCompletedBuild();
 		if (previousBuild != null && previousBuild.getAction(TestResultsAggregatorTestResultBuildAction.class) != null) {

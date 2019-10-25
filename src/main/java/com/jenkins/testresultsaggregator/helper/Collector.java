@@ -176,34 +176,44 @@ public class Collector {
 				}
 				// Calculate Previous Results
 				if (job.getBuildInfo().getPreviousBuild() != null) {
-					// Get Previous
-					try {
-						BuildInfo jenkinsPreviousBuildDTO = Deserialize.initializeObjectMapper().readValue(Http.get(job.getBuildInfo().getPreviousBuild().getUrl() + "/" + API_JSON_URL, authenticationString()),
-								BuildInfo.class);
-						results.setPreviousResult(jenkinsPreviousBuildDTO.getResult());
-						// Calculate FAIL,SKIP and TOTAL of the Previous Test
-						int previouslyFail = 0;
-						int previouslyPass = 0;
-						int previouslySkip = 0;
-						for (HashMap<Object, Object> temp : jenkinsPreviousBuildDTO.getActions()) {
-							if (temp.containsKey(FAILCOUNT)) {
-								results.setFailDif((Integer) temp.get(FAILCOUNT));
-								previouslyFail += (Integer) temp.get(FAILCOUNT);
-							}
-							if (temp.containsKey(SKIPCOUNT)) {
-								results.setSkipDif((Integer) temp.get(SKIPCOUNT));
-								previouslySkip += (Integer) temp.get(SKIPCOUNT);
-							}
-							if (temp.containsKey(TOTALCOUNT)) {
-								results.setTotalDif((Integer) temp.get(TOTALCOUNT));
-								previouslyPass += (Integer) temp.get(TOTALCOUNT);
-							}
+					BuildInfo jenkinsPreviousBuildDTO = null;
+					if (!job.getBuildInfo().getPreviousBuild().getUrl().toString().equals(job.getSavedJobUrl()) && job.getSavedJobUrl() != null) {
+						try {
+							jenkinsPreviousBuildDTO = Deserialize.initializeObjectMapper().readValue(Http.get(job.getSavedJobUrl() + "/" + API_JSON_URL, authenticationString()),
+									BuildInfo.class);
+						} catch (IOException ex) {
+							
 						}
-						// Calculate Pass Difference Results
-						results.setPassDif(previouslyPass - Math.abs(previouslyFail) - Math.abs(previouslySkip));
-					} catch (IOException ex) {
-						
+					} else {
+						try {
+							jenkinsPreviousBuildDTO = Deserialize.initializeObjectMapper().readValue(Http.get(job.getBuildInfo().getPreviousBuild().getUrl() + "/" + API_JSON_URL, authenticationString()),
+									BuildInfo.class);
+						} catch (IOException ex) {
+							
+						}
 					}
+					results.setPreviousResult(jenkinsPreviousBuildDTO.getResult());
+					// Calculate FAIL,SKIP and TOTAL of the Previous Test
+					int previouslyFail = 0;
+					int previouslyPass = 0;
+					int previouslySkip = 0;
+					for (HashMap<Object, Object> temp : jenkinsPreviousBuildDTO.getActions()) {
+						if (temp.containsKey(FAILCOUNT)) {
+							results.setFailDif((Integer) temp.get(FAILCOUNT));
+							previouslyFail += (Integer) temp.get(FAILCOUNT);
+						}
+						if (temp.containsKey(SKIPCOUNT)) {
+							results.setSkipDif((Integer) temp.get(SKIPCOUNT));
+							previouslySkip += (Integer) temp.get(SKIPCOUNT);
+						}
+						if (temp.containsKey(TOTALCOUNT)) {
+							results.setTotalDif((Integer) temp.get(TOTALCOUNT));
+							previouslyPass += (Integer) temp.get(TOTALCOUNT);
+						}
+					}
+					// Calculate Pass Difference Results
+					results.setPassDif(previouslyPass - Math.abs(previouslyFail) - Math.abs(previouslySkip));
+					
 				}
 			} else {
 				results.setCurrentResult(JobStatus.RUNNING.name());

@@ -21,6 +21,7 @@ public class Job extends AbstractDescribableImpl<Job> implements Serializable {
 	private BuildInfo buildInfo;
 	private Results results;
 	private ReportJob report;
+	private String savedUrl;
 	
 	@DataBoundConstructor
 	public Job(String jobName, String jobFriendlyName) {
@@ -93,7 +94,9 @@ public class Job extends AbstractDescribableImpl<Job> implements Serializable {
 			} else if (JobStatus.DISABLED.name().equalsIgnoreCase(results.getCurrentResult())) {
 				reportUrl = results.getUrl();
 			} else {
-				reportUrl = results.getReportUrl();
+				// reportUrl = results.getReportUrl();
+				// Link for Job name redirect to Job or results ?
+				reportUrl = results.getUrl();
 			}
 			return "<a href='" + reportUrl + "' style='text-decoration:none;'><font color='" + Colors.htmlJOB_NAME_URL() + "'>" + getJobNameFromFriendlyName() + "</font></a>";
 		}
@@ -106,5 +109,13 @@ public class Job extends AbstractDescribableImpl<Job> implements Serializable {
 	
 	public void setReport(ReportJob report) {
 		this.report = report;
+	}
+	
+	public String getSavedJobUrl() {
+		return savedUrl;
+	}
+	
+	public void setSavedJobUrl(String savedUrl) {
+		this.savedUrl = savedUrl;
 	}
 }

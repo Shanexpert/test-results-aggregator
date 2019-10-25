@@ -17,6 +17,7 @@ import com.jenkins.testresultsaggregator.data.Job;
 import com.jenkins.testresultsaggregator.helper.Analyzer;
 import com.jenkins.testresultsaggregator.helper.Collector;
 import com.jenkins.testresultsaggregator.helper.LocalMessages;
+import com.jenkins.testresultsaggregator.helper.TestResultHistoryUtil;
 import com.jenkins.testresultsaggregator.reporter.Reporter;
 
 import hudson.Extension;
@@ -114,8 +115,12 @@ public class TestResultsAggregator extends Notifier {
 			properties.put(AggregatorProperties.SORT_JOBS_BY.name(), getSortresults());
 			properties.put(AggregatorProperties.SUBJECT_PREFIX.name(), getSubject());
 			columns = calculateColumns(selectedColumns);
+			// Get Previous Saved Results
+			Aggregated previousSavedAggregatedResults = TestResultHistoryUtil.getTestResults(build.getPreviousSuccessfulBuild());
 			// Validate Input Data
 			List<Data> validatedData = validateInputData(getData());
+			// Check previous Data
+			previousSavedResults(validatedData, previousSavedAggregatedResults);
 			// Collect Data
 			Collector collector = new Collector(logger, desc.getUsername(), desc.getPassword(), desc.getJenkinsUrl());
 			collector.collectResults(validatedData);
@@ -131,6 +136,23 @@ public class TestResultsAggregator extends Notifier {
 		}
 		logger.println(LocalMessages.FINISHED_AGGREGATE.toString());
 		return true;
+	}
+	
+	private void previousSavedResults(List<Data> validatedData, Aggregated previousAggregated) {
+		if (previousAggregated != null) {
+			for (Data data : validatedData) {
+				for (Job job : data.getJobs()) {
+					for (Data pdata : previousAggregated.getData()) {
+						for (Job pjob : pdata.getJobs()) {
+							if (job.getJobName().equals(pjob.getJobName())) {
+								job.setSavedJobUrl(pjob.getJobInfo().getUrl().toString());
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	private List<LocalMessages> calculateColumns(String selectedColumns) {
