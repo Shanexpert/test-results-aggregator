@@ -197,10 +197,10 @@ public class Collector {
 						if (currentUrl.equals(job.getSavedJobUrl())) {
 							// No new Run for this Job
 							jenkinsPreviousBuildDTO = getJobInfo(job.getBuildInfo().getPreviousBuild().getUrl().toString());
-							job.setUpdated("");
+							job.setUpdated("*");
 						} else {
 							jenkinsPreviousBuildDTO = getJobInfo(job.getSavedJobUrl());
-							job.setUpdated("*");
+							job.setUpdated("");
 						}
 					}
 					results.setPreviousResult(jenkinsPreviousBuildDTO.getResult());
