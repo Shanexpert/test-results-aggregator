@@ -92,8 +92,8 @@ public class Job extends AbstractDescribableImpl<Job> implements Serializable {
 				reportUrl = null;
 			} else if (Strings.isNullOrEmpty(results.getUrl())) {
 				reportUrl = null;
-			} else if (JobStatus.DISABLED.name().equalsIgnoreCase(results.getCurrentResult())) {
-				reportUrl = results.getUrl();
+				// } else if (JobStatus.DISABLED.name().equalsIgnoreCase(results.getCurrentResult())) {
+				// reportUrl = results.getUrl();
 			} else {
 				// reportUrl = results.getReportUrl();
 				// Link for Job name redirect to Job or results ?
