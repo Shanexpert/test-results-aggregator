@@ -81,7 +81,9 @@ public class JobInfo implements Serializable {
 		this.healthReport = healthReport;
 	}
 	
-	public static class HealthReport {
+	public static class HealthReport implements Serializable {
+		
+		private static final long serialVersionUID = 742123666L;
 		
 		private int score;
 		private String description;
