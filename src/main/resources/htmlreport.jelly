@@ -39,7 +39,7 @@
 							<j:set var="line" value="2px"/>
 						</j:if>
 						<j:set var="indexGroup" value="${indexGroup+1}"/>
-						<td style='border-bottom:${line} solid ${lineSeperatorcolor}'>${job.getJobNameFromFriendlyName(true)}</td>
+						<td style='border-bottom:${line} solid ${lineSeperatorcolor}'>${job.getJobNameFromFriendlyName(true)} ${job.getUpdated()}</td>
 						<j:forEach items="${columns}" var="column">
 							<j:if test="${column.name() == 'COLUMN_JOB_STATUS'}">
 								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getStatusColor(true)}</td>

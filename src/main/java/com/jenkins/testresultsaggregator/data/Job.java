@@ -16,6 +16,7 @@ public class Job extends AbstractDescribableImpl<Job> implements Serializable {
 	
 	private String jobName;
 	private String jobFriendlyName;
+	private String updated;
 	//
 	private JobInfo jobInfo;
 	private BuildInfo buildInfo;
@@ -117,5 +118,13 @@ public class Job extends AbstractDescribableImpl<Job> implements Serializable {
 	
 	public void setSavedJobUrl(String savedUrl) {
 		this.savedUrl = savedUrl;
+	}
+	
+	public String getUpdated() {
+		return updated;
+	}
+	
+	public void setUpdated(String updated) {
+		this.updated = updated;
 	}
 }

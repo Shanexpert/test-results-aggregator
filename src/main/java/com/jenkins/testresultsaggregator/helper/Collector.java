@@ -109,10 +109,21 @@ public class Collector {
 		return null;
 	}
 	
+	public BuildInfo getJobInfo(String url) {
+		try {
+			URL jobUrlAPILastBuild = new URL(url + "/" + API_JSON_URL);
+			// Get Latest
+			String reply = Http.get(jobUrlAPILastBuild, authenticationString());
+			return Deserialize.initializeObjectMapper().readValue(reply, BuildInfo.class);
+		} catch (IOException e) {
+		}
+		return null;
+	}
+	
 	public Results calculateResults(Job job) {
 		if (job.getBuildInfo() != null) {
 			Results results = new Results();
-			// Set Url
+			// Set Urls
 			results.setUrl(job.getJobInfo().getUrl().toString());
 			// Set Building status
 			results.setBuilding(job.getBuildInfo().getBuilding());
@@ -177,19 +188,19 @@ public class Collector {
 				// Calculate Previous Results
 				if (job.getBuildInfo().getPreviousBuild() != null) {
 					BuildInfo jenkinsPreviousBuildDTO = null;
-					if (!job.getBuildInfo().getPreviousBuild().getUrl().toString().equals(job.getSavedJobUrl()) && job.getSavedJobUrl() != null) {
-						try {
-							jenkinsPreviousBuildDTO = Deserialize.initializeObjectMapper().readValue(Http.get(job.getSavedJobUrl() + "/" + API_JSON_URL, authenticationString()),
-									BuildInfo.class);
-						} catch (IOException ex) {
-							
-						}
+					if (job.getSavedJobUrl() == null) {
+						// There is no Saved Job , get Previous
+						jenkinsPreviousBuildDTO = getJobInfo(job.getBuildInfo().getPreviousBuild().getUrl().toString());
+						job.setUpdated("");
 					} else {
-						try {
-							jenkinsPreviousBuildDTO = Deserialize.initializeObjectMapper().readValue(Http.get(job.getBuildInfo().getPreviousBuild().getUrl() + "/" + API_JSON_URL, authenticationString()),
-									BuildInfo.class);
-						} catch (IOException ex) {
-							
+						String currentUrl = job.getJobInfo().getLastBuild().getUrl().toString();
+						if (currentUrl.equals(job.getSavedJobUrl())) {
+							// No new Run for this Job
+							jenkinsPreviousBuildDTO = getJobInfo(job.getBuildInfo().getPreviousBuild().getUrl().toString());
+							job.setUpdated("");
+						} else {
+							jenkinsPreviousBuildDTO = getJobInfo(job.getSavedJobUrl());
+							job.setUpdated("*");
 						}
 					}
 					results.setPreviousResult(jenkinsPreviousBuildDTO.getResult());
