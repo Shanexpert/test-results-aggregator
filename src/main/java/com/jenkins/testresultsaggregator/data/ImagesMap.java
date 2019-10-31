@@ -6,6 +6,7 @@ import java.util.Map;
 public class ImagesMap {
 	
 	private static Map<String, ImageData> images = new HashMap<>();
+	private static String imageSize = "style=\"width:30px;height:30px;\"";
 	
 	public static enum Images {
 		image0,
@@ -26,15 +27,15 @@ public class ImagesMap {
 	
 	public static String getImage(int score) {
 		if (score <= 20) {
-			return "<img src=\"" + ImagesMap.getImages().get(Images.image0.name()).getFileName() + "\" alt=\"" + ImagesMap.getImages().get(Images.image0.name()).getAlt() + "\">";
+			return "<img src=\"" + ImagesMap.getImages().get(Images.image0.name()).getFileName() + "\" alt=\"" + ImagesMap.getImages().get(Images.image0.name()).getAlt() + "\" " + imageSize + ">";
 		} else if (score <= 40) {
-			return "<img src=\"" + ImagesMap.getImages().get(Images.image1.name()).getFileName() + "\" alt=\"" + ImagesMap.getImages().get(Images.image1.name()).getAlt() + "\">";
+			return "<img src=\"" + ImagesMap.getImages().get(Images.image1.name()).getFileName() + "\" alt=\"" + ImagesMap.getImages().get(Images.image1.name()).getAlt() + "\" " + imageSize + ">";
 		} else if (score <= 60) {
-			return "<img src=\"" + ImagesMap.getImages().get(Images.image2.name()).getFileName() + "\" alt=\"" + ImagesMap.getImages().get(Images.image2.name()).getAlt() + "\">";
+			return "<img src=\"" + ImagesMap.getImages().get(Images.image2.name()).getFileName() + "\" alt=\"" + ImagesMap.getImages().get(Images.image2.name()).getAlt() + "\" " + imageSize + ">";
 		} else if (score <= 80) {
-			return "<img src=\"" + ImagesMap.getImages().get(Images.image3.name()).getFileName() + "\" alt=\"" + ImagesMap.getImages().get(Images.image3.name()).getAlt() + "\">";
+			return "<img src=\"" + ImagesMap.getImages().get(Images.image3.name()).getFileName() + "\" alt=\"" + ImagesMap.getImages().get(Images.image3.name()).getAlt() + "\" " + imageSize + ">";
 		} else {
-			return "<img src=\"" + ImagesMap.getImages().get(Images.image4.name()).getFileName() + "\" alt=\"" + ImagesMap.getImages().get(Images.image4.name()).getAlt() + "\">";
+			return "<img src=\"" + ImagesMap.getImages().get(Images.image4.name()).getFileName() + "\" alt=\"" + ImagesMap.getImages().get(Images.image4.name()).getAlt() + "\" " + imageSize + ">";
 		}
 	}
 	
