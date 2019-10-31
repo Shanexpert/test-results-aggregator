@@ -155,7 +155,7 @@ public class TestResultsAggregator extends Notifier {
 	}
 	
 	private List<LocalMessages> calculateColumns(String selectedColumns) {
-		List<LocalMessages> columns = new ArrayList<>(Arrays.asList(LocalMessages.COLUMN_GROUP, LocalMessages.COLUMN_JOB));
+		List<LocalMessages> columns = new ArrayList<>(Arrays.asList(LocalMessages.COLUMN_GROUP));
 		if (!Strings.isNullOrEmpty(selectedColumns)) {
 			String[] splitter = selectedColumns.split(",");
 			for (String temp : splitter) {
@@ -163,6 +163,8 @@ public class TestResultsAggregator extends Notifier {
 					temp = temp.trim();
 					if (temp.equalsIgnoreCase("Status")) {
 						columns.add(LocalMessages.COLUMN_JOB_STATUS);
+					} else if (temp.equalsIgnoreCase("Job")) {
+						columns.add(LocalMessages.COLUMN_JOB);
 					} else if (temp.equalsIgnoreCase("Percentage")) {
 						columns.add(LocalMessages.COLUMN_PERCENTAGE);
 					} else if (temp.equalsIgnoreCase("Total")) {

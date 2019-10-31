@@ -39,8 +39,10 @@
 							<j:set var="line" value="2px"/>
 						</j:if>
 						<j:set var="indexGroup" value="${indexGroup+1}"/>
-						<td style='border-bottom:${line} solid ${lineSeperatorcolor}'>${job.getJobNameFromFriendlyName(true)} ${job.getUpdated()}</td>
 						<j:forEach items="${columns}" var="column">
+							<j:if test="${column.name() == 'COLUMN_JOB'}">
+								<td style='border-bottom:${line} solid ${lineSeperatorcolor}'>${job.getJobNameFromFriendlyName(true)} ${job.getUpdated()}</td>
+							</j:if>
 							<j:if test="${column.name() == 'COLUMN_JOB_STATUS'}">
 								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getStatusColor(true)}</td>
 							</j:if>
@@ -80,13 +82,13 @@
 			</j:forEach>
 			<tr bgcolor='${footerColor}' style='text-align: center;color: ${footerTextColor}' height='40'>
 				<j:if test="${showGroups == true}">
-					<td style='border-bottom:2px solid ${lineSeperatorcolor};text-align: center' colspan='2'>Summary</td>
-				</j:if>
-				<j:if test="${showGroups == false}">
-					<td style='border-bottom:2px solid ${lineSeperatorcolor};text-align: center' colspan='1'>Summary</td>
+					<td style='border-bottom:2px solid ${lineSeperatorcolor};text-align: center'>Summary</td>
 				</j:if>
 				
 				<j:forEach items="${columns}" var="column">
+							<j:if test="${column.name() == 'COLUMN_JOB'}">
+								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center"></td>
+							</j:if>
 							<j:if test="${column.name() == 'COLUMN_JOB_STATUS'}">
 								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center"></td>
 							</j:if>
