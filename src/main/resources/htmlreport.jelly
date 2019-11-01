@@ -8,7 +8,7 @@
        	.hoverTable tr:hover {background-color: #F5F5F5;}
 	   </style>
        <body>
-       	<table width='100%' class='hovertable' style='border-spacing:0px'>
+       	<table width='100%' class='hovertable' style='border-spacing:0px;'>
 			<tr bgcolor='${headerColor}' style='text-align: center;color: white' height='40'>
 				<j:forEach items="${columns}" var="column">
 					<th>${column.toString()}</th>
