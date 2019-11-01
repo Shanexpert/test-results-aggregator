@@ -6,7 +6,7 @@
 		<version>2.37</version>
 		<relativePath />
 	</parent>
-	<artifactId>tests-results-aggregator</artifactId>
+	<artifactId>test-results-aggregator</artifactId>
 	<packaging>hpi</packaging>
 	<version>1.0.0</version>
 	<name>Test Results Aggregator Plugin</name>
