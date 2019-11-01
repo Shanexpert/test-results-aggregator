@@ -138,13 +138,15 @@ public class TestResultsAggregator extends Notifier {
 	}
 	
 	private void previousSavedResults(List<Data> validatedData, Aggregated previousAggregated) {
-		if (previousAggregated != null) {
+		if (previousAggregated != null && previousAggregated.getData() != null) {
 			for (Data data : validatedData) {
 				for (Job job : data.getJobs()) {
 					for (Data pdata : previousAggregated.getData()) {
 						for (Job pjob : pdata.getJobs()) {
 							if (job.getJobName().equals(pjob.getJobName())) {
-								job.setSavedJobUrl(pjob.getJobInfo().getUrl().toString());
+								if (pjob.getJobInfo().getUrl() != null) {
+									job.setSavedJobUrl(pjob.getJobInfo().getUrl().toString());
+								}
 								break;
 							}
 						}

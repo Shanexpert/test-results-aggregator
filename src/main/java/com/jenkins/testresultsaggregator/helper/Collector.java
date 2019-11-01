@@ -121,7 +121,7 @@ public class Collector {
 	}
 	
 	public Results calculateResults(Job job) {
-		if (job.getBuildInfo() != null) {
+		if (job != null && job.getBuildInfo() != null) {
 			Results results = new Results();
 			// Set Urls
 			results.setUrl(job.getJobInfo().getUrl().toString());
@@ -203,28 +203,29 @@ public class Collector {
 							job.setUpdated("");
 						}
 					}
-					results.setPreviousResult(jenkinsPreviousBuildDTO.getResult());
-					// Calculate FAIL,SKIP and TOTAL of the Previous Test
 					int previouslyFail = 0;
 					int previouslyPass = 0;
 					int previouslySkip = 0;
-					for (HashMap<Object, Object> temp : jenkinsPreviousBuildDTO.getActions()) {
-						if (temp.containsKey(FAILCOUNT)) {
-							results.setFailDif((Integer) temp.get(FAILCOUNT));
-							previouslyFail += (Integer) temp.get(FAILCOUNT);
-						}
-						if (temp.containsKey(SKIPCOUNT)) {
-							results.setSkipDif((Integer) temp.get(SKIPCOUNT));
-							previouslySkip += (Integer) temp.get(SKIPCOUNT);
-						}
-						if (temp.containsKey(TOTALCOUNT)) {
-							results.setTotalDif((Integer) temp.get(TOTALCOUNT));
-							previouslyPass += (Integer) temp.get(TOTALCOUNT);
+					if (jenkinsPreviousBuildDTO != null) {
+						results.setPreviousResult(jenkinsPreviousBuildDTO.getResult());
+						// Calculate FAIL,SKIP and TOTAL of the Previous Test
+						for (HashMap<Object, Object> temp : jenkinsPreviousBuildDTO.getActions()) {
+							if (temp.containsKey(FAILCOUNT)) {
+								results.setFailDif((Integer) temp.get(FAILCOUNT));
+								previouslyFail += (Integer) temp.get(FAILCOUNT);
+							}
+							if (temp.containsKey(SKIPCOUNT)) {
+								results.setSkipDif((Integer) temp.get(SKIPCOUNT));
+								previouslySkip += (Integer) temp.get(SKIPCOUNT);
+							}
+							if (temp.containsKey(TOTALCOUNT)) {
+								results.setTotalDif((Integer) temp.get(TOTALCOUNT));
+								previouslyPass += (Integer) temp.get(TOTALCOUNT);
+							}
 						}
 					}
 					// Calculate Pass Difference Results
 					results.setPassDif(previouslyPass - Math.abs(previouslyFail) - Math.abs(previouslySkip));
-					
 				}
 			} else {
 				results.setCurrentResult(JobStatus.RUNNING.name());
