@@ -1,6 +1,6 @@
-:imagesdir: screenshots
-
 = Test Results Aggregator
+:imagesdir: screenshots
+:icons: font
 
 image:https://img.shields.io/jenkins/plugin/v/test-results-aggregator.svg[Jenkins Plugin,link=https://plugins.jenkins.io/test-results-aggregator]
 image:https://img.shields.io/github/release/jenkinsci/test-results-aggregator.svg?label=changelog[https://github.com/jenkinsci/role-strategy-plugin/releases/latest]
