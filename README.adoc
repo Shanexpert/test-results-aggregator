@@ -85,3 +85,14 @@ image::htmlView2.png[Html View,900,align="right"]
 3.Aggregated view , sample : 
 
 image::AggregatedView.png[Aggregated,900,align="right"]
+
+
+== Release Notes
+
+See the https://github.com/jenkinsci/test-results-aggregator-plugin/releases[Github releases page].
+
+
+Old release notes:
+
+=== 1.0.0 (4 Nov 2019)
+ * Initial Release
