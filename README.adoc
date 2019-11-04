@@ -1,0 +1,72 @@
+:imagesdir: screenshots
+
+= Test Results Aggregator
+
+image:https://img.shields.io/jenkins/plugin/v/test-results-aggregator.svg[Jenkins Plugin,link=https://plugins.jenkins.io/test-results-aggregator]
+image:https://img.shields.io/jenkins/plugin/i/test-results-aggregator.svg?color=blue[Jenkins Plugin Installs,link=https://plugins.jenkins.io/test-results-aggregator]
+
+== Description
+It's a jenkins plugin that collects via API all job and test results and reports them : 
+* in a single html view, 
+* email
+
+TIP:  It's advisable to be used as the last step in a CI/CD pipeline. Currently supports only 'free style project' but can be integrated in a groovy pipeline script just by using a build action , for example : 
+    stage("Aggregate Report") {	
+      build job: 'My_aggregate_results_job'
+    }
+
+IMPORTANT: Requires both global and job configuration. Check below : 
+
+== Global Configuration
+
+After installing test-results-aggregator plugin , navigate to Global Configuration. Scroll for Test Result Aggregator , see image : 
+   image::Global_Configuration.png[Global Configuration,900,align="right"]
+In this section you can define : 
+* **Jenkins Base Url** : The HTTP address of the Jenkins installation, such as http://yourhost.yourdomain/jenkins/. This value is used to access Jenkins API.
+* **Jenkins Account Username** : username of the account that will be used to access Jenkins API and fetch job results.
+* **Jenkins Account password** : password of the account that will be used to access Jenkins API and fetch job results.
+* **Mail Notification From** : sender for the mail Notification. Default is "Jenkins".
+
+== Job Configuration
+
+1. Test Result Aggregator Plugin can be used as a "Free Style Project". Create a new by : 
+    image::FreeStyleProject.png[Free Style Project,900,align="right"]
+
+2. Select "Add Post Build" action and scroll to "Aggregate Test Results" action.
+	image::PostBuildAction.png[Post Build Action,900,align="right"]
+
+3. Add Groups/Teams and Jenkins Jobs : 
+    image::FreeStyleProject_Jobs.png[Jobs Configuraion,900,align="right"]
+  
+* **Group/Team** : it's optional, it's used in report to group Jenkins jobs. For example teams , products or testing types.
+* **Job Name** : It's mandatory, it's the exact Jenkins job name to get results.
+* **Job Friendly Name** : it's optional, used only for reporting purposes, if null or empty then "Job Name" will be used in report.
+ 
+4. Add Recipients List , Before,After Body text, theme and Sort by option : 
+	image::ReceipientsList.png[Recipients,900,align="right"]
+	
+* **Recipients List** : comma separated recipients list , ex : nick@some.com,mairy@some.com .if empty or blank no email will be triggered.
+* **Subject prefix** : prefix for mail subject.
+* **Columns** : html & email report columns and the order of them, comma separated.
+* **Before body** : plain text or html code to add before report table.
+* **After body** : plain text or html code to add after report table.
+* **Mail Theme** : Ligth or dark mail theme.
+* **Sort Results By** : report will be sorted accordingly. If there are Groups then sorting refers to jobs inside a group.
+ 
+5. Outdated results : 
+	image::OutofDate.png[OutofDate,900,align="right"]
+	
+	**Out Of Date Results in Hours** : jobs with results more than X hours ago will be marked with 'red' color under 'Last Run' column report. Otherwise (if blank or empty) then column 'Last Run' will just have the timestamp of job completion.
+
+== Reports
+
+1. Jobs and Tests graphs, see a sample :
+	image::MainView.png[Main View,900,align="right"]
+
+2. HTML Report , sample :
+	image::htmlView2.png[Html View,900,align="right"]
+    * the html report is generated under workspace/html/index.html and can be published also via HTML Publisher Plugin
+    * the same report is send via mail.
+ 
+3. Aggregated view , sample : 
+	image::AggregatedView.png[Aggregated,900,align="right"]
