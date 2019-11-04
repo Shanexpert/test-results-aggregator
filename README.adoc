@@ -63,7 +63,7 @@ image::ReceipientsList.png[Recipients,900,align="right"]
 * **Mail Theme** : Ligth or dark mail theme.
 * **Sort Results By** : report will be sorted accordingly. If there are Groups then sorting refers to jobs inside a group.
  
-5. Outdated results : 
+5.Outdated results : 
 
 image::OutofDate.png[OutofDate,900,align="right"]
 	
