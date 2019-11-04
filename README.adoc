@@ -22,11 +22,12 @@ IMPORTANT: Requires both global and job configuration.
 
 == Global Configuration
 
-After installing test-results-aggregator plugin , navigate to Global Configuration. Scroll for Test Result Aggregator , see image :
+After installing test-results-aggregator plugin , navigate to Global Configuration. Scroll for Test Result Aggregator ,image :
 
 image::Global_Configuration.png[Global Configuration,900,align="right"]
 
 In this section you can define : 
+
 * **Jenkins Base Url** : The HTTP address of the Jenkins installation, such as http://yourhost.yourdomain/jenkins/. This value is used to access Jenkins API.
 * **Jenkins Account Username** : username of the account that will be used to access Jenkins API and fetch job results.
 * **Jenkins Account password** : password of the account that will be used to access Jenkins API and fetch job results.
@@ -34,15 +35,15 @@ In this section you can define :
 
 == Job Configuration
 
-1. Test Result Aggregator Plugin can be used as a "Free Style Project". Create a new by : 
+1.Test Result Aggregator Plugin can be used as a "Free Style Project". Create a new by : 
 
 image::FreeStyleProject.png[Free Style Project,900,align="right"]
 
-2. Select "Add Post Build" action and scroll to "Aggregate Test Results" action.
+2.Select "Add Post Build" action and scroll to "Aggregate Test Results" action.
 
 image::PostBuildAction.png[Post Build Action,900,align="right"]
 
-3. Add Groups/Teams and Jenkins Jobs : 
+3.Add Groups/Teams and Jenkins Jobs : 
 
 image::FreeStyleProject_Jobs.png[Jobs Configuraion,900,align="right"]
   
@@ -50,7 +51,7 @@ image::FreeStyleProject_Jobs.png[Jobs Configuraion,900,align="right"]
 * **Job Name** : It's mandatory, it's the exact Jenkins job name to get results.
 * **Job Friendly Name** : it's optional, used only for reporting purposes, if null or empty then "Job Name" will be used in report.
  
-4. Add Recipients List , Before,After Body text, theme and Sort by option : 
+4.Add Recipients List , Before,After Body text, theme and Sort by option : 
 
 image::ReceipientsList.png[Recipients,900,align="right"]
 	
@@ -70,16 +71,17 @@ image::OutofDate.png[OutofDate,900,align="right"]
 
 == Reports
 
-1. Jobs and Tests graphs, see a sample :
+1.Jobs and Tests graphs, see a sample :
 
 image::MainView.png[Main View,900,align="right"]
 
-2. HTML Report , sample :
+2.HTML Report , sample :
 
 image::htmlView2.png[Html View,900,align="right"]
+  
     * the html report is generated under workspace/html/index.html and can be published also via HTML Publisher Plugin
     * the same report is send via mail.
  
-3. Aggregated view , sample : 
+3.Aggregated view , sample : 
 
 image::AggregatedView.png[Aggregated,900,align="right"]
