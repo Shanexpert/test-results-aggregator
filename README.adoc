@@ -13,11 +13,14 @@ It's a jenkins plugin that collects via API all job and test results and reports
 * in a single html view,
 * email
 
-TIP:  It's advisable to be used as the last step in a CI/CD pipeline. Currently supports only 'free style project' but can be integrated in a groovy pipeline script just by using a build action , for example : 
+[TIP]
+==== 
+It's advisable to be used as the last step in a CI/CD pipeline. Currently supports only 'free style project' but can be integrated in a groovy pipeline script just by using a build action , for example : 
 
     stage("Aggregate Report") {	
       build job: 'My_aggregate_results_job'
     }
+====
 
 IMPORTANT: Requires both global and job configuration.
 
