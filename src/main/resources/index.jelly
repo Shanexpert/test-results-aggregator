@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
 <!-- This view is used to render the installed plugins page. -->
 <div>
-  This plugin aggregates Job and Test results (Junit & TestNG) in a single HTML Report and sends results via email.
+  This plugin aggregates Jobs and Test results in a single HTML Report and sends results via email.
 </div>
