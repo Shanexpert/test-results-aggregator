@@ -68,6 +68,7 @@ public class HTMLReporter {
 		} catch (Exception e) {
 			logger.println("");
 			logger.printf(LocalMessages.ERROR_OCCURRED.toString() + ": " + e.getMessage());
+			e.printStackTrace();
 		}
 		return null;
 	}

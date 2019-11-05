@@ -107,6 +107,7 @@ public class MailNotification {
 			} catch (MessagingException ex) {
 				logger.println("");
 				logger.printf(LocalMessages.ERROR_OCCURRED.toString() + ": " + ex.getMessage());
+				ex.printStackTrace();
 				logger.println("");
 			}
 		}

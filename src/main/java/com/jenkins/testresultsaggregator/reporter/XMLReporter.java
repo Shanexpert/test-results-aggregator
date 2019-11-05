@@ -112,11 +112,10 @@ public class XMLReporter {
 			writer.println(SE + ROOT + E);
 			writer.close();
 			logger.println(LocalMessages.FINISHED.toString() + " " + LocalMessages.XML_REPORT.toString());
-		} catch (
-		
-		IOException e) {
+		} catch (IOException e) {
 			logger.println("");
 			logger.printf(LocalMessages.ERROR_OCCURRED.toString() + ": " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 	

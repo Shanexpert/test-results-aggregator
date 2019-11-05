@@ -132,6 +132,7 @@ public class TestResultsAggregator extends Notifier {
 			build.addAction(new TestResultsAggregatorTestResultBuildAction(aggregated));
 		} catch (Exception e) {
 			logger.printf(LocalMessages.ERROR_OCCURRED.toString() + " : %s ", e);
+			e.printStackTrace();
 		}
 		logger.println(LocalMessages.FINISHED_AGGREGATE.toString());
 		return true;
