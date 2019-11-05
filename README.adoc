@@ -1,6 +1,6 @@
 = Test Results Aggregator
 :imagesdir: screenshots
-:icons: font
+:icons:
 
 image:https://img.shields.io/jenkins/plugin/v/test-results-aggregator.svg[Jenkins Plugin,link=https://plugins.jenkins.io/test-results-aggregator]
 image:https://img.shields.io/github/release/jenkinsci/test-results-aggregator.svg?label=changelog[https://github.com/jenkinsci/role-strategy-plugin/releases/latest]
@@ -8,7 +8,7 @@ image:https://img.shields.io/github/release/jenkinsci/test-results-aggregator.sv
 
 == Description
 
-It's a jenkins plugin that collects via API all job and test results and reports them :
+It's a jenkins plugin that collects via API job and test results and reports them :
 
 * in a single html view,
 * email
