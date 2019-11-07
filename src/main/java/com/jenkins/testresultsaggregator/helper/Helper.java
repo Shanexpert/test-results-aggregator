@@ -2,6 +2,7 @@ package com.jenkins.testresultsaggregator.helper;
 
 import java.awt.Color;
 import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ import com.jenkins.testresultsaggregator.data.JobStatus;
 import com.jenkins.testresultsaggregator.data.Results;
 
 import hudson.FilePath;
+import hudson.remoting.VirtualChannel;
 
 public class Helper {
 	
@@ -163,17 +165,33 @@ public class Helper {
 		}
 	}
 	
-	public static File createFolder(FilePath filePath, String folder) {
-		File theDir = new File(filePath.getRemote(), folder);
-		// if the directory does not exist, create it
-		boolean createDirectory = false;
-		if (!theDir.exists()) {
-			createDirectory = theDir.mkdir();
+	public static FilePath createFolder(FilePath filePath, String folder) throws IOException, InterruptedException {
+		FilePath fp;
+		if (filePath.isRemote()) {
+			VirtualChannel channel = filePath.getChannel();
+			if (filePath.child(folder).exists()) {
+				filePath.child(folder).deleteRecursive();
+			}
+			fp = new FilePath(channel, filePath.child(folder).getRemote());
+		} else {
+			if (filePath.child(folder).exists()) {
+				filePath.child(folder).deleteRecursive();
+			}
+			fp = new FilePath(new File(filePath.getRemote(), folder));
 		}
-		if (createDirectory) {
-			return theDir;
+		fp.mkdirs();
+		return fp;
+	}
+	
+	public static FilePath createFile(FilePath filePath, String filename) throws IOException, InterruptedException {
+		FilePath fp;
+		if (filePath.isRemote()) {
+			VirtualChannel channel = filePath.getChannel();
+			fp = new FilePath(channel, filePath.getRemote() + "/" + filename);
+		} else {
+			fp = new FilePath(new File(filePath.getRemote() + "/" + filename));
 		}
-		return theDir;
+		return fp;
 	}
 	
 	public static String diff(long prev, long curr, boolean list) {

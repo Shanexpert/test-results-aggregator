@@ -2,7 +2,6 @@ package com.jenkins.testresultsaggregator.reporter;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -53,9 +52,9 @@ public class Reporter {
 			columns.remove(LocalMessages.COLUMN_GROUP);
 		}
 		// Generate HTML Report
-		String htmlReport = new HTMLReporter(logger, workspace).createOverview(aggregated, columns, properties.getProperty(AggregatorProperties.THEME.name()), foundAtLeastOneGroupName);
+		FilePath htmlReport = new HTMLReporter(logger, workspace).createOverview(aggregated, columns, properties.getProperty(AggregatorProperties.THEME.name()), foundAtLeastOneGroupName);
 		// Generate Body message
-		String bodyText = generateMailBody(htmlReport);
+		String bodyText = generateMailBody(htmlReport.read());
 		// Calculate attachments
 		Map<String, ImageData> images = resolveImages(bodyText);
 		// Generate and Send Mail report
@@ -71,9 +70,8 @@ public class Reporter {
 		new XMLReporter(logger, rootDir).generateXMLReport(aggregated);
 	}
 	
-	private String generateMailBody(String htmlReport) throws Exception {
-		InputStream is = new FileInputStream(htmlReport);
-		BufferedReader buf = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+	private String generateMailBody(InputStream inputStream) throws Exception {
+		BufferedReader buf = new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8")));
 		String line = buf.readLine();
 		StringBuilder sb = new StringBuilder();
 		while (line != null) {
