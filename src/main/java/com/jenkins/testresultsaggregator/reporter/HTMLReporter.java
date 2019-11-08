@@ -1,13 +1,12 @@
 package com.jenkins.testresultsaggregator.reporter;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.jelly.JellyContext;
 import org.apache.commons.jelly.JellyException;
 import org.apache.commons.jelly.XMLOutput;
@@ -68,13 +67,13 @@ public class HTMLReporter {
 	private void copyImages(FilePath directory) throws IOException, InterruptedException {
 		Set<String> setImageID = ImagesMap.getImages().keySet();
 		for (String contentId : setImageID) {
-			copyStream(ImagesMap.getImages().get(contentId).getSourceInPlugin(), ImagesMap.getImages().get(contentId).getFileName(), directory.getRemote());
+			copyStream(ImagesMap.getImages().get(contentId).getSourceInPlugin(), ImagesMap.getImages().get(contentId).getFileName(), directory);
 		}
 	}
 	
-	protected void copyStream(String sourceFile, String destinationFile, String path) throws IOException {
-		URL inputUrl = HTMLReporter.class.getResource(sourceFile);
-		File dest = new File(path + "/" + destinationFile);
-		FileUtils.copyURLToFile(inputUrl, dest);
+	protected void copyStream(String sourceFile, String destinationFile, FilePath directory) throws IOException, InterruptedException {
+		InputStream inputUrl = HTMLReporter.class.getResource(sourceFile).openStream();
+		// Create Destination File
+		Helper.createFile(directory, destinationFile).copyFrom(inputUrl);
 	}
 }
