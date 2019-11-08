@@ -2,9 +2,12 @@
 :imagesdir: screenshots
 :icons:
 
-image:https://img.shields.io/jenkins/plugin/v/test-results-aggregator.svg[Jenkins Plugin,link=https://plugins.jenkins.io/test-results-aggregator]
-image:https://img.shields.io/github/release/jenkinsci/test-results-aggregator.svg?label=changelog[https://github.com/jenkinsci/role-strategy-plugin/releases/latest]
-//image:https://img.shields.io/jenkins/plugin/i/test-results-aggregator.svg?color=blue[Jenkins Plugin Installs,link=https://plugins.jenkins.io/test-results-aggregator]
+Latest Released : image:https://img.shields.io/jenkins/plugin/v/test-results-aggregator.svg[Jenkins Plugin,link=https://plugins.jenkins.io/test-results-aggregator]
+
+Under Development :  image:https://img.shields.io/github/release/jenkinsci/test-results-aggregator.svg?label=changelog[https://github.com/jenkinsci/role-strategy-plugin/releases/latest]
+, Build Status : image:https://ci.jenkins.io/buildStatus/icon?job=Plugins/test-results-aggregator-plugin/master[https://github.com/jenkinsci/role-strategy-plugin/releases/latest]
+
+//Installs : image:https://img.shields.io/jenkins/plugin/i/test-results-aggregator.svg?color=blue[Jenkins Plugin Installs,link=https://plugins.jenkins.io/test-results-aggregator]
 
 == Description
 
