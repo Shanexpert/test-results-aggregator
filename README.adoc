@@ -2,6 +2,16 @@
 :imagesdir: screenshots
 :icons:
 
+== Description
+
+It's a jenkins plugin that collects via API job and test results and reports them :
+
+* in a single html view,
+* email
+* graphs
+
+== Status
+
 |===
 |# | Status 
 
@@ -21,13 +31,7 @@
 //image:https://img.shields.io/jenkins/plugin/i/test-results-aggregator.svg?color=blue[Jenkins Plugin Installs,link=https://plugins.jenkins.io/test-results-aggregator]
 
 
-== Description
-
-It's a jenkins plugin that collects via API job and test results and reports them :
-
-* in a single html view,
-* email
-* graphs
+== Important
 
 [TIP]
 ==== 
@@ -38,7 +42,7 @@ It's advisable to be used as the last step in a CI/CD pipeline. Currently suppor
     }
 ====
 
-IMPORTANT: Requires both global and job configuration.
+Requires both global and job configuration.
 
 == Global Configuration
 
