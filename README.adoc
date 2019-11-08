@@ -4,7 +4,7 @@
 
 == Description
 
-It's a jenkins plugin that collects via API job and test results and reports them :
+It's a jenkins plugin that collects job and test results and reports them :
 
 * in a single html view,
 * email
@@ -15,16 +15,16 @@ It's a jenkins plugin that collects via API job and test results and reports the
 |===
 |# | Status 
 
-|Latest Release
+|Latest Release : 
 |image:https://img.shields.io/jenkins/plugin/v/test-results-aggregator.svg[Jenkins Plugin,link=https://plugins.jenkins.io/test-results-aggregator]
 
-|Under Development
+|Under Development : 
 |image:https://img.shields.io/github/release/jenkinsci/test-results-aggregator.svg?label=changelog[https://github.com/jenkinsci/role-strategy-plugin/releases/latest]
 
-|Build Status
+|Build Status : 
 |image:https://ci.jenkins.io/buildStatus/icon?job=Plugins/test-results-aggregator-plugin/master[https://github.com/jenkinsci/role-strategy-plugin/releases/latest]
 
-| Installed
+| Installed : 
 | 
 |===
 
@@ -33,20 +33,17 @@ It's a jenkins plugin that collects via API job and test results and reports the
 
 == Important
 
-[TIP]
-==== 
 It's advisable to be used as the last step in a CI/CD pipeline. Currently supports only 'free style project' but can be integrated in a groovy pipeline script just by using a build action , for example : 
 
     stage("Aggregate Report") {	
       build job: 'My_aggregate_results_job'
     }
-====
 
 Requires both global and job configuration.
 
 == Global Configuration
 
-After installing test-results-aggregator plugin , navigate to Global Configuration. Scroll for Test Result Aggregator ,image :
+After installing this plugin , navigate to Global Configuration. Scroll down for Test Result Aggregator :
 
 image::Global_Configuration.png[Global Configuration,900,align="right"]
 
@@ -79,7 +76,7 @@ image::FreeStyleProject_Jobs.png[Jobs Configuraion,900,align="right"]
 
 image::ReceipientsList.png[Recipients,900,align="right"]
 	
-* **Recipients List** : comma separated recipients list , ex : nick@some.com,mairy@some.com .if empty or blank no email will be triggered.
+* **Recipients List** : comma separated recipients list, ex : nick@some.com,mairy@some.com .if empty no email will be triggered.
 * **Subject prefix** : prefix for mail subject.
 * **Columns** : html & email report columns and the order of them, comma separated.
 * **Before body** : plain text or html code to add before report table.
@@ -91,7 +88,7 @@ image::ReceipientsList.png[Recipients,900,align="right"]
 
 image::OutofDate.png[OutofDate,900,align="right"]
 	
-**Out Of Date Results in Hours** : jobs with results more than X hours ago will be marked with 'red' color under 'Last Run' column report. Otherwise (if blank or empty) then column 'Last Run' will just have the timestamp of job completion.
+**Out Of Date Results in Hours** : jobs with results more than X hours ago will be marked with 'red' color under 'Last Run' column report. Otherwise (if blank) column 'Last Run' will just have the timestamp of job completion.
 
 == Reports
 
