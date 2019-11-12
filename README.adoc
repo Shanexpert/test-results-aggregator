@@ -110,6 +110,9 @@ image::AggregatedView.png[Aggregated,900,align="right"]
 
 See the https://github.com/jenkinsci/test-results-aggregator-plugin/releases[Github releases page].
 
+=== 1.0.3 (12 Nov 2019)
+ * Fix Mail Notification with attachements Issue
+ 
 === 1.0.2 (8 Nov 2019)
  * Fix Documentation Issue
  
