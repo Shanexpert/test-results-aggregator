@@ -20,6 +20,7 @@ import com.jenkins.testresultsaggregator.data.ImagesMap;
 import com.jenkins.testresultsaggregator.data.ImagesMap.ImageData;
 import com.jenkins.testresultsaggregator.data.Job;
 import com.jenkins.testresultsaggregator.data.JobStatus;
+import com.jenkins.testresultsaggregator.helper.Helper;
 import com.jenkins.testresultsaggregator.helper.LocalMessages;
 
 import hudson.FilePath;
@@ -50,7 +51,7 @@ public class MailNotification {
 		return allJobsNotFound;
 	}
 	
-	public void send(String mailTo, String mailFrom, String subject, String body, Map<String, ImageData> images, String preBodyText, String afterBodyText) throws MessagingException, IOException {
+	public void send(String mailTo, String mailFrom, String subject, String body, Map<String, ImageData> images, String preBodyText, String afterBodyText) throws MessagingException, IOException, InterruptedException {
 		logger.print(LocalMessages.GENERATE.toString() + " " + LocalMessages.EMAIL_REPORT.toString());
 		MimeMessageBuilder mimeMessageBuilder = new MimeMessageBuilder();
 		if (validateResults()) {
@@ -94,7 +95,7 @@ public class MailNotification {
 				if (images != null && !images.isEmpty()) {
 					Set<String> setImageID = images.keySet();
 					for (String contentId : setImageID) {
-						multipart.addBodyPart(addImagePart(contentId));
+						multipart.addBodyPart(addImagePart(contentId, workspace));
 					}
 					message.setContent(multipart);
 				}
@@ -113,12 +114,12 @@ public class MailNotification {
 		}
 	}
 	
-	private MimeBodyPart addImagePart(String contentId) throws MessagingException, IOException {
+	private MimeBodyPart addImagePart(String contentId, FilePath workspace) throws MessagingException, IOException, InterruptedException {
 		MimeBodyPart imagePart = new MimeBodyPart();
 		imagePart.setHeader("Content-ID", "<" + contentId + ">");
 		imagePart.setDisposition(MimeBodyPart.INLINE);
-		String imageFilePath = workspace + "/" + ImagesMap.getImages().get(contentId).getSourcePath();
-		imagePart.attachFile(imageFilePath);
+		FilePath imageFile = Helper.createFile(workspace, ImagesMap.getImages().get(contentId).getSourcePath());
+		imagePart.attachFile(imageFile.getRemote());
 		return imagePart;
 	}
 }
