@@ -106,7 +106,7 @@ image::MainView.png[Main View,900,align="right"]
 image::htmlView2.png[Html View,900,align="right"]
   
     * the html report is generated under workspace/html/index.html and can be published also via https://plugins.jenkins.io/htmlpublisher[HTML Publisher Plugin] 
-    * the same report is send via mail.
+    * the same report is send via mail. You should configure in 'Global Configuration' the 'SMTP server' under 'E-mail Notification' configuration section.
  
 3.Aggregated view , sample : 
 
