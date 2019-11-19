@@ -29,12 +29,10 @@ It's a jenkins plugin that collects job and test results and reports them :
 //image:https://img.shields.io/jenkins/plugin/i/test-results-aggregator.svg?color=blue[Jenkins Plugin Installs,link=https://plugins.jenkins.io/test-results-aggregator]
 
 Test Results Aggregator can merge test results for : 
-* https://plugins.jenkins.io/junit[Junit]
-* https://plugins.jenkins.io/testng-plugin[TestNG]
+https://plugins.jenkins.io/junit[Junit], https://plugins.jenkins.io/testng-plugin[TestNG]
 
 and code coverages results for : 
-* https://plugins.jenkins.io/cobertura[Cobertura]
-* https://plugins.jenkins.io/jacoco[JaCoCo]
+https://plugins.jenkins.io/cobertura[Cobertura], https://plugins.jenkins.io/jacoco[JaCoCo]
 
 == Important
 
@@ -85,25 +83,7 @@ image::ReceipientsList.png[Recipients,900,align="right"]
 * **Subject prefix** : prefix for mail subject.
 * **Columns** : html & email report columns and the order of them, comma separated. Possible columns are : 
 
- ** Health, 
- ** Job, 
- ** Status,
- ** Percentage, 
- ** Total, 
- ** Pass, 
- ** Fail, 
- ** Skip, 
- ** Commits, 
- ** LastRun, 
- ** Duration, 
- ** Description, 
- ** Packages, 
- ** Files, 
- ** Classes, 
- ** Methods, 
- ** Lines, 
- ** Conditions, 
- ** Sonar
+ ** Health, Job, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Description, Packages, Files, Classes, Methods, Lines, Conditions & Sonar
 * **Before body** : plain text or html code to add before report table.
 * **After body** : plain text or html code to add after report table.
 * **Mail Theme** : Ligth or dark mail theme.
