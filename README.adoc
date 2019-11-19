@@ -31,7 +31,7 @@ It's a jenkins plugin that collects job and test results and reports them :
 Test Results Aggregator can merge test results for : 
 https://plugins.jenkins.io/junit[Junit], https://plugins.jenkins.io/testng-plugin[TestNG]
 
-and code coverages results for : 
+and code coverage results for : 
 https://plugins.jenkins.io/cobertura[Cobertura], https://plugins.jenkins.io/jacoco[JaCoCo]
 
 == Important
