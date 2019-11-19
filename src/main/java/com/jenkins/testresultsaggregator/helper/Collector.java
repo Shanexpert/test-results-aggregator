@@ -245,19 +245,25 @@ public class Collector {
 					if (job.getSavedJobUrl() == null) {
 						// There is no Saved Job , get Previous
 						jenkinsPreviousBuildDTO = getJobInfo(job.getBuildInfo().getPreviousBuild().getUrl().toString());
-						jenkinsPreviousBuildDTO.setUrl(job.getBuildInfo().getPreviousBuild().getUrl().toString());
-						job.setUpdated("");
+						if (jenkinsPreviousBuildDTO != null) {
+							jenkinsPreviousBuildDTO.setUrl(job.getBuildInfo().getPreviousBuild().getUrl().toString());
+							job.setUpdated("");
+						}
 					} else {
 						String currentUrl = job.getJobInfo().getLastBuild().getUrl().toString();
 						if (currentUrl.equals(job.getSavedJobUrl())) {
 							// No new Run for this Job
 							jenkinsPreviousBuildDTO = getJobInfo(job.getBuildInfo().getPreviousBuild().getUrl().toString());
-							jenkinsPreviousBuildDTO.setUrl(job.getBuildInfo().getPreviousBuild().getUrl().toString());
-							job.setUpdated("");
+							if (jenkinsPreviousBuildDTO != null) {
+								jenkinsPreviousBuildDTO.setUrl(job.getBuildInfo().getPreviousBuild().getUrl().toString());
+								job.setUpdated("");
+							}
 						} else {
 							jenkinsPreviousBuildDTO = getJobInfo(job.getSavedJobUrl());
-							jenkinsPreviousBuildDTO.setUrl(job.getSavedJobUrl());
-							job.setUpdated("");
+							if (jenkinsPreviousBuildDTO != null) {
+								jenkinsPreviousBuildDTO.setUrl(job.getSavedJobUrl());
+								job.setUpdated("");
+							}
 						}
 					}
 					int previouslyFail = 0;
