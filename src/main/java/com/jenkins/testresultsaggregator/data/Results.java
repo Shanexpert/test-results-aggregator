@@ -27,6 +27,30 @@ public class Results implements Serializable {
 	private int total;
 	private int totalDif;
 	
+	private String calculatedCCPackages;
+	private int ccPackages;
+	private int ccPackagesDif;
+	
+	private String calculatedCCFiles;
+	private int ccFiles;
+	private int ccFilesDif;
+	
+	private String calculatedCCClasses;
+	private int ccClasses;
+	private int ccClassesDif;
+	
+	private String calculatedCCMethods;
+	private int ccMethods;
+	private int ccMethodsDif;
+	
+	private String calculatedCCLines;
+	private int ccLines;
+	private int ccLinesDif;
+	
+	private String calculatedCCConditions;
+	private int ccConditions;
+	private int ccConditionsDif;
+	
 	private String currentResult;
 	private String previousResult;
 	private String status;
@@ -39,6 +63,7 @@ public class Results implements Serializable {
 	private String url;
 	private String reportUrl;
 	private String consoleUrl;
+	private String sonarUrl;
 	
 	private int calculatedNumberOfChanges;
 	private int numberOfChanges;
@@ -283,7 +308,7 @@ public class Results implements Serializable {
 	}
 	
 	public String getCalculatedFailColor() {
-		return Helper.diff(getFailDif(), getFail(), null, Colors.FAILED, false);
+		return Helper.diff(getFailDif(), getFail(), null, Colors.FAILED, false, false);
 	}
 	
 	public void setCalculatedFail(String calculatedFail) {
@@ -317,6 +342,134 @@ public class Results implements Serializable {
 	
 	public void setCalculatedNumberOfChanges(int calculatedNumberOfChanges) {
 		this.calculatedNumberOfChanges = calculatedNumberOfChanges;
+	}
+	
+	public String getCalculatedCcPackage() {
+		return Helper.diff(getCcPackagesDif(), getCcPackages(), false);
+	}
+	
+	public int getCcPackages() {
+		return ccPackages;
+	}
+	
+	public void setCcPackages(int ccPackages) {
+		this.ccPackages = ccPackages;
+	}
+	
+	public int getCcPackagesDif() {
+		return ccPackagesDif;
+	}
+	
+	public void setCcPackagesDif(int ccPackagesDif) {
+		this.ccPackagesDif = ccPackagesDif;
+	}
+	
+	public String getCalculatedCcFiles() {
+		return Helper.diff(getCcFilesDif(), getCcFiles(), false);
+	}
+	
+	public int getCcFiles() {
+		return ccFiles;
+	}
+	
+	public void setCcFiles(int ccFiles) {
+		this.ccFiles = ccFiles;
+	}
+	
+	public int getCcFilesDif() {
+		return ccFilesDif;
+	}
+	
+	public void setCcFilesDif(int ccFilesDif) {
+		this.ccFilesDif = ccFilesDif;
+	}
+	
+	public String getCalculatedCcClasses() {
+		return Helper.diff(getCcClassesDif(), getCcClasses(), false);
+	}
+	
+	public int getCcClasses() {
+		return ccClasses;
+	}
+	
+	public void setCcClasses(int ccClasses) {
+		this.ccClasses = ccClasses;
+	}
+	
+	public int getCcClassesDif() {
+		return ccClassesDif;
+	}
+	
+	public void setCcClassesDif(int ccClassesDif) {
+		this.ccClassesDif = ccClassesDif;
+	}
+	
+	public String getCalculatedCcMethods() {
+		return Helper.diff(getCcMethodsDif(), getCcMethods(), false);
+	}
+	
+	public int getCcMethods() {
+		return ccMethods;
+	}
+	
+	public void setCcMethods(int ccMethods) {
+		this.ccMethods = ccMethods;
+	}
+	
+	public int getCcMethodsDif() {
+		return ccMethodsDif;
+	}
+	
+	public void setCcMethodsDif(int ccMethodsDif) {
+		this.ccMethodsDif = ccMethodsDif;
+	}
+	
+	public String getCalculatedCcLines() {
+		return Helper.diff(getCcLinesDif(), getCcLines(), false);
+	}
+	
+	public int getCcLines() {
+		return ccLines;
+	}
+	
+	public void setCcLines(int ccLines) {
+		this.ccLines = ccLines;
+	}
+	
+	public int getCcLinesDif() {
+		return ccLinesDif;
+	}
+	
+	public void setCcLinesDif(int ccLinesDif) {
+		this.ccLinesDif = ccLinesDif;
+	}
+	
+	public String getCalculatedCcConditions() {
+		return Helper.diff(getCcConditionsDif(), getCcConditions(), false);
+	}
+	
+	public int getCcConditions() {
+		return ccConditions;
+	}
+	
+	public void setCcConditions(int ccConditions) {
+		this.ccConditions = ccConditions;
+	}
+	
+	public int getCcConditionsDif() {
+		return ccConditionsDif;
+	}
+	
+	public void setCcConditionsDif(int ccConditionsDif) {
+		this.ccConditionsDif = ccConditionsDif;
+	}
+	
+	public String getSonarUrl() {
+		return sonarUrl;
+	}
+	
+	public void setSonarUrl(String sonarUrl) {
+		this.sonarUrl = sonarUrl;
 	}
 	
 }

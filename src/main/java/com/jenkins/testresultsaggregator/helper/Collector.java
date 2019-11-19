@@ -11,10 +11,13 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.data.BuildInfo;
 import com.jenkins.testresultsaggregator.data.ChangeSet;
+import com.jenkins.testresultsaggregator.data.CoberturaCoverage;
+import com.jenkins.testresultsaggregator.data.CoberturaCoverage.Element;
 import com.jenkins.testresultsaggregator.data.Data;
 import com.jenkins.testresultsaggregator.data.Job;
 import com.jenkins.testresultsaggregator.data.JobInfo;
@@ -28,6 +31,8 @@ public class Collector {
 	
 	public static final String JOB = "job";
 	public static final String API_JSON_URL = "api/json";
+	public static final String API_JSON_COBERTURA = "cobertura/" + API_JSON_URL + "?depth=2";
+	public static final String API_JSON_JACOCO = API_JSON_URL + "?depth=1";
 	public static final String LASTBUILD = "lastBuild";
 	public static final String CHANGES = "changes";
 	public static final String FAILCOUNT = "failCount";
@@ -36,6 +41,14 @@ public class Collector {
 	public static final String CONSOLE_OUTPUT = "console";
 	public static final String TESTNG_REPORT = "testngreports";
 	public static final String JUNIT_REPORT = "testReport";
+	
+	public static final String JACOCO_BRANCH = "branchCoverage";
+	public static final String JACOCO_CLASS = "classCoverage";
+	public static final String JACOCO_LINES = "lineCoverage";
+	public static final String JACOCO_METHODS = "methodCoverage";
+	public static final String JACOCO_INSTRUCTION = "instructionCoverage";
+	
+	public static final String SONAR_URL = "sonarqubeDashboardUrl";
 	
 	private String username;
 	private Secret password;
@@ -100,7 +113,7 @@ public class Collector {
 	
 	public BuildInfo getJobInfoLastBuild(Job dataJobDTO) {
 		try {
-			URL jobUrlAPILastBuild = new URL(dataJobDTO.getJobInfo().getUrl() + "/" + LASTBUILD + "/" + API_JSON_URL);
+			URL jobUrlAPILastBuild = new URL(dataJobDTO.getJobInfo().getUrl() + "/" + LASTBUILD + "/" + API_JSON_JACOCO);
 			// Get Latest
 			String reply = Http.get(jobUrlAPILastBuild, authenticationString());
 			return Deserialize.initializeObjectMapper().readValue(reply, BuildInfo.class);
@@ -111,10 +124,21 @@ public class Collector {
 	
 	public BuildInfo getJobInfo(String url) {
 		try {
-			URL jobUrlAPILastBuild = new URL(url + "/" + API_JSON_URL);
+			URL jobUrlAPILastBuild = new URL(url + "/" + API_JSON_JACOCO);
 			// Get Latest
 			String reply = Http.get(jobUrlAPILastBuild, authenticationString());
 			return Deserialize.initializeObjectMapper().readValue(reply, BuildInfo.class);
+		} catch (IOException e) {
+		}
+		return null;
+	}
+	
+	public CoberturaCoverage getCobertura(String url) {
+		try {
+			URL jobUrlAPILastBuild = new URL(url + "/" + API_JSON_COBERTURA);
+			// Get Latest
+			String reply = Http.get(jobUrlAPILastBuild, authenticationString());
+			return Deserialize.initializeObjectMapper().readValue(reply, CoberturaCoverage.class);
 		} catch (IOException e) {
 		}
 		return null;
@@ -156,10 +180,12 @@ public class Collector {
 			// Set Changes URL
 			results.setChangesUrl(job.getJobInfo().getUrl() + "/" + job.getBuildInfo().getNumber() + "/" + CHANGES);
 			
+			boolean foundJacocoResults = false;
+			boolean foundCoberturaResults = false;
 			// If Job is not running get results
 			if (!results.isBuilding()) {
-				// Calculate FAIL,SKIP and TOTAL Test Results
 				for (HashMap<Object, Object> temp : job.getBuildInfo().getActions()) {
+					// Calculate FAIL,SKIP and TOTAL Test Results
 					if (temp.containsKey(FAILCOUNT)) {
 						results.setFail((Integer) temp.get(FAILCOUNT));
 					}
@@ -169,6 +195,34 @@ public class Collector {
 					if (temp.containsKey(TOTALCOUNT)) {
 						results.setTotal((Integer) temp.get(TOTALCOUNT));
 					}
+					// Jacoco Coverage data exists on Default api url
+					if (temp.containsKey(JACOCO_BRANCH)) {
+						Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_BRANCH);
+						results.setCcConditions((Integer) tempMap.get("percentage"));
+						foundJacocoResults = true;
+					}
+					if (temp.containsKey(JACOCO_CLASS)) {
+						Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_CLASS);
+						results.setCcClasses((Integer) tempMap.get("percentage"));
+						foundJacocoResults = true;
+					}
+					if (temp.containsKey(JACOCO_LINES)) {
+						Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_LINES);
+						results.setCcLines((Integer) tempMap.get("percentage"));
+						foundJacocoResults = true;
+					}
+					if (temp.containsKey(JACOCO_METHODS)) {
+						Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_METHODS);
+						results.setCcMethods((Integer) tempMap.get("percentage"));
+						foundJacocoResults = true;
+					}
+					if (temp.containsKey(SONAR_URL)) {
+						results.setSonarUrl((String) temp.get(SONAR_URL));
+					}
+				}
+				if (!foundJacocoResults) {
+					// Check for Cobertura Results
+					foundCoberturaResults = coberturaCoverage(job, results);
 				}
 				// Calculate Pass Results
 				results.setPass(results.getTotal() - Math.abs(results.getFail()) - Math.abs(results.getSkip()));
@@ -191,15 +245,18 @@ public class Collector {
 					if (job.getSavedJobUrl() == null) {
 						// There is no Saved Job , get Previous
 						jenkinsPreviousBuildDTO = getJobInfo(job.getBuildInfo().getPreviousBuild().getUrl().toString());
+						jenkinsPreviousBuildDTO.setUrl(job.getBuildInfo().getPreviousBuild().getUrl().toString());
 						job.setUpdated("");
 					} else {
 						String currentUrl = job.getJobInfo().getLastBuild().getUrl().toString();
 						if (currentUrl.equals(job.getSavedJobUrl())) {
 							// No new Run for this Job
 							jenkinsPreviousBuildDTO = getJobInfo(job.getBuildInfo().getPreviousBuild().getUrl().toString());
+							jenkinsPreviousBuildDTO.setUrl(job.getBuildInfo().getPreviousBuild().getUrl().toString());
 							job.setUpdated("");
 						} else {
 							jenkinsPreviousBuildDTO = getJobInfo(job.getSavedJobUrl());
+							jenkinsPreviousBuildDTO.setUrl(job.getSavedJobUrl());
 							job.setUpdated("");
 						}
 					}
@@ -208,8 +265,8 @@ public class Collector {
 					int previouslySkip = 0;
 					if (jenkinsPreviousBuildDTO != null) {
 						results.setPreviousResult(jenkinsPreviousBuildDTO.getResult());
-						// Calculate FAIL,SKIP and TOTAL of the Previous Test
 						for (HashMap<Object, Object> temp : jenkinsPreviousBuildDTO.getActions()) {
+							// Calculate FAIL,SKIP and TOTAL of the Previous Test
 							if (temp.containsKey(FAILCOUNT)) {
 								results.setFailDif((Integer) temp.get(FAILCOUNT));
 								previouslyFail += (Integer) temp.get(FAILCOUNT);
@@ -222,6 +279,29 @@ public class Collector {
 								results.setTotalDif((Integer) temp.get(TOTALCOUNT));
 								previouslyPass += (Integer) temp.get(TOTALCOUNT);
 							}
+							if (foundJacocoResults) {
+								// Jacoco Coverage
+								if (temp.containsKey(JACOCO_BRANCH)) {
+									Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_BRANCH);
+									results.setCcConditionsDif((Integer) tempMap.get("percentage"));
+								}
+								if (temp.containsKey(JACOCO_CLASS)) {
+									Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_CLASS);
+									results.setCcClassesDif((Integer) tempMap.get("percentage"));
+								}
+								if (temp.containsKey(JACOCO_LINES)) {
+									Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_LINES);
+									results.setCcLinesDif((Integer) tempMap.get("percentage"));
+								}
+								if (temp.containsKey(JACOCO_METHODS)) {
+									Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_METHODS);
+									results.setCcMethodsDif((Integer) tempMap.get("percentage"));
+								}
+							}
+						}
+						if (foundCoberturaResults) {
+							// Check for Cobertura Results
+							coberturaCoverage(jenkinsPreviousBuildDTO.getUrl(), results);
 						}
 					}
 					// Calculate Pass Difference Results
@@ -236,6 +316,51 @@ public class Collector {
 			return results;
 		}
 		return null;
+	}
+	
+	private boolean coberturaCoverage(Job job, Results results) {
+		return coberturaCoverage(job.getJobInfo().getUrl().toString() + "/" + job.getBuildInfo().getNumber(), results);
+	}
+	
+	private boolean coberturaCoverage(String url, Results results) {
+		// Check for Cobertura Results
+		CoberturaCoverage cobertura = getCobertura(url);
+		if (cobertura != null) {
+			Double packages = 0D;
+			Double files = 0D;
+			Double classes = 0D;
+			Double methods = 0D;
+			Double lines = 0D;
+			Double conditions = 0D;
+			for (Element tempElement : cobertura.getResults().getElements()) {
+				if ("Packages".equalsIgnoreCase(tempElement.getName())) {
+					packages = tempElement.getRatio();
+				}
+				if ("Files".equalsIgnoreCase(tempElement.getName())) {
+					files = tempElement.getRatio();
+				}
+				if ("Classes".equalsIgnoreCase(tempElement.getName())) {
+					classes = tempElement.getRatio();
+				}
+				if ("Methods".equalsIgnoreCase(tempElement.getName())) {
+					methods = tempElement.getRatio();
+				}
+				if ("Lines".equalsIgnoreCase(tempElement.getName())) {
+					lines = tempElement.getRatio();
+				}
+				if ("Conditionals".equalsIgnoreCase(tempElement.getName())) {
+					conditions = tempElement.getRatio();
+				}
+			}
+			results.setCcPackages(packages.intValue());
+			results.setCcFiles(files.intValue());
+			results.setCcClasses(classes.intValue());
+			results.setCcMethods(methods.intValue());
+			results.setCcLines(lines.intValue());
+			results.setCcConditions(conditions.intValue());
+			return true;
+		}
+		return true;
 	}
 	
 	public class ReportThread extends Thread {

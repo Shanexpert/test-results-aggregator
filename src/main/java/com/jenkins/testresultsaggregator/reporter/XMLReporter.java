@@ -82,6 +82,12 @@ public class XMLReporter {
 							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.ABORTED_P, dataJob.getResults().getSkipDif()));
 							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.FAILED, dataJob.getResults().getFail()));
 							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.FAILED_P, dataJob.getResults().getFailDif()));
+							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.CC_PACKAGES, dataJob.getResults().getCcPackages()));
+							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.CC_FILES, dataJob.getResults().getCcFiles()));
+							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.CC_CLASSES, dataJob.getResults().getCcClasses()));
+							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.CC_METHODS, dataJob.getResults().getCcMethods()));
+							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.CC_LINES, dataJob.getResults().getCcLines()));
+							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.CC_CONDTITIONALS, dataJob.getResults().getCcConditions()));
 						} else if (JobStatus.NOT_FOUND.name().equalsIgnoreCase(dataJob.getResults().getCurrentResult())) {
 							writer.println(TAB + TAB + xmlTag(URL, null));
 							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.TOTAL, 0));
@@ -92,6 +98,12 @@ public class XMLReporter {
 							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.ABORTED_P, 0));
 							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.FAILED, 0));
 							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.FAILED_P, 0));
+							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.CC_PACKAGES, 0));
+							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.CC_FILES, 0));
+							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.CC_CLASSES, 0));
+							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.CC_METHODS, 0));
+							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.CC_LINES, 0));
+							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.CC_CONDTITIONALS, 0));
 						} else {
 							writer.println(TAB + TAB + xmlTag(URL, dataJob.getJobInfo().getLastBuild().getUrl().toString()));
 							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.TOTAL, dataJob.getResults().getTotal()));
@@ -102,6 +114,12 @@ public class XMLReporter {
 							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.ABORTED_P, dataJob.getResults().getSkipDif()));
 							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.FAILED, dataJob.getResults().getFail()));
 							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.FAILED_P, dataJob.getResults().getFailDif()));
+							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.CC_PACKAGES, dataJob.getResults().getCcPackages()));
+							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.CC_FILES, dataJob.getResults().getCcFiles()));
+							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.CC_CLASSES, dataJob.getResults().getCcClasses()));
+							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.CC_METHODS, dataJob.getResults().getCcMethods()));
+							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.CC_LINES, dataJob.getResults().getCcLines()));
+							writer.println(TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.CC_CONDTITIONALS, dataJob.getResults().getCcConditions()));
 						}
 						writer.println(TAB + SE + JOB + E);
 					}

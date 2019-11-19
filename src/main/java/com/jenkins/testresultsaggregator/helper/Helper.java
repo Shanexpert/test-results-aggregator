@@ -199,14 +199,14 @@ public class Helper {
 	}
 	
 	public static String diff(long prev, long curr, String name) {
-		return diff(prev, curr, name, null, false);
+		return diff(prev, curr, name, null, false, false);
 	}
 	
 	public static String diff(long prev, long curr, String name, boolean list) {
-		return diff(prev, curr, name, null, list);
+		return diff(prev, curr, name, null, list, false);
 	}
 	
-	public static String diff(long prev, long curr, String name, Color color, boolean list) {
+	public static String diff(long prev, long curr, String name, Color color, boolean list, boolean percentage) {
 		String namePrefix = null;
 		String text = null;
 		if (Strings.isNullOrEmpty(name)) {
@@ -223,6 +223,10 @@ public class Helper {
 		} else {
 			text = namePrefix;
 		}
+		String percentageIcon = "";
+		if (percentage) {
+			percentageIcon = "%";
+		}
 		if (list) {
 			if (prev == curr) {
 				return "<li>" + text + curr + "</li>";
@@ -236,21 +240,21 @@ public class Helper {
 				if (curr == 0) {
 					return "";
 				} else {
-					return text + colorize(curr, Colors.BLACK) + "";
+					return text + colorize(curr, Colors.BLACK) + percentageIcon;
 				}
 			} else if (prev < curr) {
 				if (curr == 0) {
-					return text + colorize("+" + (curr - prev), Colors.BLACK);
+					return text + colorize("+" + (curr - prev), Colors.BLACK) + percentageIcon;
 				} else if (prev == 0) {
-					return text + colorize(curr, color);
+					return text + colorize(curr, color) + percentageIcon;
 				} else {
-					return text + colorize(curr, color) + colorize("(+" + (curr - prev) + ")", Colors.BLACK);
+					return text + colorize(curr, color) + colorize("(+" + (curr - prev) + ")", Colors.BLACK) + percentageIcon;
 				}
 			} else { // if (a < b)
 				if (curr == 0) {
-					return text + colorize("-" + (prev - curr), Colors.BLACK);
+					return text + colorize("-" + (prev - curr), Colors.BLACK) + percentageIcon;
 				} else {
-					return text + colorize(curr, color) + colorize("(-" + (prev - curr) + ")", Colors.BLACK);
+					return text + colorize(curr, color) + colorize("(-" + (prev - curr) + ")", Colors.BLACK) + percentageIcon;
 				}
 			}
 		}

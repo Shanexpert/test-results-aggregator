@@ -53,6 +53,14 @@ public class TestResultsAggregatorProjectAction extends TestResultProjectAction
 	public static final String FAILED_TEST = "Failed_TEST";
 	public static final String FAILED_P_TEST = "Failed_P_TEST";
 	
+	// For Code Coverage
+	public static final String CC_PACKAGES = "CC_Packages";
+	public static final String CC_FILES = "CC_Files";
+	public static final String CC_CLASSES = "CC_Classes";
+	public static final String CC_METHODS = "CC_Methods";
+	public static final String CC_LINES = "CC_Lines";
+	public static final String CC_CONDTITIONALS = "CC_Conditionals";
+	
 	public TestResultsAggregatorProjectAction(Job<?, ?> project) {
 		super(project);
 	}

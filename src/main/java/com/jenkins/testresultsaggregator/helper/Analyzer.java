@@ -76,6 +76,16 @@ public class Analyzer {
 				job.getReport().calculateChanges(job.getResults());
 				// Calculate Report
 				job.getReport().calculateReport(job.getResults());
+				// Calculate Sonar Url
+				job.getReport().calculateSonar(job.getResults());
+				// Calculate Coverage Packages
+				job.getReport().calculateCCPackages(job.getResults());
+				job.getReport().calculateCCFiles(job.getResults());
+				job.getReport().calculateCCClasses(job.getResults());
+				job.getReport().calculateCCMethods(job.getResults());
+				job.getReport().calculateCCLines(job.getResults());
+				job.getReport().calculateCCConditions(job.getResults());
+				
 				// Calculate Duration
 				if (job.getBuildInfo() != null) {
 					job.getReport().calculateDuration(job.getBuildInfo().getDuration());

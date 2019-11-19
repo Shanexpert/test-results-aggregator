@@ -76,7 +76,14 @@ public class TestResultsAggregator extends Notifier {
 		LAST_RUN,
 		COMMITS,
 		DURATION,
-		PERCENTAGE
+		PERCENTAGE,
+		CC_PACKAGES,
+		CC_FILES,
+		CC_CLASSES,
+		CC_METHODS,
+		CC_LINES,
+		CC_CONDITIONS,
+		SONAR_URL
 	}
 	
 	public enum Theme {
@@ -188,11 +195,24 @@ public class TestResultsAggregator extends Notifier {
 						columns.add(LocalMessages.COLUMN_DESCRIPTION);
 					} else if (temp.equalsIgnoreCase("Health")) {
 						columns.add(LocalMessages.COLUMN_HEALTH);
+					} else if (temp.equalsIgnoreCase("Packages")) {
+						columns.add(LocalMessages.COLUMN_CC_PACKAGES);
+					} else if (temp.equalsIgnoreCase("Files")) {
+						columns.add(LocalMessages.COLUMN_CC_FILES);
+					} else if (temp.equalsIgnoreCase("Classes")) {
+						columns.add(LocalMessages.COLUMN_CC_CLASSES);
+					} else if (temp.equalsIgnoreCase("Methods")) {
+						columns.add(LocalMessages.COLUMN_CC_METHODS);
+					} else if (temp.equalsIgnoreCase("Lines")) {
+						columns.add(LocalMessages.COLUMN_CC_LINES);
+					} else if (temp.equalsIgnoreCase("Conditions")) {
+						columns.add(LocalMessages.COLUMN_CC_CONDITIONS);
+					} else if (temp.equalsIgnoreCase("Sonar")) {
+						columns.add(LocalMessages.COLUMN_SONAR_URL);
 					}
 				}
 			}
 		}
-		
 		return columns;
 	}
 	

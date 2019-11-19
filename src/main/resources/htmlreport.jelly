@@ -76,6 +76,27 @@
 							<j:if test="${column.name() == 'COLUMN_DESCRIPTION'}">
 								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: left">${job.getReport().getDescription()}</td>
 							</j:if>
+							<j:if test="${column.name() == 'COLUMN_CC_PACKAGES'}">
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getCcPackages()}</td>
+							</j:if>
+							<j:if test="${column.name() == 'COLUMN_CC_FILES'}">
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getCcFiles()}</td>
+							</j:if>
+							<j:if test="${column.name() == 'COLUMN_CC_CLASSES'}">
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getCcClasses()}</td>
+							</j:if>
+							<j:if test="${column.name() == 'COLUMN_CC_METHODS'}">
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getCcMethods()}</td>
+							</j:if>
+							<j:if test="${column.name() == 'COLUMN_CC_LINES'}">
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getCcLines()}</td>
+							</j:if>
+							<j:if test="${column.name() == 'COLUMN_CC_CONDITIONS'}">
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getCcConditions()}</td>
+							</j:if>
+							<j:if test="${column.name() == 'COLUMN_SONAR_URL'}">
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getSonarUrl()}</td>
+							</j:if>
 						</j:forEach>
 					</tr>
 				</j:forEach>
@@ -84,7 +105,6 @@
 				<j:if test="${showGroups == true}">
 					<td style='border-bottom:2px solid ${lineSeperatorcolor};text-align: center'>Summary</td>
 				</j:if>
-				
 				<j:forEach items="${columns}" var="column">
 							<j:if test="${column.name() == 'COLUMN_JOB'}">
 								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center"></td>
@@ -122,10 +142,28 @@
 							<j:if test="${column.name() == 'COLUMN_DESCRIPTION'}">
 								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center"></td>
 							</j:if>
+							<j:if test="${column.name() == 'COLUMN_CC_PACKAGES'}">
+								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center"></td>
+							</j:if>
+							<j:if test="${column.name() == 'COLUMN_CC_FILES'}">
+								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center"></td>
+							</j:if>
+							<j:if test="${column.name() == 'COLUMN_CC_CLASSES'}">
+								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center"></td>
+							</j:if>
+							<j:if test="${column.name() == 'COLUMN_CC_METHODS'}">
+								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center"></td>
+							</j:if>
+							<j:if test="${column.name() == 'COLUMN_CC_LINES'}">
+								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center"></td>
+							</j:if>
+							<j:if test="${column.name() == 'COLUMN_CC_CONDITIONS'}">
+								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center"></td>
+							</j:if>
+							<j:if test="${column.name() == 'COLUMN_SONAR_URL'}">
+								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center"></td>
+							</j:if>
 				</j:forEach>
-				<td style='text-align: center'></td>
-				<td style='text-align: center'></td>
-				<td colspan='2'></td>
 			</tr>
 		</table>
        </body>

@@ -25,6 +25,14 @@ public class ReportJob implements Serializable {
 	private String parameters;
 	private String percentage;
 	
+	private String sonarUrl;
+	private String ccPackages;
+	private String ccFiles;
+	private String ccClasses;
+	private String ccMethods;
+	private String ccLines;
+	private String ccConditions;
+	
 	public ReportJob() {
 		
 	}
@@ -64,7 +72,7 @@ public class ReportJob implements Serializable {
 	
 	public void calculateFailedColor(Results resultsDTO) {
 		if (resultsDTO != null) {
-			setFailedColor(Helper.diff(resultsDTO.getFailDif(), resultsDTO.getFail(), null, Colors.FAILED, false));
+			setFailedColor(Helper.diff(resultsDTO.getFailDif(), resultsDTO.getFail(), null, Colors.FAILED, false, false));
 		} else {
 			setFailedColor("0");
 		}
@@ -300,6 +308,118 @@ public class ReportJob implements Serializable {
 	
 	public void setPercentage(String percentage) {
 		this.percentage = percentage;
+	}
+	
+	public String calculateSonar(Results results) {
+		if (!Strings.isNullOrEmpty(results.getSonarUrl())) {
+			setSonarUrl("<a href='" + results.getSonarUrl() + "' style='text-decoration:none;'>Sonar</a>");
+			return getSonarUrl();
+		}
+		return "";
+	}
+	
+	public String getSonarUrl() {
+		return sonarUrl;
+	}
+	
+	public void setSonarUrl(String sonarUrl) {
+		this.sonarUrl = sonarUrl;
+	}
+	
+	public String calculateCCPackages(Results results) {
+		setCcPackages(Helper.diff(results.getCcPackagesDif(), results.getCcPackages(), false));
+		return getCcPackages();
+	}
+	
+	public String getCcPackages() {
+		if (Strings.isNullOrEmpty(ccPackages)) {
+			return ccPackages;
+		}
+		return ccPackages + "%";
+	}
+	
+	public void setCcPackages(String ccPackages) {
+		this.ccPackages = ccPackages;
+	}
+	
+	public String calculateCCFiles(Results results) {
+		setCcFiles(Helper.diff(results.getCcFilesDif(), results.getCcFiles(), false));
+		return getCcFiles();
+	}
+	
+	public String getCcFiles() {
+		if (Strings.isNullOrEmpty(ccFiles)) {
+			return ccFiles;
+		}
+		return ccFiles + "%";
+	}
+	
+	public void setCcFiles(String ccFiles) {
+		this.ccFiles = ccFiles;
+	}
+	
+	public String calculateCCClasses(Results results) {
+		setCcClasses(Helper.diff(results.getCcClassesDif(), results.getCcClasses(), false));
+		return getCcClasses();
+	}
+	
+	public String getCcClasses() {
+		if (Strings.isNullOrEmpty(ccClasses)) {
+			return ccClasses;
+		}
+		return ccClasses + "%";
+	}
+	
+	public void setCcClasses(String ccClasses) {
+		this.ccClasses = ccClasses;
+	}
+	
+	public String calculateCCMethods(Results results) {
+		setCcMethods(Helper.diff(results.getCcMethodsDif(), results.getCcMethods(), false));
+		return getCcMethods();
+	}
+	
+	public String getCcMethods() {
+		if (Strings.isNullOrEmpty(ccMethods)) {
+			return ccMethods;
+		}
+		return ccMethods + "%";
+	}
+	
+	public void setCcMethods(String ccMethods) {
+		this.ccMethods = ccMethods;
+	}
+	
+	public String calculateCCLines(Results results) {
+		setCcLines(Helper.diff(results.getCcLinesDif(), results.getCcLines(), false));
+		return getCcLines();
+	}
+	
+	public String getCcLines() {
+		if (Strings.isNullOrEmpty(ccLines)) {
+			return ccLines;
+		}
+		return ccLines + "%";
+	}
+	
+	public void setCcLines(String ccLines) {
+		this.ccLines = ccLines;
+	}
+	
+	public String calculateCCConditions(Results results) {
+		setCcConditions(Helper.diff(results.getCcConditionsDif(), results.getCcConditions(), false));
+		return getCcConditions();
+	}
+	
+	public String getCcConditions() {
+		if (Strings.isNullOrEmpty(ccConditions)) {
+			return ccConditions;
+		}
+		return ccConditions + "%";
+	}
+	
+	public void setCcConditions(String ccConditions) {
+		this.ccConditions = ccConditions;
 	}
 	
 }

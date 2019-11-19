@@ -19,6 +19,7 @@ public class BuildInfo implements Serializable {
 	private String displayName;
 	private List<ChangeSet> changeSets;
 	private Long timestamp;
+	private String url;
 	
 	public BuildInfo() {
 		
@@ -114,6 +115,14 @@ public class BuildInfo implements Serializable {
 	
 	public void setTimestamp(Long timestamp) {
 		this.timestamp = timestamp;
+	}
+	
+	public String getUrl() {
+		return url;
+	}
+	
+	public void setUrl(String url) {
+		this.url = url;
 	}
 	
 }

@@ -40,6 +40,13 @@ public enum LocalMessages {
 	COLUMN_DESCRIPTION ("columnDescription"),
 	COLUMN_PERCENTAGE ("columnPercentage"),
 	COLUMN_HEALTH ("columnHealth"),
+	COLUMN_CC_PACKAGES ("columnCCPackages"),
+	COLUMN_CC_FILES ("columnCCFiles"),
+	COLUMN_CC_CLASSES ("columnCCClasses"),
+	COLUMN_CC_METHODS ("columnCCMethods"),
+	COLUMN_CC_LINES ("columnCCLines"),
+	COLUMN_CC_CONDITIONS ("columnCCConditions"),
+	COLUMN_SONAR_URL ("columnSonarURL"),
 	XML_REPORT ("xmlReport");
 	
 	private final static ResourceBundle MESSAGES = ResourceBundle.getBundle("com.jenkins.testresultsaggregator.Messages");
