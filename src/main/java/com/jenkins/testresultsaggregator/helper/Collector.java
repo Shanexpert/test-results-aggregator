@@ -167,19 +167,6 @@ public class Collector {
 				String dateFormatted = formatter.format(new Date(job.getBuildInfo().getTimestamp()));
 				results.setTimestamp(dateFormatted);
 			}
-			// Set Change Set
-			if (job.getBuildInfo().getChangeSets() != null) {
-				int changes = 0;
-				for (ChangeSet tempI : job.getBuildInfo().getChangeSets()) {
-					changes += tempI.getItems().size();
-				}
-				results.setNumberOfChanges(changes);
-			} else {
-				results.setNumberOfChanges(0);
-			}
-			// Set Changes URL
-			results.setChangesUrl(job.getJobInfo().getUrl() + "/" + job.getBuildInfo().getNumber() + "/" + CHANGES);
-			
 			boolean foundJacocoResults = false;
 			boolean foundCoberturaResults = false;
 			// If Job is not running get results
@@ -239,7 +226,7 @@ public class Collector {
 				} else {
 					results.setReportUrl(results.getConsoleUrl());
 				}
-				// Calculate Previous Results
+				// Calculate Previous Results and change sets
 				if (job.getBuildInfo().getPreviousBuild() != null) {
 					BuildInfo jenkinsPreviousBuildDTO = null;
 					if (job.getSavedJobUrl() == null) {
@@ -309,6 +296,7 @@ public class Collector {
 							// Check for Cobertura Results
 							coberturaCoverage(jenkinsPreviousBuildDTO.getUrl(), results);
 						}
+						calculateChangeSets(job, results, jenkinsPreviousBuildDTO);
 					}
 					// Calculate Pass Difference Results
 					results.setPassDif(previouslyPass - Math.abs(previouslyFail) - Math.abs(previouslySkip));
@@ -322,6 +310,36 @@ public class Collector {
 			return results;
 		}
 		return null;
+	}
+	
+	private void calculateChangeSets(Job job, Results results, BuildInfo jenkinsPreviousBuildDTO) {
+		if (job.getBuildInfo().getPreviousBuild().getUrl().toString().equalsIgnoreCase(jenkinsPreviousBuildDTO.getUrl())) {
+			// Set Change Set
+			if (job.getBuildInfo().getChangeSets() != null) {
+				int changes = 0;
+				for (ChangeSet tempI : job.getBuildInfo().getChangeSets()) {
+					changes += tempI.getItems().size();
+				}
+				results.setNumberOfChanges(changes);
+			} else {
+				results.setNumberOfChanges(0);
+			}
+			// Set Changes URL
+			results.setChangesUrl(job.getJobInfo().getUrl() + "/" + job.getBuildInfo().getNumber() + "/" + CHANGES);
+		} else {
+			// More jobs and possible change sets , resolve them
+			int changes = 0;
+			for (int i = jenkinsPreviousBuildDTO.getNumber() + 1; i <= job.getBuildInfo().getNumber(); i++) {
+				// Get sets
+				BuildInfo temp = getJobInfo(job.getJobInfo().getUrl().toString() + i);
+				if (temp.getChangeSets() != null) {
+					for (ChangeSet tempI : temp.getChangeSets()) {
+						changes += tempI.getItems().size();
+					}
+				}
+			}
+			results.setNumberOfChanges(changes);
+		}
 	}
 	
 	private boolean coberturaCoverage(Job job, Results results) {
