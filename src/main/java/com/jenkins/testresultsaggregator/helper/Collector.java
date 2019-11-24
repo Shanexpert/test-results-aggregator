@@ -339,6 +339,8 @@ public class Collector {
 				}
 			}
 			results.setNumberOfChanges(changes);
+			// Set Changes URL
+			results.setChangesUrl(job.getJobInfo().getUrl() + "/" + job.getBuildInfo().getNumber() + "/" + CHANGES);
 		}
 	}
 	
