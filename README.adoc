@@ -18,6 +18,9 @@ https://plugins.jenkins.io/cobertura[Cobertura], https://plugins.jenkins.io/jaco
 
 image:https://img.shields.io/jenkins/plugin/v/test-results-aggregator.svg[Jenkins Plugin,link=https://plugins.jenkins.io/test-results-aggregator]
 image:https://ci.jenkins.io/buildStatus/icon?job=Plugins/test-results-aggregator-plugin/master[https://github.com/jenkinsci/role-strategy-plugin/releases/latest]
+image:https://github.com/jenkinsci/test-results-aggregator-plugin/workflows/Java_CI/badge.svg[Build,link= https://github.com/jenkinsci/test-results-aggregator-plugin/workflows/Java_CI]
+
+
 //image:https://img.shields.io/jenkins/plugin/i/test-results-aggregator.svg?color=blue[Jenkins Plugin Installs,link=https://plugins.jenkins.io/test-results-aggregator]
 
 == Important
