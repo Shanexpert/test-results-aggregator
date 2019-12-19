@@ -60,102 +60,106 @@ public class Analyzer {
 			data.setReportGroup(new ReportGroup());
 			for (Job job : data.getJobs()) {
 				job.setReport(new ReportJob());
-				// Calculate Job Status
-				job.getReport().calculateStatus(job.getResults());
-				// Calculate Total
-				job.getReport().calculateTotal(job.getResults());
-				// Calculate Pass
-				job.getReport().calculatePass(job.getResults());
-				// Calculate Fail
-				job.getReport().calculateFailedColor(job.getResults());
-				// Calculate Skipped
-				job.getReport().calculateSkipped(job.getResults());
-				// Calculate timestamp
-				job.getReport().calculateTimestamp(job.getResults(), outOfDateResults);
-				// Calculate Changes
-				job.getReport().calculateChanges(job.getResults());
-				// Calculate Report
-				job.getReport().calculateReport(job.getResults());
-				// Calculate Sonar Url
-				job.getReport().calculateSonar(job.getResults());
-				// Calculate Coverage Packages
-				job.getReport().calculateCCPackages(job.getResults());
-				job.getReport().calculateCCFiles(job.getResults());
-				job.getReport().calculateCCClasses(job.getResults());
-				job.getReport().calculateCCMethods(job.getResults());
-				job.getReport().calculateCCLines(job.getResults());
-				job.getReport().calculateCCConditions(job.getResults());
-				
-				// Calculate Duration
-				if (job.getBuildInfo() != null) {
-					job.getReport().calculateDuration(job.getBuildInfo().getDuration());
-					// Total Duration
-					aggregated.setTotalDuration(aggregated.getTotalDuration() + job.getBuildInfo().getDuration());
-					// Total Changes
-					aggregated.setTotalNumberOfChanges(aggregated.getTotalNumberOfChanges() + job.getResults().getNumberOfChanges());
-					// Calculate Description
-					job.getReport().calculateDescription(job.getBuildInfo().getDescription());
+				if (job.getResults() != null) {
+					// Calculate Job Status
+					job.getReport().calculateStatus(job.getResults());
+					// Calculate Total
+					job.getReport().calculateTotal(job.getResults());
+					// Calculate Pass
+					job.getReport().calculatePass(job.getResults());
+					// Calculate Fail
+					job.getReport().calculateFailedColor(job.getResults());
+					// Calculate Skipped
+					job.getReport().calculateSkipped(job.getResults());
+					// Calculate timestamp
+					job.getReport().calculateTimestamp(job.getResults(), outOfDateResults);
+					// Calculate Changes
+					job.getReport().calculateChanges(job.getResults());
+					// Calculate Report
+					job.getReport().calculateReport(job.getResults());
+					// Calculate Sonar Url
+					job.getReport().calculateSonar(job.getResults());
+					// Calculate Coverage Packages
+					job.getReport().calculateCCPackages(job.getResults());
+					job.getReport().calculateCCFiles(job.getResults());
+					job.getReport().calculateCCClasses(job.getResults());
+					job.getReport().calculateCCMethods(job.getResults());
+					job.getReport().calculateCCLines(job.getResults());
+					job.getReport().calculateCCConditions(job.getResults());
+					
+					// Calculate Duration
+					if (job.getBuildInfo() != null) {
+						job.getReport().calculateDuration(job.getBuildInfo().getDuration());
+						// Total Duration
+						aggregated.setTotalDuration(aggregated.getTotalDuration() + job.getBuildInfo().getDuration());
+						// Total Changes
+						aggregated.setTotalNumberOfChanges(aggregated.getTotalNumberOfChanges() + job.getResults().getNumberOfChanges());
+						// Calculate Description
+						job.getReport().calculateDescription(job.getBuildInfo().getDescription());
+					}
+					// Calculate Percentage
+					job.getReport().calculatePercentage(job.getResults());
+					// Calculate Group
+					if (JobStatus.SUCCESS.name().equals(job.getReport().getStatus())) {
+						data.getReportGroup().setJobSuccess(data.getReportGroup().getJobSuccess() + 1);
+						aggregated.setSuccessJobs(aggregated.getSuccessJobs() + 1);
+						jobSuccess++;
+					} else if (JobStatus.FIXED.name().equals(job.getReport().getStatus())) {
+						data.getReportGroup().setJobSuccess(data.getReportGroup().getJobSuccess() + 1);
+						aggregated.setFixedJobs(aggregated.getFixedJobs() + 1);
+						jobSuccess++;
+					} else if (JobStatus.RUNNING.name().equals(job.getReport().getStatus())) {
+						foundRunning = true;
+						data.getReportGroup().setJobRunning(data.getReportGroup().getJobRunning() + 1);
+						aggregated.setRunningJobs(aggregated.getRunningJobs() + 1);
+						jobRunning++;
+					} else if (JobStatus.FAILURE.name().equals(job.getReport().getStatus())) {
+						foundFailure = true;
+						data.getReportGroup().setJobFailed(data.getReportGroup().getJobFailed() + 1);
+						aggregated.setFailedJobs(aggregated.getFailedJobs() + 1);
+						jobFailed++;
+						// Do not Check total Test
+						job.getReport().calculateTotal(null);
+						job.getReport().calculatePass(null);
+						job.getReport().calculateFailed(null);
+						job.getReport().calculateFailedColor(null);
+						job.getReport().calculateSkipped(null);
+					} else if (JobStatus.STILL_FAILING.name().equals(job.getReport().getStatus())) {
+						foundFailure = true;
+						data.getReportGroup().setJobFailed(data.getReportGroup().getJobFailed() + 1);
+						aggregated.setKeepFailJobs(aggregated.getKeepFailJobs() + 1);
+						jobFailed++;
+						// Do not Check total Test
+						job.getReport().calculateTotal(null);
+						job.getReport().calculatePass(null);
+						job.getReport().calculateFailed(null);
+						job.getReport().calculateFailedColor(null);
+						job.getReport().calculateSkipped(null);
+					} else if (JobStatus.UNSTABLE.name().equals(job.getReport().getStatus())) {
+						foundSkip = true;
+						data.getReportGroup().setJobUnstable(data.getReportGroup().getJobUnstable() + 1);
+						aggregated.setUnstableJobs(aggregated.getUnstableJobs() + 1);
+						jobUnstable++;
+					} else if (JobStatus.STILL_UNSTABLE.name().equals(job.getReport().getStatus())) {
+						foundSkip = true;
+						data.getReportGroup().setJobUnstable(data.getReportGroup().getJobUnstable() + 1);
+						aggregated.setKeepUnstableJobs(aggregated.getKeepUnstableJobs() + 1);
+						jobUnstable++;
+					} else if (JobStatus.ABORTED.name().equals(job.getReport().getStatus())) {
+						foundSkip = true;
+						data.getReportGroup().setJobAborted(data.getReportGroup().getJobAborted() + 1);
+						aggregated.setAbortedJobs(aggregated.getAbortedJobs() + 1);
+						jobAborted++;
+					}
+					// Calculate Total Per Group
+					resultsPerGroup.setPass(resultsPerGroup.getPass() + job.getResults().getPass());
+					resultsPerGroup.setSkip(resultsPerGroup.getSkip() + job.getResults().getSkip());
+					resultsPerGroup.setTotal(resultsPerGroup.getTotal() + job.getResults().getTotal());
+					// Calculate Total for Summary Column
+					totalResults.addResults(job.getResults());
+				} else {
+					logger.println("Not found results for " + job.getJobName());
 				}
-				// Calculate Percentage
-				job.getReport().calculatePercentage(job.getResults());
-				// Calculate Group
-				if (JobStatus.SUCCESS.name().equals(job.getReport().getStatus())) {
-					data.getReportGroup().setJobSuccess(data.getReportGroup().getJobSuccess() + 1);
-					aggregated.setSuccessJobs(aggregated.getSuccessJobs() + 1);
-					jobSuccess++;
-				} else if (JobStatus.FIXED.name().equals(job.getReport().getStatus())) {
-					data.getReportGroup().setJobSuccess(data.getReportGroup().getJobSuccess() + 1);
-					aggregated.setFixedJobs(aggregated.getFixedJobs() + 1);
-					jobSuccess++;
-				} else if (JobStatus.RUNNING.name().equals(job.getReport().getStatus())) {
-					foundRunning = true;
-					data.getReportGroup().setJobRunning(data.getReportGroup().getJobRunning() + 1);
-					aggregated.setRunningJobs(aggregated.getRunningJobs() + 1);
-					jobRunning++;
-				} else if (JobStatus.FAILURE.name().equals(job.getReport().getStatus())) {
-					foundFailure = true;
-					data.getReportGroup().setJobFailed(data.getReportGroup().getJobFailed() + 1);
-					aggregated.setFailedJobs(aggregated.getFailedJobs() + 1);
-					jobFailed++;
-					// Do not Check total Test
-					job.getReport().calculateTotal(null);
-					job.getReport().calculatePass(null);
-					job.getReport().calculateFailed(null);
-					job.getReport().calculateFailedColor(null);
-					job.getReport().calculateSkipped(null);
-				} else if (JobStatus.STILL_FAILING.name().equals(job.getReport().getStatus())) {
-					foundFailure = true;
-					data.getReportGroup().setJobFailed(data.getReportGroup().getJobFailed() + 1);
-					aggregated.setKeepFailJobs(aggregated.getKeepFailJobs() + 1);
-					jobFailed++;
-					// Do not Check total Test
-					job.getReport().calculateTotal(null);
-					job.getReport().calculatePass(null);
-					job.getReport().calculateFailed(null);
-					job.getReport().calculateFailedColor(null);
-					job.getReport().calculateSkipped(null);
-				} else if (JobStatus.UNSTABLE.name().equals(job.getReport().getStatus())) {
-					foundSkip = true;
-					data.getReportGroup().setJobUnstable(data.getReportGroup().getJobUnstable() + 1);
-					aggregated.setUnstableJobs(aggregated.getUnstableJobs() + 1);
-					jobUnstable++;
-				} else if (JobStatus.STILL_UNSTABLE.name().equals(job.getReport().getStatus())) {
-					foundSkip = true;
-					data.getReportGroup().setJobUnstable(data.getReportGroup().getJobUnstable() + 1);
-					aggregated.setKeepUnstableJobs(aggregated.getKeepUnstableJobs() + 1);
-					jobUnstable++;
-				} else if (JobStatus.ABORTED.name().equals(job.getReport().getStatus())) {
-					foundSkip = true;
-					data.getReportGroup().setJobAborted(data.getReportGroup().getJobAborted() + 1);
-					aggregated.setAbortedJobs(aggregated.getAbortedJobs() + 1);
-					jobAborted++;
-				}
-				// Calculate Total Per Group
-				resultsPerGroup.setPass(resultsPerGroup.getPass() + job.getResults().getPass());
-				resultsPerGroup.setSkip(resultsPerGroup.getSkip() + job.getResults().getSkip());
-				resultsPerGroup.setTotal(resultsPerGroup.getTotal() + job.getResults().getTotal());
-				// Calculate Total for Summary Column
-				totalResults.addResults(job.getResults());
 			}
 			// Set Results Per Group
 			data.getReportGroup().setResults(resultsPerGroup);
