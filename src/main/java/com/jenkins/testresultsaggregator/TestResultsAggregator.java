@@ -134,7 +134,7 @@ public class TestResultsAggregator extends Notifier {
 			Aggregated aggregated = new Analyzer(logger).analyze(validatedData, properties);
 			// Reporter for HTML and mail
 			Reporter reporter = new Reporter(logger, build.getProject().getSomeWorkspace(), build.getRootDir(), desc.getMailNotificationFrom());
-			reporter.publishResuts(getRecipientsList(), aggregated, properties, columns);
+			reporter.publishResuts(getRecipientsList(), aggregated, properties, columns, build.getRootDir());
 			// Add Build Action
 			build.addAction(new TestResultsAggregatorTestResultBuildAction(aggregated));
 		} catch (Exception e) {
