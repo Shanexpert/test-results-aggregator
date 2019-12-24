@@ -3,6 +3,8 @@ package com.jenkins.testresultsaggregator.data;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jvnet.localizer.Localizable;
+
 import com.jenkins.testresultsaggregator.reporter.HTMLReporter;
 
 import hudson.model.HealthReport;
@@ -22,11 +24,11 @@ public class ImagesMap {
 	}
 	
 	public static String getIconImagePath(int score) {
-		return hudson.model.HealthReport.min(new HealthReport(score, ""), null).getIconUrl(getIconSize);
+		return hudson.model.HealthReport.min(new HealthReport(score, new Localizable(null, null, null)), null).getIconUrl(getIconSize);
 	}
 	
 	public static String getIconImagePath(String contentId) {
-		return hudson.model.HealthReport.min(new HealthReport(getImages().get(contentId).getScore(), ""), null).getIconUrl(getIconSize);
+		return hudson.model.HealthReport.min(new HealthReport(getImages().get(contentId).getScore(), new Localizable(null, null, null)), null).getIconUrl(getIconSize);
 	}
 	
 	public static String getImage(String contentId) {
