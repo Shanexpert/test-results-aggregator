@@ -104,14 +104,17 @@ image::AggregatedView.png[Aggregated,900,align="right"]
 
 See the https://github.com/jenkinsci/test-results-aggregator-plugin/releases[Github releases page].
 
+=== 1.0.5 (19 Dec 2019)
+ * FIX: NPE in test analyzer
+ 
 === 1.0.4 (28 Nov 2019)
  * Include Code Coverage results in report
  
 === 1.0.3 (12 Nov 2019)
- * Fix mail notification exception on remote slave
+ * FIX: mail notification exception on remote slave
  
 === 1.0.2 (8 Nov 2019)
- * Fix Documentation Issue
+ * FIX: Documentation Issue
  
 === 1.0.0 (4 Nov 2019)
  * Initial Release
