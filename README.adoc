@@ -104,6 +104,10 @@ image::AggregatedView.png[Aggregated,900,align="right"]
 
 See the https://github.com/jenkinsci/test-results-aggregator-plugin/releases[Github releases page].
 
+=== 1.0.6 (8 Jan 2020)
+ * FIX: NPE in Collector
+ * FIX: Show links in reports
+ 
 === 1.0.5 (19 Dec 2019)
  * FIX: NPE in test analyzer
  
