@@ -73,7 +73,7 @@ public class Helper {
 	
 	public static String urlNumberofChanges(String url, String number) {
 		if (!number.isEmpty()) {
-			return "<a href = '" + url + "'>" + number + "</a>";
+			return "<a href = '" + url + "' ><font color='" + Colors.htmlJOB_NAME_URL() + "'>" + number + "</font></a>";
 		}
 		return "";
 	}

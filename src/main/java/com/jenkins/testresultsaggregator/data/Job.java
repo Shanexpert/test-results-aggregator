@@ -99,7 +99,8 @@ public class Job extends AbstractDescribableImpl<Job> implements Serializable {
 				// Link for Job name redirect to Job or results ?
 				reportUrl = results.getUrl();
 			}
-			return "<a href='" + reportUrl + "' style='text-decoration:none;'><font color='" + Colors.htmlJOB_NAME_URL() + "'>" + getJobNameFromFriendlyName() + "</font></a>";
+			// return "<a href='" + reportUrl + "' style='text-decoration:none;'><font color='" + Colors.htmlJOB_NAME_URL() + "'>" + getJobNameFromFriendlyName() + "</font></a>";
+			return "<a href='" + reportUrl + "'><font color='" + Colors.htmlJOB_NAME_URL() + "'>" + getJobNameFromFriendlyName() + "</font></a>";
 		}
 		return getJobNameFromFriendlyName();
 	}
