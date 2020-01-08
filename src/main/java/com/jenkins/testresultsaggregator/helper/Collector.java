@@ -332,7 +332,7 @@ public class Collector {
 			for (int i = jenkinsPreviousBuildDTO.getNumber() + 1; i <= job.getBuildInfo().getNumber(); i++) {
 				// Get sets
 				BuildInfo temp = getJobInfo(job.getJobInfo().getUrl().toString() + i);
-				if (temp.getChangeSets() != null) {
+				if (temp != null && temp.getChangeSets() != null) {
 					for (ChangeSet tempI : temp.getChangeSets()) {
 						changes += tempI.getItems().size();
 					}
