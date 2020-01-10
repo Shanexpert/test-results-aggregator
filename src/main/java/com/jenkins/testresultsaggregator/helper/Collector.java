@@ -101,36 +101,56 @@ public class Collector {
 		return Http.get(jobUrlAPI, authenticationString());
 	}
 	
-	public JobInfo getJobInfo(Job job) {
+	public void delay(int millisec) {
 		try {
-			URL jobUrlAPI = new URL(jenkinsUrl + "/" + JOB + "/" + job.getJobName() + "/" + API_JSON_URL);
-			String reply = Http.get(jobUrlAPI, authenticationString());
-			return Deserialize.initializeObjectMapper().readValue(reply, JobInfo.class);
-		} catch (IOException e) {
+			Thread.sleep(millisec);
+		} catch (InterruptedException e) {
 		}
-		return null;
+	}
+	
+	public JobInfo getJobInfo(Job job) {
+		JobInfo jobInfo = null;
+		int retries = 1;
+		while (jobInfo == null && retries <= 3) {
+			try {
+				URL jobUrlAPI = new URL(jenkinsUrl + "/" + JOB + "/" + job.getJobName() + "/" + API_JSON_URL);
+				jobInfo = Deserialize.initializeObjectMapper().readValue(Http.get(jobUrlAPI, authenticationString()), JobInfo.class);
+			} catch (IOException e) {
+			}
+			retries++;
+			delay(2000);
+		}
+		return jobInfo;
 	}
 	
 	public BuildInfo getJobInfoLastBuild(Job dataJobDTO) {
-		try {
-			URL jobUrlAPILastBuild = new URL(dataJobDTO.getJobInfo().getUrl() + "/" + LASTBUILD + "/" + API_JSON_JACOCO);
-			// Get Latest
-			String reply = Http.get(jobUrlAPILastBuild, authenticationString());
-			return Deserialize.initializeObjectMapper().readValue(reply, BuildInfo.class);
-		} catch (IOException e) {
+		BuildInfo buildInfo = null;
+		int retries = 1;
+		while (buildInfo == null && retries <= 3) {
+			try {
+				URL jobUrlAPILastBuild = new URL(dataJobDTO.getJobInfo().getUrl() + "/" + LASTBUILD + "/" + API_JSON_JACOCO);
+				buildInfo = Deserialize.initializeObjectMapper().readValue(Http.get(jobUrlAPILastBuild, authenticationString()), BuildInfo.class);
+			} catch (IOException e) {
+			}
+			retries++;
+			delay(2000);
 		}
-		return null;
+		return buildInfo;
 	}
 	
 	public BuildInfo getJobInfo(String url) {
-		try {
-			URL jobUrlAPILastBuild = new URL(url + "/" + API_JSON_JACOCO);
-			// Get Latest
-			String reply = Http.get(jobUrlAPILastBuild, authenticationString());
-			return Deserialize.initializeObjectMapper().readValue(reply, BuildInfo.class);
-		} catch (IOException e) {
+		BuildInfo buildInfo = null;
+		int retries = 1;
+		while (buildInfo == null && retries <= 3) {
+			try {
+				URL jobUrlAPILastBuild = new URL(url + "/" + API_JSON_JACOCO);
+				buildInfo = Deserialize.initializeObjectMapper().readValue(Http.get(jobUrlAPILastBuild, authenticationString()), BuildInfo.class);
+			} catch (IOException e) {
+			}
+			retries++;
+			delay(2000);
 		}
-		return null;
+		return buildInfo;
 	}
 	
 	public CoberturaCoverage getCobertura(String url) {
