@@ -40,6 +40,7 @@ public class MailNotification {
 	private List<Data> dataJob;
 	private FilePath workspace;
 	private File rootDirectory;
+	private boolean useImages = false;
 	
 	public MailNotification(PrintStream logger, List<Data> dataJob, FilePath workspace, File rootDirectory) {
 		this.logger = logger;
@@ -62,7 +63,10 @@ public class MailNotification {
 	}
 	
 	public void send(String mailTo, String mailFrom, String subject, String body, Map<String, ImageData> images, String preBodyText, String afterBodyText)
-			throws MessagingException, IOException, InterruptedException, URISyntaxException {
+			throws MessagingException,
+			IOException,
+			InterruptedException,
+			URISyntaxException {
 		logger.print(LocalMessages.GENERATE.toString() + " " + LocalMessages.EMAIL_REPORT.toString());
 		MimeMessageBuilder mimeMessageBuilder = new MimeMessageBuilder();
 		if (validateResults()) {
@@ -70,6 +74,7 @@ public class MailNotification {
 		} else if (Strings.isNullOrEmpty(mailTo)) {
 			logger.println(LocalMessages.VALIDATION_MAIL_RECEIPIENTS_EMPTY.toString());
 		} else {
+			MimeMessage message = mimeMessageBuilder.buildMimeMessage();
 			try {// Add Recipients
 				String[] to = mailTo.split(",");
 				for (String recipient : to) {
@@ -95,35 +100,38 @@ public class MailNotification {
 				// Set type
 				mimeMessageBuilder.setMimeType("text/html");
 				// Build
-				MimeMessage message = mimeMessageBuilder.buildMimeMessage();
 				message.setFrom(new InternetAddress(mailFrom));
 				
 				MimeBodyPart messageBodyPart = new MimeBodyPart();
 				messageBodyPart.setContent(messageBody.toString(), "text/html");
 				Multipart multipart = new MimeMultipart();
 				multipart.addBodyPart(messageBodyPart);
-				if (images != null && !images.isEmpty()) {
-					Set<String> setImageID = images.keySet();
-					for (String contentId : setImageID) {
-						multipart.addBodyPart(addImagePart(contentId));
+				// Disable images
+				if (useImages) {
+					try {
+						if (images != null && !images.isEmpty()) {
+							Set<String> setImageID = images.keySet();
+							for (String contentId : setImageID) {
+								multipart.addBodyPart(addImagePart(contentId));
+							}
+							message.setContent(multipart);
+						}
+					} catch (Exception ex) {
+						
 					}
-					message.setContent(multipart);
 				}
 				// Save Message
 				message.saveChanges();
 				// Send Message
-				try {
-					Transport.send(message);
-				} catch (Exception ex) {
-					// Send Mail with no images
-					message.setContent(null);
-					Transport.send(message);
-				}
+				Transport.send(message);
 				logger.println(LocalMessages.SEND_MAIL_TO.toString());
 				logger.println("" + mailTo);
 			} catch (MessagingException ex) {
-				logger.println("");
+				// Send Mail with no images
 				logger.printf(LocalMessages.ERROR_OCCURRED.toString() + ": " + ex.getMessage());
+				logger.println(LocalMessages.SEND_MAIL_TO.toString());
+				message.setContent(null);
+				Transport.send(message);
 				ex.printStackTrace();
 				logger.println("");
 			}
