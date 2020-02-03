@@ -116,7 +116,7 @@ public class MailNotification {
 							}
 							message.setContent(multipart);
 						}
-					} catch (Exception ex) {
+					} catch (IOException ex) {
 						
 					}
 				}
