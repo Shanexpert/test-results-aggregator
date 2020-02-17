@@ -38,9 +38,6 @@ public class Collector {
 	public static final String FAILCOUNT = "failCount";
 	public static final String SKIPCOUNT = "skipCount";
 	public static final String TOTALCOUNT = "totalCount";
-	public static final String CONSOLE_OUTPUT = "console";
-	public static final String TESTNG_REPORT = "testngreports";
-	public static final String JUNIT_REPORT = "testReport";
 	
 	public static final String JACOCO_BRANCH = "branchCoverage";
 	public static final String JACOCO_CLASS = "classCoverage";
@@ -235,17 +232,6 @@ public class Collector {
 				results.setPass(results.getTotal() - Math.abs(results.getFail()) - Math.abs(results.getSkip()));
 				// Calculate Percentage
 				results.setPercentage(Helper.countPercentage(results));
-				// Add Url
-				results.setConsoleUrl(job.getJobInfo().getUrl().toString() + job.getBuildInfo().getNumber() + "/" + CONSOLE_OUTPUT);
-				String testNGUrl = job.getJobInfo().getUrl().toString() + job.getBuildInfo().getNumber() + "/" + TESTNG_REPORT;
-				String junitsUrl = job.getJobInfo().getUrl().toString() + job.getBuildInfo().getNumber() + "/" + JUNIT_REPORT;
-				if (Http.getResponseCode(testNGUrl, authenticationString()) == 200) {
-					results.setReportUrl(testNGUrl);
-				} else if (Http.getResponseCode(junitsUrl, authenticationString()) == 200) {
-					results.setReportUrl(junitsUrl);
-				} else {
-					results.setReportUrl(results.getConsoleUrl());
-				}
 				// Calculate Previous Results and change sets
 				if (job.getBuildInfo().getPreviousBuild() != null) {
 					BuildInfo jenkinsPreviousBuildDTO = null;
@@ -323,9 +309,6 @@ public class Collector {
 				}
 			} else {
 				results.setCurrentResult(JobStatus.RUNNING.name());
-				// Add Url
-				results.setConsoleUrl(job.getJobInfo().getUrl() + "/" + job.getBuildInfo().getNumber() + "/" + CONSOLE_OUTPUT);
-				results.setReportUrl(results.getConsoleUrl());
 			}
 			return results;
 		}
@@ -427,7 +410,6 @@ public class Collector {
 				job.setResults(new Results(JobStatus.NOT_FOUND.name(), null));
 				job.getResults().setUrl(null);
 				job.setReport(new ReportJob());
-				job.getReport().calculateReport(job.getResults());
 				logger.println(LocalMessages.COLLECT_DATA.toString() + " '" + job.getJobName() + "' " + LocalMessages.JOB_NOT_FOUND.toString());
 			} else if (!job.getJobInfo().getBuildable()) {
 				// Job is Disabled/ Not Buildable
@@ -436,7 +418,6 @@ public class Collector {
 				job.setResults(new Results(JobStatus.DISABLED.name(), null));
 				job.getResults().setUrl(tempUrl);
 				job.setReport(new ReportJob());
-				job.getReport().calculateReport(null);
 				logger.println(LocalMessages.COLLECT_DATA.toString() + " '" + job.getJobName() + "' " + LocalMessages.JOB_IS_DISABLED.toString());
 			} else if (job.getJobInfo() != null) {
 				// Job Found and is Buildable

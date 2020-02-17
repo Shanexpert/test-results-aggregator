@@ -75,8 +75,6 @@ public class Analyzer {
 					job.getReport().calculateTimestamp(job.getResults(), outOfDateResults);
 					// Calculate Changes
 					job.getReport().calculateChanges(job.getResults());
-					// Calculate Report
-					job.getReport().calculateReport(job.getResults());
 					// Calculate Sonar Url
 					job.getReport().calculateSonar(job.getResults());
 					// Calculate Coverage Packages

@@ -11,43 +11,33 @@ public class Results implements Serializable {
 	
 	private String name;
 	
-	private String calculatedPass;
 	private int pass;
 	private int passDif;
 	
-	private String calculatedFail;
 	private int fail;
 	private int failDif;
 	
-	private String calculatedSkip;
 	private int skip;
 	private int skipDif;
 	
-	private String calculatedTotal;
 	private int total;
 	private int totalDif;
 	
-	private String calculatedCCPackages;
 	private int ccPackages;
 	private int ccPackagesDif;
 	
-	private String calculatedCCFiles;
 	private int ccFiles;
 	private int ccFilesDif;
 	
-	private String calculatedCCClasses;
 	private int ccClasses;
 	private int ccClassesDif;
 	
-	private String calculatedCCMethods;
 	private int ccMethods;
 	private int ccMethodsDif;
 	
-	private String calculatedCCLines;
 	private int ccLines;
 	private int ccLinesDif;
 	
-	private String calculatedCCConditions;
 	private int ccConditions;
 	private int ccConditionsDif;
 	
@@ -61,8 +51,6 @@ public class Results implements Serializable {
 	private boolean building;
 	
 	private String url;
-	private String reportUrl;
-	private String consoleUrl;
 	private String sonarUrl;
 	
 	private int calculatedNumberOfChanges;
@@ -231,22 +219,6 @@ public class Results implements Serializable {
 		this.building = building;
 	}
 	
-	public String getReportUrl() {
-		return reportUrl;
-	}
-	
-	public void setReportUrl(String reportUrl) {
-		this.reportUrl = reportUrl;
-	}
-	
-	public String getConsoleUrl() {
-		return consoleUrl;
-	}
-	
-	public void setConsoleUrl(String consoleUrl) {
-		this.consoleUrl = consoleUrl;
-	}
-	
 	public int getNumberOfChanges() {
 		return numberOfChanges;
 	}
@@ -283,24 +255,12 @@ public class Results implements Serializable {
 		return Helper.diff(getPassDif(), getPass(), false);
 	}
 	
-	public void setCalculatedPass(String calculatedPass) {
-		this.calculatedPass = calculatedPass;
-	}
-	
 	public String getCalculatedTotal() {
 		return Helper.diff(getTotalDif(), getTotal(), false);
 	}
 	
-	public void setCalculatedTotal(String calculatedTotal) {
-		this.calculatedTotal = calculatedTotal;
-	}
-	
 	public String getCalculatedSkip() {
 		return Helper.diff(getSkipDif(), getSkip(), false);
-	}
-	
-	public void setCalculatedSkip(String calculatedSkip) {
-		this.calculatedSkip = calculatedSkip;
 	}
 	
 	public String getCalculatedFail() {
@@ -309,10 +269,6 @@ public class Results implements Serializable {
 	
 	public String getCalculatedFailColor() {
 		return Helper.diff(getFailDif(), getFail(), null, Colors.FAILED, false, false);
-	}
-	
-	public void setCalculatedFail(String calculatedFail) {
-		this.calculatedFail = calculatedFail;
 	}
 	
 	public String getUrl() {

@@ -40,7 +40,7 @@ public class MailNotification {
 	private List<Data> dataJob;
 	private FilePath workspace;
 	private File rootDirectory;
-	private boolean useImages = false;
+	private boolean useImages = true;
 	
 	public MailNotification(PrintStream logger, List<Data> dataJob, FilePath workspace, File rootDirectory) {
 		this.logger = logger;
@@ -63,18 +63,15 @@ public class MailNotification {
 	}
 	
 	public void send(String mailTo, String mailFrom, String subject, String body, Map<String, ImageData> images, String preBodyText, String afterBodyText)
-			throws MessagingException,
-			IOException,
-			InterruptedException,
-			URISyntaxException {
+			throws Exception {
 		logger.print(LocalMessages.GENERATE.toString() + " " + LocalMessages.EMAIL_REPORT.toString());
 		MimeMessageBuilder mimeMessageBuilder = new MimeMessageBuilder();
+		MimeMessage message = null;
 		if (validateResults()) {
 			logger.println(LocalMessages.VALIDATION_MAIL_NOT_FOUND_JOBS.toString());
 		} else if (Strings.isNullOrEmpty(mailTo)) {
 			logger.println(LocalMessages.VALIDATION_MAIL_RECEIPIENTS_EMPTY.toString());
 		} else {
-			MimeMessage message = mimeMessageBuilder.buildMimeMessage();
 			try {// Add Recipients
 				String[] to = mailTo.split(",");
 				for (String recipient : to) {
@@ -99,41 +96,51 @@ public class MailNotification {
 				mimeMessageBuilder.setSubject(subject);
 				// Set type
 				mimeMessageBuilder.setMimeType("text/html");
-				// Build
-				message.setFrom(new InternetAddress(mailFrom));
 				
-				MimeBodyPart messageBodyPart = new MimeBodyPart();
-				messageBodyPart.setContent(messageBody.toString(), "text/html");
-				Multipart multipart = new MimeMultipart();
-				multipart.addBodyPart(messageBodyPart);
-				// Disable images
-				if (useImages) {
-					try {
-						if (images != null && !images.isEmpty()) {
-							Set<String> setImageID = images.keySet();
-							for (String contentId : setImageID) {
-								multipart.addBodyPart(addImagePart(contentId));
-							}
-							message.setContent(multipart);
-						}
-					} catch (IOException ex) {
-						
-					}
-				}
+				// Build
+				message = mimeMessageBuilder.buildMimeMessage();
+				message.setFrom(new InternetAddress(mailFrom));
+				useImages(messageBody, images, message);
 				// Save Message
 				message.saveChanges();
 				// Send Message
-				Transport.send(message);
+				sendMessage(message);
 				logger.println(LocalMessages.SEND_MAIL_TO.toString());
 				logger.println("" + mailTo);
-			} catch (MessagingException ex) {
+			} catch (Exception ex) {
 				// Send Mail with no images
 				logger.printf(LocalMessages.ERROR_OCCURRED.toString() + ": " + ex.getMessage());
 				logger.println(LocalMessages.SEND_MAIL_TO.toString());
-				message.setContent(null);
-				Transport.send(message);
+				if (message != null) {
+					message = mimeMessageBuilder.buildMimeMessage();
+					message.setFrom(new InternetAddress(mailFrom));
+					// Save Message
+					message.saveChanges();
+					sendMessage(message);
+				}
 				ex.printStackTrace();
 				logger.println("");
+			}
+		}
+	}
+	
+	private void sendMessage(MimeMessage message) throws Exception {
+		Transport.send(message);
+	}
+	
+	private void useImages(StringBuffer messageBody, Map<String, ImageData> images, MimeMessage message) throws MessagingException, IOException, InterruptedException, URISyntaxException {
+		MimeBodyPart messageBodyPart = new MimeBodyPart();
+		messageBodyPart.setContent(messageBody.toString(), "text/html");
+		Multipart multipart = new MimeMultipart();
+		multipart.addBodyPart(messageBodyPart);
+		// Disable images
+		if (useImages) {
+			if (images != null && !images.isEmpty()) {
+				Set<String> setImageID = images.keySet();
+				for (String contentId : setImageID) {
+					multipart.addBodyPart(addImagePart(contentId));
+				}
+				message.setContent(multipart);
 			}
 		}
 	}
