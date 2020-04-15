@@ -11,10 +11,14 @@ It's a jenkins plugin that collects job and test results and reports them :
 * graphs
 
 Test Results Aggregator can merge test results for : 
-https://plugins.jenkins.io/junit[Junit], https://plugins.jenkins.io/testng-plugin[TestNG]
+
+* https://plugins.jenkins.io/junit[Junit], 
+* https://plugins.jenkins.io/testng-plugin[TestNG]
 
 and code coverage results for : 
-https://plugins.jenkins.io/cobertura[Cobertura], https://plugins.jenkins.io/jacoco[JaCoCo]
+
+* https://plugins.jenkins.io/cobertura[Cobertura], 
+* https://plugins.jenkins.io/jacoco[JaCoCo]
 
 image:https://img.shields.io/jenkins/plugin/v/test-results-aggregator.svg[Jenkins Plugin,link=https://plugins.jenkins.io/test-results-aggregator]
 image:https://ci.jenkins.io/buildStatus/icon?job=Plugins/test-results-aggregator-plugin/master[https://github.com/jenkinsci/role-strategy-plugin/releases/latest]
@@ -39,7 +43,7 @@ image::Global_Configuration.png[Global Configuration,900,align="right"]
 
 In this section you can define : 
 
-* **Jenkins Base Url** : The HTTP address of the Jenkins installation, such as http://yourhost.yourdomain/jenkins/. This value is used to access Jenkins API.
+* **Jenkins Base Url** : The HTTP address of the Jenkins installation, such as http://yourhost.yourdomain/jenkins/ This is used to access Jenkins API, so you can fetch results from any jenkins installation.
 * **Jenkins Account Username** : username of the account that will be used to access Jenkins API and fetch job results.
 * **Jenkins Account password** : password of the account that will be used to access Jenkins API and fetch job results.
 * **Mail Notification From** : sender for the mail Notification. Default is "Jenkins".
@@ -104,6 +108,9 @@ image::AggregatedView.png[Aggregated,900,align="right"]
 
 See the https://github.com/jenkinsci/test-results-aggregator-plugin/releases[Github releases page].
 
+=== 1.0.7 (17 Feb 2021)
+ * FIX: varius fixes
+ 
 === 1.0.6 (8 Jan 2020)
  * FIX: NPE in Collector
  * FIX: Show links in reports
