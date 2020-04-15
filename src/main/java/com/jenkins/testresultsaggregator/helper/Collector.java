@@ -186,129 +186,131 @@ public class Collector {
 			}
 			boolean foundJacocoResults = false;
 			boolean foundCoberturaResults = false;
-			// If Job is not running get results
-			if (!results.isBuilding()) {
-				for (HashMap<Object, Object> temp : job.getBuildInfo().getActions()) {
-					// Calculate FAIL,SKIP and TOTAL Test Results
-					if (temp.containsKey(FAILCOUNT)) {
-						results.setFail((Integer) temp.get(FAILCOUNT));
-					}
-					if (temp.containsKey(SKIPCOUNT)) {
-						results.setSkip((Integer) temp.get(SKIPCOUNT));
-					}
-					if (temp.containsKey(TOTALCOUNT)) {
-						results.setTotal((Integer) temp.get(TOTALCOUNT));
-					}
-					// Jacoco Coverage data exists on Default api url
-					if (temp.containsKey(JACOCO_BRANCH)) {
-						Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_BRANCH);
-						results.setCcConditions((Integer) tempMap.get("percentage"));
-						foundJacocoResults = true;
-					}
-					if (temp.containsKey(JACOCO_CLASS)) {
-						Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_CLASS);
-						results.setCcClasses((Integer) tempMap.get("percentage"));
-						foundJacocoResults = true;
-					}
-					if (temp.containsKey(JACOCO_LINES)) {
-						Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_LINES);
-						results.setCcLines((Integer) tempMap.get("percentage"));
-						foundJacocoResults = true;
-					}
-					if (temp.containsKey(JACOCO_METHODS)) {
-						Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_METHODS);
-						results.setCcMethods((Integer) tempMap.get("percentage"));
-						foundJacocoResults = true;
-					}
-					if (temp.containsKey(SONAR_URL)) {
-						results.setSonarUrl((String) temp.get(SONAR_URL));
-					}
-				}
-				if (!foundJacocoResults) {
-					// Check for Cobertura Results
-					foundCoberturaResults = coberturaCoverage(job, results);
-				}
-				// Calculate Pass Results
-				results.setPass(results.getTotal() - Math.abs(results.getFail()) - Math.abs(results.getSkip()));
-				// Calculate Percentage
-				results.setPercentage(Helper.countPercentage(results));
-				// Calculate Previous Results and change sets
-				if (job.getBuildInfo().getPreviousBuild() != null) {
-					BuildInfo jenkinsPreviousBuildDTO = null;
-					if (job.getSavedJobUrl() == null) {
-						// There is no Saved Job , get Previous
-						jenkinsPreviousBuildDTO = getJobInfo(job.getBuildInfo().getPreviousBuild().getUrl().toString());
-						if (jenkinsPreviousBuildDTO != null) {
-							jenkinsPreviousBuildDTO.setUrl(job.getBuildInfo().getPreviousBuild().getUrl().toString());
-							job.setUpdated("");
+			if (results.isBuilding()) {
+				results.setCurrentResult(JobStatus.RUNNING.name());
+			} else {
+				// if job is not failed
+				if (!results.getCurrentResult().equalsIgnoreCase("FAILURE")) {
+					for (HashMap<Object, Object> temp : job.getBuildInfo().getActions()) {
+						// Calculate FAIL,SKIP and TOTAL Test Results
+						if (temp.containsKey(FAILCOUNT)) {
+							results.setFail((Integer) temp.get(FAILCOUNT));
 						}
-					} else {
-						String currentUrl = job.getJobInfo().getLastBuild().getUrl().toString();
-						if (currentUrl.equals(job.getSavedJobUrl())) {
-							// No new Run for this Job
+						if (temp.containsKey(SKIPCOUNT)) {
+							results.setSkip((Integer) temp.get(SKIPCOUNT));
+						}
+						if (temp.containsKey(TOTALCOUNT)) {
+							results.setTotal((Integer) temp.get(TOTALCOUNT));
+						}
+						// Jacoco Coverage data exists on Default api url
+						if (temp.containsKey(JACOCO_BRANCH)) {
+							Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_BRANCH);
+							results.setCcConditions((Integer) tempMap.get("percentage"));
+							foundJacocoResults = true;
+						}
+						if (temp.containsKey(JACOCO_CLASS)) {
+							Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_CLASS);
+							results.setCcClasses((Integer) tempMap.get("percentage"));
+							foundJacocoResults = true;
+						}
+						if (temp.containsKey(JACOCO_LINES)) {
+							Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_LINES);
+							results.setCcLines((Integer) tempMap.get("percentage"));
+							foundJacocoResults = true;
+						}
+						if (temp.containsKey(JACOCO_METHODS)) {
+							Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_METHODS);
+							results.setCcMethods((Integer) tempMap.get("percentage"));
+							foundJacocoResults = true;
+						}
+						if (temp.containsKey(SONAR_URL)) {
+							results.setSonarUrl((String) temp.get(SONAR_URL));
+						}
+					}
+					if (!foundJacocoResults) {
+						// Check for Cobertura Results
+						foundCoberturaResults = coberturaCoverage(job, results);
+					}
+					// Calculate Pass Results
+					results.setPass(results.getTotal() - Math.abs(results.getFail()) - Math.abs(results.getSkip()));
+					// Calculate Percentage
+					results.setPercentage(Helper.countPercentage(results));
+					// Calculate Previous Results and change sets
+					if (job.getBuildInfo().getPreviousBuild() != null) {
+						BuildInfo jenkinsPreviousBuildDTO = null;
+						if (job.getSavedJobUrl() == null) {
+							// There is no Saved Job , get Previous
 							jenkinsPreviousBuildDTO = getJobInfo(job.getBuildInfo().getPreviousBuild().getUrl().toString());
 							if (jenkinsPreviousBuildDTO != null) {
 								jenkinsPreviousBuildDTO.setUrl(job.getBuildInfo().getPreviousBuild().getUrl().toString());
 								job.setUpdated("");
 							}
 						} else {
-							jenkinsPreviousBuildDTO = getJobInfo(job.getSavedJobUrl());
-							if (jenkinsPreviousBuildDTO != null) {
-								jenkinsPreviousBuildDTO.setUrl(job.getSavedJobUrl());
-								job.setUpdated("");
+							String currentUrl = job.getJobInfo().getLastBuild().getUrl().toString();
+							if (currentUrl.equals(job.getSavedJobUrl())) {
+								// No new Run for this Job
+								jenkinsPreviousBuildDTO = getJobInfo(job.getBuildInfo().getPreviousBuild().getUrl().toString());
+								if (jenkinsPreviousBuildDTO != null) {
+									jenkinsPreviousBuildDTO.setUrl(job.getBuildInfo().getPreviousBuild().getUrl().toString());
+									job.setUpdated("");
+								}
+							} else {
+								jenkinsPreviousBuildDTO = getJobInfo(job.getSavedJobUrl());
+								if (jenkinsPreviousBuildDTO != null) {
+									jenkinsPreviousBuildDTO.setUrl(job.getSavedJobUrl());
+									job.setUpdated("");
+								}
 							}
 						}
+						int previouslyFail = 0;
+						int previouslyPass = 0;
+						int previouslySkip = 0;
+						if (jenkinsPreviousBuildDTO != null) {
+							results.setPreviousResult(jenkinsPreviousBuildDTO.getResult());
+							for (HashMap<Object, Object> temp : jenkinsPreviousBuildDTO.getActions()) {
+								// Calculate FAIL,SKIP and TOTAL of the Previous Test
+								if (temp.containsKey(FAILCOUNT)) {
+									results.setFailDif((Integer) temp.get(FAILCOUNT));
+									previouslyFail += (Integer) temp.get(FAILCOUNT);
+								}
+								if (temp.containsKey(SKIPCOUNT)) {
+									results.setSkipDif((Integer) temp.get(SKIPCOUNT));
+									previouslySkip += (Integer) temp.get(SKIPCOUNT);
+								}
+								if (temp.containsKey(TOTALCOUNT)) {
+									results.setTotalDif((Integer) temp.get(TOTALCOUNT));
+									previouslyPass += (Integer) temp.get(TOTALCOUNT);
+								}
+								if (foundJacocoResults) {
+									// Jacoco Coverage
+									if (temp.containsKey(JACOCO_BRANCH)) {
+										Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_BRANCH);
+										results.setCcConditionsDif((Integer) tempMap.get("percentage"));
+									}
+									if (temp.containsKey(JACOCO_CLASS)) {
+										Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_CLASS);
+										results.setCcClassesDif((Integer) tempMap.get("percentage"));
+									}
+									if (temp.containsKey(JACOCO_LINES)) {
+										Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_LINES);
+										results.setCcLinesDif((Integer) tempMap.get("percentage"));
+									}
+									if (temp.containsKey(JACOCO_METHODS)) {
+										Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_METHODS);
+										results.setCcMethodsDif((Integer) tempMap.get("percentage"));
+									}
+								}
+							}
+							if (foundCoberturaResults) {
+								// Check for Cobertura Results
+								coberturaCoverage(jenkinsPreviousBuildDTO.getUrl(), results);
+							}
+							calculateChangeSets(job, results, jenkinsPreviousBuildDTO);
+						}
+						// Calculate Pass Difference Results
+						results.setPassDif(previouslyPass - Math.abs(previouslyFail) - Math.abs(previouslySkip));
 					}
-					int previouslyFail = 0;
-					int previouslyPass = 0;
-					int previouslySkip = 0;
-					if (jenkinsPreviousBuildDTO != null) {
-						results.setPreviousResult(jenkinsPreviousBuildDTO.getResult());
-						for (HashMap<Object, Object> temp : jenkinsPreviousBuildDTO.getActions()) {
-							// Calculate FAIL,SKIP and TOTAL of the Previous Test
-							if (temp.containsKey(FAILCOUNT)) {
-								results.setFailDif((Integer) temp.get(FAILCOUNT));
-								previouslyFail += (Integer) temp.get(FAILCOUNT);
-							}
-							if (temp.containsKey(SKIPCOUNT)) {
-								results.setSkipDif((Integer) temp.get(SKIPCOUNT));
-								previouslySkip += (Integer) temp.get(SKIPCOUNT);
-							}
-							if (temp.containsKey(TOTALCOUNT)) {
-								results.setTotalDif((Integer) temp.get(TOTALCOUNT));
-								previouslyPass += (Integer) temp.get(TOTALCOUNT);
-							}
-							if (foundJacocoResults) {
-								// Jacoco Coverage
-								if (temp.containsKey(JACOCO_BRANCH)) {
-									Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_BRANCH);
-									results.setCcConditionsDif((Integer) tempMap.get("percentage"));
-								}
-								if (temp.containsKey(JACOCO_CLASS)) {
-									Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_CLASS);
-									results.setCcClassesDif((Integer) tempMap.get("percentage"));
-								}
-								if (temp.containsKey(JACOCO_LINES)) {
-									Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_LINES);
-									results.setCcLinesDif((Integer) tempMap.get("percentage"));
-								}
-								if (temp.containsKey(JACOCO_METHODS)) {
-									Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_METHODS);
-									results.setCcMethodsDif((Integer) tempMap.get("percentage"));
-								}
-							}
-						}
-						if (foundCoberturaResults) {
-							// Check for Cobertura Results
-							coberturaCoverage(jenkinsPreviousBuildDTO.getUrl(), results);
-						}
-						calculateChangeSets(job, results, jenkinsPreviousBuildDTO);
-					}
-					// Calculate Pass Difference Results
-					results.setPassDif(previouslyPass - Math.abs(previouslyFail) - Math.abs(previouslySkip));
 				}
-			} else {
-				results.setCurrentResult(JobStatus.RUNNING.name());
 			}
 			return results;
 		}
