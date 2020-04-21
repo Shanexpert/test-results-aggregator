@@ -3,6 +3,8 @@ package com.jenkins.testresultsaggregator.helper;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -17,6 +19,10 @@ import hudson.FilePath;
 import hudson.remoting.VirtualChannel;
 
 public class Helper {
+	
+	public static String encodeValue(String value) throws UnsupportedEncodingException, MalformedURLException {
+		return java.net.URLEncoder.encode(value, "UTF-8").replace("+", "%20").trim();
+	}
 	
 	public static String getTimeStamp(String timeStamp) {
 		if (Strings.isNullOrEmpty(timeStamp)) {
