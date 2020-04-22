@@ -9,9 +9,9 @@
 	   </style>
        <body>
        	<table width='100%' class='hovertable' style='border-spacing:0px;'>
-			<tr bgcolor='${headerColor}' style='text-align: center;color: white' height='40'>
+			<tr bgcolor='${headerColor}' style='text-align: center;' height='40'>
 				<j:forEach items="${columns}" var="column">
-					<th>${column.toString()}</th>
+					<th><font color='white'>${column.toString()}</font></th>
 				</j:forEach>
 			</tr>
 			<j:set var="index" value="1"/>
