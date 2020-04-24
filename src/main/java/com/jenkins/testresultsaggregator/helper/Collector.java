@@ -110,7 +110,7 @@ public class Collector {
 		int retries = 1;
 		while (jobInfo == null && retries <= 3) {
 			try {
-				URL jobUrlAPI = new URL(jenkinsUrl + "/" + JOB + "/" + job.getJobName() + "/" + API_JSON_URL);
+				URL jobUrlAPI = new URL(jenkinsUrl + "/" + JOB + "/" + Helper.encodeValue(job.getJobName()) + "/" + API_JSON_URL);
 				jobInfo = Deserialize.initializeObjectMapper().readValue(Http.get(jobUrlAPI, authenticationString()), JobInfo.class);
 			} catch (IOException e) {
 			}

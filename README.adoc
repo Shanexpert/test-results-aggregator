@@ -108,6 +108,9 @@ image::AggregatedView.png[Aggregated,900,align="right"]
 
 See the https://github.com/jenkinsci/test-results-aggregator-plugin/releases[Github releases page].
 
+=== 1.0.8 (24 Apr 2020)
+ * FIX: various fixes
+ 
 === 1.0.7 (17 Feb 2020)
  * FIX: various fixes
  
