@@ -339,13 +339,17 @@ public class TestResultsAggregator extends Notifier {
 			for (Job job : jobs.getJobs()) {
 				if (job.getJobName().contains("/")) {
 					String[] spliter = job.getJobName().split("/");
-					StringBuilder folders = new StringBuilder();
-					for (int i = 0; i < spliter.length - 1; i++) {
-						folders.append(spliter[i] + "/");
+					if (spliter[spliter.length - 1].equals("*")) {
+						// Do nothing for now
+					} else {
+						StringBuilder folders = new StringBuilder();
+						for (int i = 0; i < spliter.length - 1; i++) {
+							folders.append(spliter[i] + "/");
+						}
+						job.setFolder(folders.toString());
+						job.setUrl(jenkinsUrl + "/" + Collector.JOB + "/" + Helper.encodeValue(job.getFolder()).replace("%2F", "/")
+								+ Collector.JOB + "/" + Helper.encodeValue(spliter[spliter.length - 1]));
 					}
-					job.setFolder(folders.toString());
-					job.setUrl(jenkinsUrl + "/" + Collector.JOB + "/" + Helper.encodeValue(job.getFolder()).replace("%2F", "/")
-							+ Collector.JOB + "/" + Helper.encodeValue(spliter[spliter.length - 1]));
 				} else {
 					job.setFolder("root");
 					if (Strings.isNullOrEmpty(job.getUrl())) {
