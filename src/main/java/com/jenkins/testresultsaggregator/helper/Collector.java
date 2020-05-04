@@ -21,6 +21,8 @@ import com.jenkins.testresultsaggregator.data.CoberturaCoverage.Element;
 import com.jenkins.testresultsaggregator.data.Data;
 import com.jenkins.testresultsaggregator.data.Job;
 import com.jenkins.testresultsaggregator.data.JobInfo;
+import com.jenkins.testresultsaggregator.data.JobListDTO;
+import com.jenkins.testresultsaggregator.data.JobListDTO.JobDTO;
 import com.jenkins.testresultsaggregator.data.JobStatus;
 import com.jenkins.testresultsaggregator.data.ReportJob;
 import com.jenkins.testresultsaggregator.data.Results;
@@ -31,6 +33,7 @@ public class Collector {
 	
 	public static final String JOB = "job";
 	public static final String API_JSON_URL = "api/json";
+	public static final String API_JSON_JOBS = API_JSON_URL + "?tree=jobs[name,url]";
 	public static final String API_JSON_COBERTURA = "cobertura/" + API_JSON_URL + "?depth=2";
 	public static final String API_JSON_JACOCO = API_JSON_URL + "?depth=1";
 	public static final String LASTBUILD = "lastBuild";
@@ -105,17 +108,90 @@ public class Collector {
 		}
 	}
 	
+	public JobListDTO getJobList() {
+		return getJobList(jenkinsUrl);
+	}
+	
+	public JobListDTO getJobList(String url) {
+		JobListDTO jobListDTO = null;
+		int retries = 1;
+		while (jobListDTO == null && retries <= 3) {
+			try {
+				URL jobUrlAPI = new URL(url + "/" + API_JSON_JOBS);
+				jobListDTO = Deserialize.initializeObjectMapper().readValue(Http.get(jobUrlAPI, authenticationString()), JobListDTO.class);
+			} catch (IOException e) {
+			}
+			retries++;
+			if (jobListDTO == null) {
+				delay(2000);
+			}
+		}
+		return jobListDTO;
+	}
+	
+	public List<Data> resolveJobs(List<Data> validatedData) {
+		List<JobDTO> allJobs = getAllJenkinsJobs();
+		// Get a list
+		for (Data group : validatedData) {
+			if (group.getJobs() != null && !group.getJobs().isEmpty()) {
+				for (Job jobInGroup : group.getJobs()) {
+					// Check if job name exists in list with all jenkins jobs
+					for (JobDTO temp : allJobs) {
+						if (jobInGroup.getJobName().equalsIgnoreCase(temp.getName())) {
+							// Found
+							jobInGroup.setUrl(temp.getUrl());
+							break;
+						}
+					}
+				}
+			}
+		}
+		return validatedData;
+	}
+	
+	public List<JobDTO> getAllJenkinsJobs() {
+		List<JobDTO> returnList = new ArrayList<>();
+		// Get a List with all jobs
+		JobListDTO original = getJobList();
+		for (JobDTO tempInOriginalList : original.getJobs()) {
+			if (!Strings.isNullOrEmpty(tempInOriginalList.getClassString()) && tempInOriginalList.getClassString().endsWith(".Folder")) {
+				// Get a List with all jobs insider the folder
+				JobListDTO listTemp = getJobList(tempInOriginalList.getUrl());
+				for (JobDTO temp : listTemp.getJobs()) {
+					if (!Strings.isNullOrEmpty(temp.getClassString()) && temp.getClassString().endsWith(".Folder")) {
+						// Do nothing , works only for one level of folders
+					} else {
+						temp.setFolder(tempInOriginalList.getName());
+						returnList.add(temp);
+					}
+				}
+			} else {
+				// Add to return list
+				tempInOriginalList.setFolder("root");
+				returnList.add(tempInOriginalList);
+			}
+		}
+		return returnList;
+	}
+	
 	public JobInfo getJobInfo(Job job) {
 		JobInfo jobInfo = null;
 		int retries = 1;
 		while (jobInfo == null && retries <= 3) {
 			try {
-				URL jobUrlAPI = new URL(jenkinsUrl + "/" + JOB + "/" + Helper.encodeValue(job.getJobName()) + "/" + API_JSON_URL);
+				URL jobUrlAPI = null;
+				if (Strings.isNullOrEmpty(job.getUrl())) {
+					jobUrlAPI = new URL(jenkinsUrl + "/" + JOB + "/" + Helper.encodeValue(job.getJobName()) + "/" + API_JSON_URL);
+				} else {
+					jobUrlAPI = new URL(job.getUrl() + "/" + API_JSON_URL);
+				}
 				jobInfo = Deserialize.initializeObjectMapper().readValue(Http.get(jobUrlAPI, authenticationString()), JobInfo.class);
 			} catch (IOException e) {
 			}
+			if (jobInfo == null) {
+				delay(2000);
+			}
 			retries++;
-			delay(2000);
 		}
 		return jobInfo;
 	}
@@ -130,7 +206,9 @@ public class Collector {
 			} catch (IOException e) {
 			}
 			retries++;
-			delay(2000);
+			if (buildInfo == null) {
+				delay(2000);
+			}
 		}
 		return buildInfo;
 	}
@@ -145,7 +223,9 @@ public class Collector {
 			} catch (IOException e) {
 			}
 			retries++;
-			delay(2000);
+			if (buildInfo == null) {
+				delay(2000);
+			}
 		}
 		return buildInfo;
 	}
@@ -433,4 +513,5 @@ public class Collector {
 			}
 		}
 	}
+	
 }

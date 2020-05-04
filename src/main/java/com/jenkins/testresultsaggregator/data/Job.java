@@ -14,7 +14,9 @@ public class Job extends AbstractDescribableImpl<Job> implements Serializable {
 	
 	private static final long serialVersionUID = 34911974223666L;
 	
+	private String folder;
 	private String jobName;
+	
 	private String jobFriendlyName;
 	private String updated;
 	//
@@ -23,6 +25,7 @@ public class Job extends AbstractDescribableImpl<Job> implements Serializable {
 	private Results results;
 	private ReportJob report;
 	private String savedUrl;
+	private String url;
 	
 	@DataBoundConstructor
 	public Job(String jobName, String jobFriendlyName) {
@@ -123,5 +126,21 @@ public class Job extends AbstractDescribableImpl<Job> implements Serializable {
 	
 	public void setUpdated(String updated) {
 		this.updated = updated;
+	}
+	
+	public String getUrl() {
+		return url;
+	}
+	
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	
+	public String getFolder() {
+		return folder;
+	}
+	
+	public void setFolder(String folder) {
+		this.folder = folder;
 	}
 }

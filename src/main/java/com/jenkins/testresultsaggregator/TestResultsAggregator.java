@@ -1,6 +1,8 @@
 package com.jenkins.testresultsaggregator;
 
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +18,7 @@ import com.jenkins.testresultsaggregator.data.Data;
 import com.jenkins.testresultsaggregator.data.Job;
 import com.jenkins.testresultsaggregator.helper.Analyzer;
 import com.jenkins.testresultsaggregator.helper.Collector;
+import com.jenkins.testresultsaggregator.helper.Helper;
 import com.jenkins.testresultsaggregator.helper.LocalMessages;
 import com.jenkins.testresultsaggregator.helper.TestResultHistoryUtil;
 import com.jenkins.testresultsaggregator.reporter.Reporter;
@@ -124,11 +127,12 @@ public class TestResultsAggregator extends Notifier {
 			// Get Previous Saved Results
 			Aggregated previousSavedAggregatedResults = TestResultHistoryUtil.getTestResults(build.getPreviousSuccessfulBuild());
 			// Validate Input Data
-			List<Data> validatedData = validateInputData(getData());
+			List<Data> validatedData = validateInputData(getData(), desc.getJenkinsUrl());
 			// Check previous Data
 			previousSavedResults(validatedData, previousSavedAggregatedResults);
 			// Collect Data
 			Collector collector = new Collector(logger, desc.getUsername(), desc.getPassword(), desc.getJenkinsUrl());
+			// collector.resolveJobs(validatedData);
 			collector.collectResults(validatedData);
 			// Analyze Results
 			Aggregated aggregated = new Analyzer(logger).analyze(validatedData, properties);
@@ -309,7 +313,7 @@ public class TestResultsAggregator extends Notifier {
 		}
 	}
 	
-	private List<Data> validateInputData(List<Data> data) {
+	private List<Data> validateInputData(List<Data> data, String jenkinsUrl) throws UnsupportedEncodingException, MalformedURLException {
 		List<Data> validateData = new ArrayList<Data>();
 		for (Data tempDataDTO : data) {
 			if (tempDataDTO.getJobs() != null && !tempDataDTO.getJobs().isEmpty()) {
@@ -327,7 +331,30 @@ public class TestResultsAggregator extends Notifier {
 				}
 			}
 		}
-		return validateData;
+		return evaluateInputData(validateData, jenkinsUrl);
+	}
+	
+	private List<Data> evaluateInputData(List<Data> data, String jenkinsUrl) throws UnsupportedEncodingException, MalformedURLException {
+		for (Data jobs : data) {
+			for (Job job : jobs.getJobs()) {
+				if (job.getJobName().contains("/")) {
+					String[] spliter = job.getJobName().split("/");
+					StringBuilder folders = new StringBuilder();
+					for (int i = 0; i < spliter.length - 1; i++) {
+						folders.append(spliter[i] + "/");
+					}
+					job.setFolder(folders.toString());
+					job.setUrl(jenkinsUrl + "/" + Collector.JOB + "/" + Helper.encodeValue(job.getFolder()).replace("%2F", "/")
+							+ Collector.JOB + "/" + Helper.encodeValue(spliter[spliter.length - 1]));
+				} else {
+					job.setFolder("root");
+					if (Strings.isNullOrEmpty(job.getUrl())) {
+						job.setUrl(jenkinsUrl + "/" + Collector.JOB + "/" + Helper.encodeValue(job.getJobName()));
+					}
+				}
+			}
+		}
+		return data;
 	}
 	
 	public BuildStepMonitor getRequiredMonitorService() {
