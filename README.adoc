@@ -63,7 +63,7 @@ image::PostBuildAction.png[Post Build Action,900,align="right"]
 image::FreeStyleProject_Jobs.png[Jobs Configuraion,900,align="right"]
   
 * **Group/Team** : it's optional, it's used in report to group Jenkins jobs. For example teams , products or testing types.
-* **Job Name** : It's mandatory, it's the exact Jenkins job name to get results. In case of a job inside a 'folder' use : folderName/jobName
+* **Job Name** : It's mandatory, it's the exact Jenkins job name to get results. In case of a job inside a 'folder' use : folderName/jobName or folderName(s)/jobName
 * **Job Friendly Name** : it's optional, used only for reporting purposes, if null or empty then "Job Name" will be used in report.
  
 4.Add Recipients List , Before,After Body text, theme and Sort by option : 
