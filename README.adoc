@@ -108,6 +108,9 @@ image::AggregatedView.png[Aggregated,900,align="right"]
 
 See the https://github.com/jenkinsci/test-results-aggregator-plugin/releases[Github releases page].
 
+=== 1.0.10 (13 Aug 2020)
+ * FIX : Support multi levels of folders
+ 
 === 1.0.9 (4 May 2020)
  * Support jobs inside folders
  
