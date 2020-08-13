@@ -80,6 +80,7 @@ public class MailNotification {
 				// Add Body before
 				StringBuffer messageBody = new StringBuffer();
 				if (!Strings.isNullOrEmpty(preBodyText)) {
+					preBodyText = resolveVariables(preBodyText);
 					messageBody.append(preBodyText);
 					messageBody.append("<br></br>");
 				}
@@ -87,6 +88,7 @@ public class MailNotification {
 				messageBody.append(body);
 				// Add Body before and after text
 				if (!Strings.isNullOrEmpty(afterBodyText)) {
+					afterBodyText = resolveVariables(afterBodyText);
 					messageBody.append("<br></br>");
 					messageBody.append(afterBodyText);
 				}
@@ -172,5 +174,11 @@ public class MailNotification {
 		// Create Destination File
 		Helper.createFile(new FilePath(directory), destinationFile).copyFrom(inputUrl);
 		return new File(directory + destinationFile);
+	}
+	
+	private String resolveVariables(String text) {
+		// String newText = Matcher.quoteReplacement(text);
+		// newText = TokenMacro.expandAll(context.getRun(), context.getWorkspace(), context.getListener(), newText, false, null);
+		return text != null ? text.trim() : "";
 	}
 }
