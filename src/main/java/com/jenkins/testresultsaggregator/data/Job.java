@@ -99,6 +99,10 @@ public class Job extends AbstractDescribableImpl<Job> implements Serializable {
 			} else {
 				reportUrl = results.getUrl();
 			}
+			if (Strings.isNullOrEmpty(reportUrl) && jobInfo.getUrl() != null) {
+				// Use the Job Url
+				reportUrl = jobInfo.getUrl().toString();
+			}
 			return "<a href='" + reportUrl + "'><font color='" + Colors.htmlJOB_NAME_URL() + "'>" + getJobNameFromFriendlyName() + "</font></a>";
 		}
 		return getJobNameFromFriendlyName();

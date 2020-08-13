@@ -346,9 +346,9 @@ public class TestResultsAggregator extends Notifier {
 						for (int i = 0; i < spliter.length - 1; i++) {
 							folders.append(spliter[i] + "/");
 						}
-						job.setFolder(folders.toString());
+						job.setFolder(folders.toString().replaceAll("/", "/" + Collector.JOB + "/"));
 						job.setUrl(jenkinsUrl + "/" + Collector.JOB + "/" + Helper.encodeValue(job.getFolder()).replace("%2F", "/")
-								+ Collector.JOB + "/" + Helper.encodeValue(spliter[spliter.length - 1]));
+								+ Helper.encodeValue(spliter[spliter.length - 1]));
 					}
 				} else {
 					job.setFolder("root");
