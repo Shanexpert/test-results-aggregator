@@ -67,14 +67,14 @@ public class XMLReporter {
 						if (dataJob.getResults() != null) {
 							writer.println(TAB + TAB + TAB + xmlTag(STATUS, dataJob.getResults().getStatus()));
 							if (JobStatus.DISABLED.name().equalsIgnoreCase(dataJob.getResults().getCurrentResult())) {
-								jobStatus(writer, dataJob, dataJob.getJobInfo().getUrl().toString(), true);
+								jobStatus(writer, dataJob, dataJob.getJobInfo().getUrl(), true);
 							} else if (JobStatus.NOT_FOUND.name().equalsIgnoreCase(dataJob.getResults().getCurrentResult())) {
-								jobStatus(writer, dataJob, null, true);
+								jobStatus(writer, dataJob, null, false);
 							} else {
-								jobStatus(writer, dataJob, dataJob.getJobInfo().getLastBuild().getUrl().toString(), true);
+								jobStatus(writer, dataJob, dataJob.getJobInfo().getLastBuild().getUrl(), true);
 							}
 						} else {
-							jobStatus(writer, dataJob, dataJob.getJobInfo().getLastBuild().getUrl().toString(), true);
+							jobStatus(writer, dataJob, dataJob.getJobInfo().getLastBuild().getUrl(), true);
 						}
 						writer.println(TAB + TAB + SE + JOB + E);
 					}
@@ -98,7 +98,7 @@ public class XMLReporter {
 		return "<" + tag + "></" + tag + ">";
 	}
 	
-	private void jobStatus(PrintWriter writer, Job dataJob, String url, boolean found) {
+	private void jobStatus(PrintWriter writer, Job dataJob, java.net.URL url, boolean found) {
 		writer.println(TAB + TAB + TAB + xmlTag(URL, url));
 		if (found) {
 			writer.println(TAB + TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.TEST_TOTAL, dataJob.getResults().getTotal()));
