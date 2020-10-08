@@ -82,7 +82,7 @@ public class Job extends AbstractDescribableImpl<Job> implements Serializable {
 	}
 	
 	public String getJobNameFromFriendlyName() {
-		if (jobFriendlyName == null || jobFriendlyName.isEmpty()) {
+		if (Strings.isNullOrEmpty(jobFriendlyName)) {
 			return jobName;
 		}
 		return jobFriendlyName;
