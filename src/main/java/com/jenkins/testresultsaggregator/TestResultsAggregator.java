@@ -39,7 +39,7 @@ import net.sf.json.JSONObject;
 
 public class TestResultsAggregator extends Notifier {
 	
-	private final static String displayName = "Aggregate Test Results";
+	private static final String displayName = "Aggregate Test Results";
 	private String subject;
 	private String recipientsList;
 	private String beforebody;
@@ -132,7 +132,6 @@ public class TestResultsAggregator extends Notifier {
 			previousSavedResults(validatedData, previousSavedAggregatedResults);
 			// Collect Data
 			Collector collector = new Collector(logger, desc.getUsername(), desc.getPassword(), desc.getJenkinsUrl());
-			// collector.resolveJobs(validatedData);
 			collector.collectResults(validatedData);
 			// Analyze Results
 			Aggregated aggregated = new Analyzer(logger).analyze(validatedData, properties);
@@ -314,7 +313,7 @@ public class TestResultsAggregator extends Notifier {
 	}
 	
 	private List<Data> validateInputData(List<Data> data, String jenkinsUrl) throws UnsupportedEncodingException, MalformedURLException {
-		List<Data> validateData = new ArrayList<Data>();
+		List<Data> validateData = new ArrayList<>();
 		for (Data tempDataDTO : data) {
 			if (tempDataDTO.getJobs() != null && !tempDataDTO.getJobs().isEmpty()) {
 				boolean allJobsareEmpty = true;
