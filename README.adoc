@@ -70,13 +70,13 @@ image::FreeStyleProject_Jobs.png[Jobs Configuraion,900,align="right"]
 
 image::ReceipientsList.png[Recipients,900,align="right"]
 	
-* **Recipients List** : comma separated recipients list, ex : nick@some.com,mairy@some.com .if empty no email will be triggered.
-* **Subject prefix** : prefix for mail subject.
+* **Recipients List** : comma separated recipients list, ex : nick@some.com,mairy@some.com . if empty no email will be triggered. Supports also job variables.
+* **Subject prefix** : prefix for mail subject. Supports also job & env variables.
 * **Columns** : html & email report columns and the order of them, comma separated. Possible columns are : 
 
  ** Health, Job, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Description, Packages, Files, Classes, Methods, Lines, Conditions & Sonar
-* **Before body** : plain text or html code to add before report table.
-* **After body** : plain text or html code to add after report table.
+* **Before body** : plain text or html code to add before report table. Supports also job & env variables , for example ${WORKSPACE}
+* **After body** : plain text or html code to add after report table. Supports also job & env variables.
 * **Mail Theme** : Ligth or dark mail theme.
 * **Sort Results By** : report will be sorted accordingly. If there are Groups then sorting refers to jobs inside a group.
  
