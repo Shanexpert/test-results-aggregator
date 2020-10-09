@@ -107,37 +107,3 @@ image::AggregatedView.png[Aggregated,900,align="right"]
 == Release Notes
 
 See the https://github.com/jenkinsci/test-results-aggregator-plugin/releases[Github releases page].
-
-=== 1.1.0 (9 Oct 2020)
- * Support job and env variables
- 
-=== 1.0.10 (13 Aug 2020)
- * FIX : Support multi levels of folders
- 
-=== 1.0.9 (4 May 2020)
- * Support jobs inside folders
- 
-=== 1.0.8 (24 Apr 2020)
- * FIX: various fixes
- 
-=== 1.0.7 (17 Feb 2020)
- * FIX: various fixes
- 
-=== 1.0.6 (8 Jan 2020)
- * FIX: NPE in Collector
- * FIX: Show links in reports
- 
-=== 1.0.5 (19 Dec 2019)
- * FIX: NPE in test analyzer
- 
-=== 1.0.4 (28 Nov 2019)
- * Include Code Coverage results in report
- 
-=== 1.0.3 (12 Nov 2019)
- * FIX: mail notification exception on remote slave
- 
-=== 1.0.2 (8 Nov 2019)
- * FIX: Documentation Issue
- 
-=== 1.0.0 (4 Nov 2019)
- * Initial Release
