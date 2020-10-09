@@ -1,12 +1,16 @@
 package com.jenkins.testresultsaggregator;
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -23,6 +27,7 @@ import com.jenkins.testresultsaggregator.helper.LocalMessages;
 import com.jenkins.testresultsaggregator.helper.TestResultHistoryUtil;
 import com.jenkins.testresultsaggregator.reporter.Reporter;
 
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
@@ -35,6 +40,7 @@ import hudson.tasks.Notifier;
 import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
 import hudson.util.Secret;
+import hudson.util.VariableResolver;
 import net.sf.json.JSONObject;
 
 public class TestResultsAggregator extends Notifier {
@@ -66,7 +72,8 @@ public class TestResultsAggregator extends Notifier {
 		TEXT_AFTER_MAIL_BODY,
 		THEME,
 		SORT_JOBS_BY,
-		SUBJECT_PREFIX
+		SUBJECT_PREFIX,
+		RECIPIENTS_LIST
 	}
 	
 	public enum SortResultsBy {
@@ -123,6 +130,10 @@ public class TestResultsAggregator extends Notifier {
 			properties.put(AggregatorProperties.TEXT_AFTER_MAIL_BODY.name(), getAfterbody());
 			properties.put(AggregatorProperties.SORT_JOBS_BY.name(), getSortresults());
 			properties.put(AggregatorProperties.SUBJECT_PREFIX.name(), getSubject());
+			properties.put(AggregatorProperties.RECIPIENTS_LIST.name(), getRecipientsList());
+			// Resolve Variables
+			resolveVariables(properties, build, listener);
+			// Resolve Columns
 			columns = calculateColumns(selectedColumns);
 			// Get Previous Saved Results
 			Aggregated previousSavedAggregatedResults = TestResultHistoryUtil.getTestResults(build.getPreviousSuccessfulBuild());
@@ -137,7 +148,7 @@ public class TestResultsAggregator extends Notifier {
 			Aggregated aggregated = new Analyzer(logger).analyze(validatedData, properties);
 			// Reporter for HTML and mail
 			Reporter reporter = new Reporter(logger, build.getProject().getSomeWorkspace(), build.getRootDir(), desc.getMailNotificationFrom());
-			reporter.publishResuts(getRecipientsList(), aggregated, properties, columns, build.getRootDir());
+			reporter.publishResuts(aggregated, properties, columns, build.getRootDir());
 			// Add Build Action
 			build.addAction(new TestResultsAggregatorTestResultBuildAction(aggregated));
 		} catch (Exception e) {
@@ -146,6 +157,38 @@ public class TestResultsAggregator extends Notifier {
 		}
 		logger.println(LocalMessages.FINISHED_AGGREGATE.toString());
 		return true;
+	}
+	
+	private void resolveVariables(Properties properties, AbstractBuild build, BuildListener listener) throws IOException, InterruptedException {
+		// Variables
+		VariableResolver<?> buildVars = build.getBuildVariableResolver();
+		EnvVars envVars = build.getEnvironment(listener);
+		Set<Entry<Object, Object>> entrySet = properties.entrySet();
+		Iterator<Entry<Object, Object>> iterator = entrySet.iterator();
+		while (iterator.hasNext()) {
+			Entry<Object, Object> entry = iterator.next();
+			String originalValue = entry.getValue().toString();
+			if (!Strings.isNullOrEmpty(originalValue)) {
+				while (originalValue.contains("${")) {
+					String tempValue = null;
+					if (originalValue.contains("${")) {
+						tempValue = originalValue.substring(originalValue.indexOf("${") + 2, originalValue.indexOf('}'));
+					}
+					// Resolve from building variables
+					Object buildVariable = buildVars.resolve(tempValue);
+					// If null try resolve it from env variables
+					if (buildVariable == null) {
+						buildVariable = envVars.get(tempValue);
+					}
+					if (buildVariable != null) {
+						originalValue = originalValue.replaceAll("\\$\\{" + tempValue + "}", buildVariable.toString());
+					} else {
+						originalValue = originalValue.replaceAll("\\$\\{" + tempValue + "}", "\\$[" + tempValue + "]");
+					}
+				}
+				entry.setValue(originalValue);
+			}
+		}
 	}
 	
 	private void previousSavedResults(List<Data> validatedData, Aggregated previousAggregated) {
