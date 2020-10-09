@@ -30,7 +30,7 @@
 					<tr bgcolor='${bgcolor}' height='35'>
 						<j:if test="${groupadded == false}">
 							<j:if test="${showGroups == true}">
-								<th rowspan='${dataJob.getJobs().size()}' style='border-bottom:2px solid ${lineSeperatorcolor}'>${dataJob.getGroupName()}<br>${dataJob.getReportGroup().getPercentage(true)}</br></th>
+								<th rowspan='${dataJob.getJobs().size()}' style='border-bottom:2px solid ${lineSeperatorcolor}'>${dataJob.getGroupName()}<br>${dataJob.getReportGroup().getPercentage(true,true,true)}</br></th>
 							</j:if>
 							<j:set var="groupadded" value="true"/>
 						</j:if>

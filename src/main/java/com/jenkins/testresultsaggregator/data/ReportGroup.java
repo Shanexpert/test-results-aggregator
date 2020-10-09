@@ -1,7 +1,10 @@
 package com.jenkins.testresultsaggregator.data;
 
+import java.awt.Color;
 import java.io.Serializable;
 
+import com.google.common.base.Strings;
+import com.jenkins.testresultsaggregator.helper.Colors;
 import com.jenkins.testresultsaggregator.helper.Helper;
 
 public class ReportGroup implements Serializable {
@@ -9,7 +12,8 @@ public class ReportGroup implements Serializable {
 	private static final long serialVersionUID = 3491199923666L;
 	
 	private String status;
-	private String percentage;
+	private String percentageForJobs;
+	private String percentageForTests;
 	private int jobSuccess;
 	private int jobFailed;
 	private int jobUnstable;
@@ -107,14 +111,58 @@ public class ReportGroup implements Serializable {
 		this.results = results;
 	}
 	
-	public String getPercentage(boolean withColor) {
-		if (withColor) {
-			setPercentage(Helper.colorizePercentage(Double.valueOf(percentage)));
+	public String getPercentageForJobs(boolean withColor) {
+		if (Double.valueOf(percentageForJobs) > 0) {
+			if (withColor) {
+				setPercentageForJobs(Helper.colorizePercentage(Double.valueOf(percentageForJobs)));
+			}
+		} else {
+			return "";
 		}
-		return percentage;
+		return percentageForJobs;
 	}
 	
-	public void setPercentage(String percentage) {
-		this.percentage = percentage;
+	public void setPercentageForJobs(String percentageForJobs) {
+		this.percentageForJobs = percentageForJobs;
+	}
+	
+	public String getPercentageForTests(boolean withColor) {
+		if (Double.valueOf(percentageForTests) > 0 && Double.valueOf(percentageForTests) != 100.0) {
+			if (withColor) {
+				setPercentageForTests(Helper.colorizePercentage(Double.valueOf(percentageForTests)));
+			}
+		} else {
+			return "";
+		}
+		return percentageForTests;
+	}
+	
+	public void setPercentageForTests(String percentageForTests) {
+		this.percentageForTests = percentageForTests;
+	}
+	
+	//
+	public String getPercentage(boolean jobs, boolean tests, boolean withColor) {
+		StringBuilder percentage = new StringBuilder();
+		int fontSize = 8;
+		String fontColor = Colors.html(Color.gray);
+		if (jobs) {
+			String jobPercentage = getPercentageForJobs(false);
+			if (!Strings.isNullOrEmpty(jobPercentage)) {
+				percentage.append(getPercentageForJobs(withColor));
+			}
+		}
+		if (tests) {
+			String testPercentage = getPercentageForTests(false);
+			if (!Strings.isNullOrEmpty(testPercentage)) {
+				if (!Strings.isNullOrEmpty(percentage.toString())) {
+					percentage.append("<font style='font-size:" + fontSize + "px;color:" + fontColor + "'> Jobs</font>").append("<br>");
+				}
+				percentage.append(getPercentageForTests(true)).append("<font style='font-size:" + fontSize + "px;color:" + fontColor + "'> Tests</font>");
+			} else {
+				// Print something here?
+			}
+		}
+		return percentage.toString();
 	}
 }

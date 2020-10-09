@@ -132,6 +132,13 @@ public class Helper {
 		return countPercentage(results).toString();
 	}
 	
+	/**
+	 * Return the percentage of x/y
+	 * 
+	 * @param pass
+	 * @param total
+	 * @return Double
+	 */
 	public static Double countPercentageD(int pass, int total) {
 		Results results = new Results();
 		results.setPass(pass);
@@ -142,7 +149,7 @@ public class Helper {
 	
 	public static String colorizePercentage(double percentageDouble) {
 		if (percentageDouble >= 100) {
-			return colorize(percentageDouble + "%", Colors.SUCCESS);
+			return colorize(100 + "%", Colors.SUCCESS);
 		} else if (percentageDouble >= 95) {
 			return colorize(percentageDouble + "%", Colors.UNSTABLE);
 		} else {
