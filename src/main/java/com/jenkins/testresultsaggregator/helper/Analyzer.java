@@ -50,6 +50,7 @@ public class Analyzer {
 			boolean foundFailure = false;
 			boolean foundRunning = false;
 			boolean foundSkip = false;
+			boolean foundDisabled = false;
 			Results resultsPerGroup = new Results();
 			int jobFailed = 0;
 			int jobSkipped = 0;
@@ -57,6 +58,7 @@ public class Analyzer {
 			int jobAborted = 0;
 			int jobSuccess = 0;
 			int jobRunning = 0;
+			int jobDisabled = 0;
 			data.setReportGroup(new ReportGroup());
 			for (Job job : data.getJobs()) {
 				job.setReport(new ReportJob());
@@ -148,6 +150,11 @@ public class Analyzer {
 						data.getReportGroup().setJobAborted(data.getReportGroup().getJobAborted() + 1);
 						aggregated.setAbortedJobs(aggregated.getAbortedJobs() + 1);
 						jobAborted++;
+					} else if (JobStatus.DISABLED.name().equals(job.getReport().getStatus())) {
+						foundDisabled = true;
+						data.getReportGroup().setJobDisabled(data.getReportGroup().getJobDisabled() + 1);
+						aggregated.setDisabledJobs(aggregated.getDisabledJobs() + 1);
+						jobDisabled++;
 					}
 					// Calculate Total Tests Per Group
 					resultsPerGroup.setPass(resultsPerGroup.getPass() + job.getResults().getPass());
@@ -163,10 +170,10 @@ public class Analyzer {
 			// Set Results Per Group
 			data.getReportGroup().setResults(resultsPerGroup);
 			// Calculate Group Status
-			if (foundFailure) {
-				data.getReportGroup().setStatus(JobStatus.FAILURE.name());
-			} else if (foundRunning) {
+			if (foundRunning) {
 				data.getReportGroup().setStatus(JobStatus.RUNNING.name());
+			} else if (foundFailure) {
+				data.getReportGroup().setStatus(JobStatus.FAILURE.name());
 			} else if (foundSkip) {
 				data.getReportGroup().setStatus(JobStatus.UNSTABLE.name());
 			} else {
