@@ -21,6 +21,7 @@ public class Aggregated extends BaseResult {
 	private int unstableJobs = 0;
 	private int keepUnstableJobs = 0;
 	private int abortedJobs = 0;
+	private int disabledJobs = 0;
 	private int totalJobs = 0;
 	private Long totalDuration = 0L;
 	private int totalNumberOfChanges = 0;
@@ -171,6 +172,14 @@ public class Aggregated extends BaseResult {
 	
 	public int getUnstable() {
 		return unstableJobs + keepUnstableJobs;
+	}
+
+	public int getDisabledJobs() {
+		return disabledJobs;
+	}
+
+	public void setDisabledJobs(int disabledJobs) {
+		this.disabledJobs = disabledJobs;
 	}
 	
 }
