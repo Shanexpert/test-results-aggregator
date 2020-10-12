@@ -19,6 +19,7 @@ public class ReportGroup implements Serializable {
 	private int jobUnstable;
 	private int jobRunning;
 	private int jobAborted;
+	private int jobDisabled;
 	private Results results;
 	
 	public ReportGroup() {
@@ -111,10 +112,10 @@ public class ReportGroup implements Serializable {
 		this.results = results;
 	}
 	
-	public String getPercentageForJobs(boolean withColor) {
+	public String getPercentageForJobs(boolean withColor, Integer fontSize) {
 		if (Double.valueOf(percentageForJobs) > 0) {
 			if (withColor) {
-				setPercentageForJobs(Helper.colorizePercentage(Double.valueOf(percentageForJobs)));
+				setPercentageForJobs(Helper.colorizePercentage(Double.valueOf(percentageForJobs), fontSize, status));
 			}
 		} else {
 			return "";
@@ -126,10 +127,10 @@ public class ReportGroup implements Serializable {
 		this.percentageForJobs = percentageForJobs;
 	}
 	
-	public String getPercentageForTests(boolean withColor) {
+	public String getPercentageForTests(boolean withColor, Integer fontSize) {
 		if (Double.valueOf(percentageForTests) > 0 && Double.valueOf(percentageForTests) != 100.0) {
 			if (withColor) {
-				setPercentageForTests(Helper.colorizePercentage(Double.valueOf(percentageForTests)));
+				setPercentageForTests(Helper.colorizePercentage(Double.valueOf(percentageForTests), fontSize, status));
 			}
 		} else {
 			return "";
@@ -144,25 +145,33 @@ public class ReportGroup implements Serializable {
 	//
 	public String getPercentage(boolean jobs, boolean tests, boolean withColor) {
 		StringBuilder percentage = new StringBuilder();
-		int fontSize = 8;
+		int fontSize = 10;
 		String fontColor = Colors.html(Color.gray);
 		if (jobs) {
-			String jobPercentage = getPercentageForJobs(false);
+			String jobPercentage = getPercentageForJobs(false, null);
 			if (!Strings.isNullOrEmpty(jobPercentage)) {
-				percentage.append(getPercentageForJobs(withColor));
+				percentage.append(getPercentageForJobs(withColor, fontSize));
 			}
 		}
 		if (tests) {
-			String testPercentage = getPercentageForTests(false);
+			String testPercentage = getPercentageForTests(false, null);
 			if (!Strings.isNullOrEmpty(testPercentage)) {
 				if (!Strings.isNullOrEmpty(percentage.toString())) {
 					percentage.append("<font style='font-size:" + fontSize + "px;color:" + fontColor + "'> Jobs</font>").append("<br>");
 				}
-				percentage.append(getPercentageForTests(true)).append("<font style='font-size:" + fontSize + "px;color:" + fontColor + "'> Tests</font>");
+				percentage.append(getPercentageForTests(true, fontSize)).append("<font style='font-size:" + fontSize + "px;color:" + fontColor + "'> Tests</font>");
 			} else {
 				// Print something here?
 			}
 		}
 		return percentage.toString();
+	}
+	
+	public int getJobDisabled() {
+		return jobDisabled;
+	}
+	
+	public void setJobDisabled(int jobDisabled) {
+		this.jobDisabled = jobDisabled;
 	}
 }
