@@ -11,7 +11,12 @@
        	<table width='100%' class='hovertable' style='border-spacing:0px;'>
 			<tr bgcolor='${headerColor}' style='text-align: center;' height='40'>
 				<j:forEach items="${columns}" var="column">
-					<th><font color='white'>${column.toString()}</font></th>
+					<j:if test="${column.toString() == 'Job'}">
+						<th style="text-align: left"><font color='white' >${column.toString()}</font></th>
+					</j:if>
+					<j:if test="${column.toString() != 'Job'}">
+						<th><font color='white'>${column.toString()}</font></th>
+					</j:if>
 				</j:forEach>
 			</tr>
 			<j:set var="index" value="1"/>
