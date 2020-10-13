@@ -145,7 +145,7 @@ public class ReportGroup implements Serializable {
 	//
 	public String getPercentage(boolean jobs, boolean tests, boolean withColor) {
 		StringBuilder percentage = new StringBuilder();
-		int fontSize = 10;
+		int fontSize = 12;
 		String fontColor = Colors.html(Color.gray);
 		if (jobs) {
 			String jobPercentage = getPercentageForJobs(false, null);
@@ -157,9 +157,9 @@ public class ReportGroup implements Serializable {
 			String testPercentage = getPercentageForTests(false, null);
 			if (!Strings.isNullOrEmpty(testPercentage)) {
 				if (!Strings.isNullOrEmpty(percentage.toString())) {
-					percentage.append("<font style='font-size:" + fontSize + "px;color:" + fontColor + "'> Jobs</font>").append("<br>");
+					percentage.append("<font style='font-size:" + (fontSize - 2) + "px;color:" + fontColor + "'> Jobs</font>").append("<br>");
 				}
-				percentage.append(getPercentageForTests(true, fontSize)).append("<font style='font-size:" + fontSize + "px;color:" + fontColor + "'> Tests</font>");
+				percentage.append(getPercentageForTests(true, fontSize)).append("<font style='font-size:" + (fontSize - 2) + "px;color:" + fontColor + "'> Tests</font>");
 			} else {
 				// Print something here?
 			}
