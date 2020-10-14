@@ -100,6 +100,8 @@ public class Helper {
 			return colorize(result, Colors.ABORTED);
 		} else if (JobStatus.STILL_UNSTABLE.name().equals(result)) {
 			return colorize(result, Colors.UNSTABLE);
+		} else if (JobStatus.RUNNING.name().equals(result)) {
+			return colorize(result, Colors.RUNNING);
 		}
 		return result;
 	}
@@ -136,13 +138,6 @@ public class Helper {
 		return countPercentage(results).toString();
 	}
 	
-	/**
-	 * Return the percentage of x/y
-	 * 
-	 * @param pass
-	 * @param total
-	 * @return Double
-	 */
 	public static Double countPercentageD(int pass, int total) {
 		Results results = new Results();
 		results.setPass(pass);

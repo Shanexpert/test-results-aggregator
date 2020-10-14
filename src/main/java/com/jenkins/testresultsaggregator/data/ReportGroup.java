@@ -21,6 +21,7 @@ public class ReportGroup implements Serializable {
 	private int jobAborted;
 	private int jobDisabled;
 	private Results results;
+	private boolean onlyTests;
 	
 	public ReportGroup() {
 		this.jobSuccess = 0;
@@ -28,6 +29,7 @@ public class ReportGroup implements Serializable {
 		this.jobUnstable = 0;
 		this.jobRunning = 0;
 		this.jobAborted = 0;
+		this.onlyTests = true;
 		this.setResults(new Results());
 	}
 	
@@ -49,20 +51,6 @@ public class ReportGroup implements Serializable {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	
-	/*public String getStatusColor() {
-		final String SUCCESS = "<font color='" + Colors.htmlSUCCESS() + "'>SUCCESS</font>";
-		final String FAILED = "<font color='" + Colors.htmlFAILED() + "'>FAIL</font>";
-		final String UNSTABLE = "<font color='" + Colors.htmlUNSTABLE() + "'>UNSTABLE</font>";
-		if (JobStatus.FAILURE.name().equalsIgnoreCase(status)) {
-			return FAILED;
-		} else if (JobStatus.UNSTABLE.name().equalsIgnoreCase(status)) {
-			return UNSTABLE;
-		} else if (JobStatus.SUCCESS.name().equalsIgnoreCase(status)) {
-			return SUCCESS;
-		}
-		return status;
-	}*/
 	
 	public int getJobSuccess() {
 		return jobSuccess;
@@ -113,7 +101,7 @@ public class ReportGroup implements Serializable {
 	}
 	
 	public String getPercentageForJobs(boolean withColor, Integer fontSize) {
-		if (Double.valueOf(percentageForJobs) > 0) {
+		if (!Strings.isNullOrEmpty(percentageForJobs) && Double.valueOf(percentageForJobs) > 0) {
 			if (withColor) {
 				setPercentageForJobs(Helper.colorizePercentage(Double.valueOf(percentageForJobs), fontSize, status));
 			}
@@ -128,7 +116,7 @@ public class ReportGroup implements Serializable {
 	}
 	
 	public String getPercentageForTests(boolean withColor, Integer fontSize) {
-		if (Double.valueOf(percentageForTests) > 0 && Double.valueOf(percentageForTests) != 100.0) {
+		if (!Strings.isNullOrEmpty(percentageForTests) && Double.valueOf(percentageForTests) > 0) {
 			if (withColor) {
 				setPercentageForTests(Helper.colorizePercentage(Double.valueOf(percentageForTests), fontSize, status));
 			}
@@ -145,24 +133,22 @@ public class ReportGroup implements Serializable {
 	//
 	public String getPercentage(boolean jobs, boolean tests, boolean withColor) {
 		StringBuilder percentage = new StringBuilder();
+		String jobPercentage = getPercentageForJobs(false, null);
+		String testPercentage = getPercentageForTests(false, null);
 		int fontSize = 12;
 		String fontColor = Colors.html(Color.gray);
-		if (jobs) {
-			String jobPercentage = getPercentageForJobs(false, null);
-			if (!Strings.isNullOrEmpty(jobPercentage)) {
-				percentage.append(getPercentageForJobs(withColor, fontSize));
-			}
-		}
-		if (tests) {
-			String testPercentage = getPercentageForTests(false, null);
-			if (!Strings.isNullOrEmpty(testPercentage)) {
-				if (!Strings.isNullOrEmpty(percentage.toString())) {
-					percentage.append("<font style='font-size:" + (fontSize - 2) + "px;color:" + fontColor + "'> Jobs</font>").append("<br>");
-				}
-				percentage.append(getPercentageForTests(true, fontSize)).append("<font style='font-size:" + (fontSize - 2) + "px;color:" + fontColor + "'> Tests</font>");
-			} else {
-				// Print something here?
-			}
+		
+		if (jobPercentage.equals(testPercentage) && !Strings.isNullOrEmpty(testPercentage)) {
+			percentage.append(getPercentageForTests(true, fontSize));
+		} else if (!Strings.isNullOrEmpty(jobPercentage) && !Strings.isNullOrEmpty(testPercentage)) {
+			percentage.append(getPercentageForJobs(withColor, fontSize));
+			percentage.append("<font style='font-size:" + (fontSize - 2) + "px;color:" + fontColor + "'> Jobs</font>").append("<br>");
+			percentage.append(getPercentageForTests(true, fontSize));
+			percentage.append("<font style='font-size:" + (fontSize - 2) + "px;color:" + fontColor + "'> Tests</font>");
+		} else if (!Strings.isNullOrEmpty(testPercentage)) {
+			percentage.append(getPercentageForTests(true, fontSize));
+		} else if (!Strings.isNullOrEmpty(jobPercentage)) {
+			percentage.append(getPercentageForJobs(true, fontSize));
 		}
 		return percentage.toString();
 	}
@@ -173,5 +159,13 @@ public class ReportGroup implements Serializable {
 	
 	public void setJobDisabled(int jobDisabled) {
 		this.jobDisabled = jobDisabled;
+	}
+	
+	public boolean isOnlyTests() {
+		return onlyTests;
+	}
+	
+	public void setOnlyTests(boolean onlyTests) {
+		this.onlyTests = onlyTests;
 	}
 }

@@ -59,7 +59,9 @@ public class Analyzer {
 			int jobSuccess = 0;
 			int jobRunning = 0;
 			int jobDisabled = 0;
+			boolean isOnlyTestIntoGroup = true;
 			data.setReportGroup(new ReportGroup());
+			
 			for (Job job : data.getJobs()) {
 				job.setReport(new ReportJob());
 				if (job.getResults() != null) {
@@ -113,6 +115,8 @@ public class Analyzer {
 						data.getReportGroup().setJobRunning(data.getReportGroup().getJobRunning() + 1);
 						aggregated.setRunningJobs(aggregated.getRunningJobs() + 1);
 						jobRunning++;
+						//
+						isOnlyTestIntoGroup = false;
 					} else if (JobStatus.FAILURE.name().equals(job.getReport().getStatus())) {
 						foundFailure = true;
 						data.getReportGroup().setJobFailed(data.getReportGroup().getJobFailed() + 1);
@@ -124,6 +128,8 @@ public class Analyzer {
 						job.getReport().calculateFailed(null);
 						job.getReport().calculateFailedColor(null);
 						job.getReport().calculateSkipped(null);
+						//
+						isOnlyTestIntoGroup = false;
 					} else if (JobStatus.STILL_FAILING.name().equals(job.getReport().getStatus())) {
 						foundFailure = true;
 						data.getReportGroup().setJobFailed(data.getReportGroup().getJobFailed() + 1);
@@ -135,6 +141,8 @@ public class Analyzer {
 						job.getReport().calculateFailed(null);
 						job.getReport().calculateFailedColor(null);
 						job.getReport().calculateSkipped(null);
+						//
+						isOnlyTestIntoGroup = false;
 					} else if (JobStatus.UNSTABLE.name().equals(job.getReport().getStatus())) {
 						foundSkip = true;
 						data.getReportGroup().setJobUnstable(data.getReportGroup().getJobUnstable() + 1);
@@ -150,6 +158,8 @@ public class Analyzer {
 						data.getReportGroup().setJobAborted(data.getReportGroup().getJobAborted() + 1);
 						aggregated.setAbortedJobs(aggregated.getAbortedJobs() + 1);
 						jobAborted++;
+						//
+						isOnlyTestIntoGroup = false;
 					} else if (JobStatus.DISABLED.name().equals(job.getReport().getStatus())) {
 						foundDisabled = true;
 						data.getReportGroup().setJobDisabled(data.getReportGroup().getJobDisabled() + 1);
@@ -163,6 +173,10 @@ public class Analyzer {
 					resultsPerGroup.setTotal(resultsPerGroup.getTotal() + job.getResults().getTotal());
 					// Calculate Total Tests for Summary Column
 					totalResults.addResults(job.getResults());
+					// Has tests
+					if (job.getResults().getTotal() <= 0) {
+						isOnlyTestIntoGroup = false;
+					}
 				} else {
 					logger.println("Not found results for " + job.getJobName());
 				}
@@ -179,8 +193,12 @@ public class Analyzer {
 			} else {
 				data.getReportGroup().setStatus(JobStatus.SUCCESS.name());
 			}
+			// Set status if only tests
+			data.getReportGroup().setOnlyTests(isOnlyTestIntoGroup);
 			// Calculate Percentage Per Group based on Jobs
-			data.getReportGroup().setPercentageForJobs(Helper.countPercentageD(jobSuccess, jobSuccess + jobRunning + jobAborted + jobUnstable + jobSkipped + jobFailed).toString());
+			if (!isOnlyTestIntoGroup) {
+				data.getReportGroup().setPercentageForJobs(Helper.countPercentageD(jobSuccess, jobSuccess + jobRunning + jobAborted + jobUnstable + jobSkipped + jobFailed).toString());
+			}
 			// Calculate Percentage Per Group based on Tests
 			// Skip tests are calculated as success into test percentage
 			data.getReportGroup().setPercentageForTests(Helper.countPercentageD(resultsPerGroup.getPass() + resultsPerGroup.getSkip(),
