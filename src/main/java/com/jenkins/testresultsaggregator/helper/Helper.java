@@ -150,13 +150,18 @@ public class Helper {
 		return colorizePercentage(percentageDouble, null, null);
 	}
 	
-	public static String colorizePercentage(double percentageDouble, Integer fontSize, String jobStatus) {
+	public static String colorizePercentage(Double percentageDouble, Integer fontSize, String jobStatus) {
 		Color color = null;
+		String percentageString = "";
 		if (JobStatus.RUNNING.toString().equalsIgnoreCase(jobStatus)) {
 			color = Colors.RUNNING;
 		}
 		if (percentageDouble >= 100) {
-			percentageDouble = 100;
+			percentageString = "100";
+		} else if (percentageDouble == 0) {
+			percentageString = "0";
+		} else {
+			percentageString = percentageDouble.toString();
 		}
 		if (color == null) {
 			if (percentageDouble == 100) {
@@ -167,7 +172,7 @@ public class Helper {
 				color = Colors.FAILED;
 			}
 		}
-		return colorize(percentageDouble + "%", color, fontSize);
+		return colorize(percentageString + "%", color, fontSize);
 	}
 	
 	private static String singDoubleSingle(double value) {
