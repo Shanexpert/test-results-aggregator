@@ -101,9 +101,9 @@ public class ReportGroup implements Serializable {
 	}
 	
 	public String getPercentageForJobs(boolean withColor, Integer fontSize) {
-		if (!Strings.isNullOrEmpty(percentageForJobs) && Double.valueOf(percentageForJobs) > 0) {
+		if (!Strings.isNullOrEmpty(percentageForJobs) && resolvePercentage(percentageForJobs) > 0) {
 			if (withColor) {
-				setPercentageForJobs(Helper.colorizePercentage(Double.valueOf(percentageForJobs), fontSize, status));
+				setPercentageForJobs(Helper.colorizePercentage(resolvePercentage(percentageForJobs), fontSize, status));
 			}
 		} else {
 			return "";
@@ -115,10 +115,25 @@ public class ReportGroup implements Serializable {
 		this.percentageForJobs = percentageForJobs;
 	}
 	
+	private Double resolvePercentage(String percentage) {
+		if (Strings.isNullOrEmpty(percentage)) {
+			return 0D;
+		}
+		try {
+			Double doublePercentage = Double.valueOf(percentageForJobs);
+			if (doublePercentage >= 100) {
+				return 100D;
+			}
+			return doublePercentage;
+		} catch (NumberFormatException ex) {
+			return 0D;
+		}
+	}
+	
 	public String getPercentageForTests(boolean withColor, Integer fontSize) {
-		if (!Strings.isNullOrEmpty(percentageForTests) && Double.valueOf(percentageForTests) > 0) {
+		if (!Strings.isNullOrEmpty(percentageForTests) && resolvePercentage(percentageForTests) > 0) {
 			if (withColor) {
-				setPercentageForTests(Helper.colorizePercentage(Double.valueOf(percentageForTests), fontSize, status));
+				setPercentageForTests(Helper.colorizePercentage(resolvePercentage(percentageForTests), fontSize, status));
 			}
 		} else {
 			return "";
