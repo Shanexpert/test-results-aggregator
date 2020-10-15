@@ -53,7 +53,6 @@ public class Analyzer {
 			boolean foundDisabled = false;
 			Results resultsPerGroup = new Results();
 			int jobFailed = 0;
-			int jobSkipped = 0;
 			int jobUnstable = 0;
 			int jobAborted = 0;
 			int jobSuccess = 0;
@@ -197,7 +196,7 @@ public class Analyzer {
 			data.getReportGroup().setOnlyTests(isOnlyTestIntoGroup);
 			// Calculate Percentage Per Group based on Jobs
 			if (!isOnlyTestIntoGroup) {
-				data.getReportGroup().setPercentageForJobs(Helper.countPercentageD(jobSuccess, jobSuccess + jobRunning + jobAborted + jobUnstable + jobSkipped + jobFailed).toString());
+				data.getReportGroup().setPercentageForJobs(Helper.countPercentageD(jobSuccess + jobUnstable, jobSuccess + jobRunning + jobAborted + jobUnstable + jobFailed).toString());
 			}
 			// Calculate Percentage Per Group based on Tests
 			// Skip tests are calculated as success into test percentage

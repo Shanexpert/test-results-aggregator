@@ -12,10 +12,10 @@
 			<tr bgcolor='${headerColor}' style='text-align: center;' height='40'>
 				<j:forEach items="${columns}" var="column">
 					<j:if test="${column.toString() == 'Job'}">
-						<th style="text-align: left"><font color='white' >${column.toString()}</font></th>
+						<th style="text-align: left; border-bottom:3px solid ${lineSeperatorcolor}; border-top:3px solid ${lineSeperatorcolor}">${column.toString()}</th>
 					</j:if>
 					<j:if test="${column.toString() != 'Job'}">
-						<th><font color='white'>${column.toString()}</font></th>
+						<th style="text-align: center; border-bottom:3px solid ${lineSeperatorcolor}; border-top:3px solid ${lineSeperatorcolor}">${column.toString()}</th>
 					</j:if>
 				</j:forEach>
 			</tr>
@@ -106,9 +106,9 @@
 					</tr>
 				</j:forEach>
 			</j:forEach>
-			<tr bgcolor='${footerColor}' style='text-align: center;color: ${footerTextColor}' height='40'>
+			<tr style='text-align: center;' height='40'>
 				<j:if test="${showGroups == true}">
-					<td style='border-bottom:2px solid ${lineSeperatorcolor};text-align: center'>Summary</td>
+					<td style='border-bottom:3px solid ${lineSeperatorcolor};text-align: center'>Summary${aggregated.getPercentageSummary(true)}</td>
 				</j:if>
 				<j:forEach items="${columns}" var="column">
 							<j:if test="${column.name() == 'COLUMN_JOB'}">

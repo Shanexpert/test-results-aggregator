@@ -372,4 +372,20 @@ public class Helper {
 			return currentResult;
 		}
 	}
+	
+	public static Double resolvePercentage(String percentage) {
+		if (Strings.isNullOrEmpty(percentage)) {
+			return -1D;
+		} else {
+			try {
+				Double doublePercentage = Double.valueOf(percentage);
+				if (doublePercentage >= 100) {
+					return 100D;
+				}
+				return doublePercentage;
+			} catch (NumberFormatException ex) {
+			}
+		}
+		return -1D;
+	}
 }

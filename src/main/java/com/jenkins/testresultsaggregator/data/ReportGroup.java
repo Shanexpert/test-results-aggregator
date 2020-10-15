@@ -101,9 +101,9 @@ public class ReportGroup implements Serializable {
 	}
 	
 	public String getPercentageForJobs(boolean withColor, Integer fontSize) {
-		if (!Strings.isNullOrEmpty(percentageForJobs) && resolvePercentage(percentageForJobs) >= 0) {
+		if (!Strings.isNullOrEmpty(percentageForJobs) && Helper.resolvePercentage(percentageForJobs) >= 0) {
 			if (withColor) {
-				return Helper.colorizePercentage(resolvePercentage(percentageForJobs), fontSize, status);
+				return Helper.colorizePercentage(Helper.resolvePercentage(percentageForJobs), fontSize, status);
 			}
 		} else {
 			return "";
@@ -115,26 +115,10 @@ public class ReportGroup implements Serializable {
 		this.percentageForJobs = percentageForJobs;
 	}
 	
-	private Double resolvePercentage(String percentage) {
-		if (Strings.isNullOrEmpty(percentage)) {
-			return -1D;
-		} else {
-			try {
-				Double doublePercentage = Double.valueOf(percentage);
-				if (doublePercentage >= 100) {
-					return 100D;
-				}
-				return doublePercentage;
-			} catch (NumberFormatException ex) {
-			}
-		}
-		return -1D;
-	}
-	
 	public String getPercentageForTests(boolean withColor, Integer fontSize) {
-		if (!Strings.isNullOrEmpty(percentageForTests) && resolvePercentage(percentageForTests) >= 0) {
+		if (!Strings.isNullOrEmpty(percentageForTests) && Helper.resolvePercentage(percentageForTests) >= 0) {
 			if (withColor) {
-				return Helper.colorizePercentage(resolvePercentage(percentageForTests), fontSize, status);
+				return Helper.colorizePercentage(Helper.resolvePercentage(percentageForTests), fontSize, status);
 			}
 		} else {
 			return "";
@@ -153,11 +137,11 @@ public class ReportGroup implements Serializable {
 		String testPercentage = getPercentageForTests(false, null);
 		int fontSize = 12;
 		String fontColor = Colors.html(Color.gray);
-		if (resolvePercentage(jobPercentage) > 0 && resolvePercentage(jobPercentage) < 100) {
+		if (Helper.resolvePercentage(jobPercentage) > 0 && Helper.resolvePercentage(jobPercentage) < 100) {
 			percentage.append(getPercentageForJobs(withColor, fontSize));
-		} else if (resolvePercentage(testPercentage) > 0 && resolvePercentage(testPercentage) < 100) {
+		} else if (Helper.resolvePercentage(testPercentage) > 0 && Helper.resolvePercentage(testPercentage) < 100) {
 			percentage.append(getPercentageForTests(withColor, fontSize));
-		} else if (resolvePercentage(testPercentage).equals(resolvePercentage(jobPercentage))) {
+		} else if (Helper.resolvePercentage(testPercentage).equals(Helper.resolvePercentage(jobPercentage))) {
 			percentage.append(getPercentageForTests(withColor, fontSize));
 		} else {
 			if (!Strings.isNullOrEmpty(jobPercentage)) {
