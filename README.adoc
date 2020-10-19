@@ -48,6 +48,7 @@ In this section you can define :
 * **Jenkins Account password** : password of the account that will be used to access Jenkins API and fetch job results.
 * **Mail Notification From** : sender for the mail Notification. Default is "Jenkins".
 
+
 == Job Configuration
 
 1.Test Result Aggregator Plugin can be used as a "Free Style Project". Create a new by : 
