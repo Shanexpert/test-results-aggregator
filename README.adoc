@@ -108,3 +108,5 @@ image::AggregatedView.png[Aggregated,900,align="right"]
 == Release Notes
 
 See the https://github.com/jenkinsci/test-results-aggregator-plugin/releases[Github releases page].
+
+Jenkins CI https://ci.jenkins.io/job/Plugins/job/test-results-aggregator-plugin/
