@@ -74,7 +74,7 @@ public class TestResultHistoryUtil {
 		Aggregated result = action.getResult();
 		return "<ul>" + Helper.diff(prevTotal, result.getResults().getTotal(), "Total Tests ", true) +
 				Helper.diff(prevFailed, result.getResults().getFail(), TestResultsAggregatorProjectAction.FAILED + " Tests ", true) +
-				Helper.diff(prevUnstable, result.getResults().getSkip(), TestResultsAggregatorProjectAction.UNSTABLE + " Tests ", true) +
+				Helper.diff(prevUnstable, result.getResults().getSkip(), TestResultsAggregatorProjectAction.ABORTED + " Tests ", true) +
 				Helper.diff(prevSucces, result.getResults().getPass(), TestResultsAggregatorProjectAction.SUCCESS + " Tests ", true) +
 				"</ul>";
 	}

@@ -14,7 +14,9 @@ public class Job extends AbstractDescribableImpl<Job> implements Serializable {
 	
 	private static final long serialVersionUID = 34911974223666L;
 	
+	private String folder;
 	private String jobName;
+	
 	private String jobFriendlyName;
 	private String updated;
 	//
@@ -23,6 +25,7 @@ public class Job extends AbstractDescribableImpl<Job> implements Serializable {
 	private Results results;
 	private ReportJob report;
 	private String savedUrl;
+	private String url;
 	
 	@DataBoundConstructor
 	public Job(String jobName, String jobFriendlyName) {
@@ -79,7 +82,7 @@ public class Job extends AbstractDescribableImpl<Job> implements Serializable {
 	}
 	
 	public String getJobNameFromFriendlyName() {
-		if (jobFriendlyName == null || jobFriendlyName.isEmpty()) {
+		if (Strings.isNullOrEmpty(jobFriendlyName)) {
 			return jobName;
 		}
 		return jobFriendlyName;
@@ -90,16 +93,17 @@ public class Job extends AbstractDescribableImpl<Job> implements Serializable {
 			String reportUrl = null;
 			if (results == null) {
 				reportUrl = null;
+				// Get job and execution id
 			} else if (Strings.isNullOrEmpty(results.getUrl())) {
 				reportUrl = null;
-				// } else if (JobStatus.DISABLED.name().equalsIgnoreCase(results.getCurrentResult())) {
-				// reportUrl = results.getUrl();
 			} else {
-				// reportUrl = results.getReportUrl();
-				// Link for Job name redirect to Job or results ?
 				reportUrl = results.getUrl();
 			}
-			return "<a href='" + reportUrl + "' style='text-decoration:none;'><font color='" + Colors.htmlJOB_NAME_URL() + "'>" + getJobNameFromFriendlyName() + "</font></a>";
+			if (Strings.isNullOrEmpty(reportUrl) && jobInfo.getUrl() != null) {
+				// Use the Job Url
+				reportUrl = jobInfo.getUrl().toString();
+			}
+			return "<a href='" + reportUrl + "'><font color='" + Colors.htmlJOB_NAME_URL() + "'>" + getJobNameFromFriendlyName() + "</font></a>";
 		}
 		return getJobNameFromFriendlyName();
 	}
@@ -126,5 +130,21 @@ public class Job extends AbstractDescribableImpl<Job> implements Serializable {
 	
 	public void setUpdated(String updated) {
 		this.updated = updated;
+	}
+	
+	public String getUrl() {
+		return url;
+	}
+	
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	
+	public String getFolder() {
+		return folder;
+	}
+	
+	public void setFolder(String folder) {
+		this.folder = folder;
 	}
 }

@@ -38,7 +38,7 @@ public class Reporter {
 		this.mailNotificationFrom = mailNotificationFrom;
 	}
 	
-	public void publishResuts(String recipientsList, Aggregated aggregated, Properties properties, List<LocalMessages> columns) throws Exception {
+	public void publishResuts(Aggregated aggregated, Properties properties, List<LocalMessages> columns, File rootDirectory) throws Exception {
 		List<Data> dataJob = aggregated.getData();
 		foundAtLeastOneGroupName = false;
 		for (Data data : dataJob) {
@@ -58,8 +58,8 @@ public class Reporter {
 		// Calculate attachments
 		Map<String, ImageData> images = resolveImages(bodyText);
 		// Generate and Send Mail report
-		new MailNotification(logger, dataJob, workspace).send(
-				recipientsList,
+		new MailNotification(logger, dataJob, workspace, rootDirectory).send(
+				properties.getProperty(AggregatorProperties.RECIPIENTS_LIST.name()),
 				mailNotificationFrom,
 				generateMailSubject(properties.getProperty(AggregatorProperties.SUBJECT_PREFIX.name()), aggregated),
 				bodyText,

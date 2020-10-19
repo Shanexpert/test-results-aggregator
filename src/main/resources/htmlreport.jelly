@@ -9,9 +9,14 @@
 	   </style>
        <body>
        	<table width='100%' class='hovertable' style='border-spacing:0px;'>
-			<tr bgcolor='${headerColor}' style='text-align: center;color: white' height='40'>
+			<tr bgcolor='${headerColor}' style='text-align: center;' height='40'>
 				<j:forEach items="${columns}" var="column">
-					<th>${column.toString()}</th>
+					<j:if test="${column.toString() == 'Job'}">
+						<th style="text-align: left; border-bottom:3px solid ${lineSeperatorcolor}; border-top:3px solid ${lineSeperatorcolor}">${column.toString()}</th>
+					</j:if>
+					<j:if test="${column.toString() != 'Job'}">
+						<th style="text-align: center; border-bottom:3px solid ${lineSeperatorcolor}; border-top:3px solid ${lineSeperatorcolor}">${column.toString()}</th>
+					</j:if>
 				</j:forEach>
 			</tr>
 			<j:set var="index" value="1"/>
@@ -30,7 +35,7 @@
 					<tr bgcolor='${bgcolor}' height='35'>
 						<j:if test="${groupadded == false}">
 							<j:if test="${showGroups == true}">
-								<th rowspan='${dataJob.getJobs().size()}' style='border-bottom:2px solid ${lineSeperatorcolor}'>${dataJob.getGroupName()}<br>${dataJob.getReportGroup().getPercentage(true)}</br></th>
+								<th rowspan='${dataJob.getJobs().size()}' style='border-bottom:2px solid ${lineSeperatorcolor}'>${dataJob.getGroupName()}<br>${dataJob.getReportGroup().getPercentage(true,true,true)}</br></th>
 							</j:if>
 							<j:set var="groupadded" value="true"/>
 						</j:if>
@@ -44,25 +49,25 @@
 								<td style='border-bottom:${line} solid ${lineSeperatorcolor}'>${job.getJobNameFromFriendlyName(true)} ${job.getUpdated()}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_JOB_STATUS'}">
-								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getStatusColor(true)}</td>
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getStatusColor(false)}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_HEALTH'}">
 								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getJobInfo().getHealthReport(true)}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_PERCENTAGE'}">
-								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getPercentage(true,true)}</td>
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getPercentage(true,false)}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_TESTS'}">
-								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getTotal(true)}</td>
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getTotal(false)}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_PASS'}">
-								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getPass(true)}</td>
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getPass(false)}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_FAIL'}">
-								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getFailedColor(true)}</td>
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getFailedColor(false)}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_SKIP'}">
-								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getSkipped(true)}</td>
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getSkipped(false)}</td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_COMMITS'}">
 								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getChanges()}</td>
@@ -101,9 +106,9 @@
 					</tr>
 				</j:forEach>
 			</j:forEach>
-			<tr bgcolor='${footerColor}' style='text-align: center;color: ${footerTextColor}' height='40'>
+			<tr style='text-align: center;' height='40'>
 				<j:if test="${showGroups == true}">
-					<td style='border-bottom:2px solid ${lineSeperatorcolor};text-align: center'>Summary</td>
+					<td style='border-bottom:3px solid ${lineSeperatorcolor};text-align: center'><b>Summary${aggregated.getPercentageSummary(true)}</b></td>
 				</j:if>
 				<j:forEach items="${columns}" var="column">
 							<j:if test="${column.name() == 'COLUMN_JOB'}">

@@ -8,12 +8,12 @@
 	</parent>
 	<artifactId>test-results-aggregator</artifactId>
 	<packaging>hpi</packaging>
-	<version>1.0.4-SNAPSHOT</version>
+	<version>1.1.2-SNAPSHOT</version>
 	<name>Test Results Aggregator Plugin</name>
 	<description>Aggregate Test and Job Results in a single HTML/email report.</description>
 	<url>https://github.com/jenkinsci/test-results-aggregator-plugin</url>
 	<properties>
-    	<jenkins.version>2.0</jenkins.version>
+		<jenkins.version>2.0</jenkins.version>
 	</properties>
 	<licenses>
 		<license>
@@ -33,7 +33,7 @@
 		<connection>scm:git:https://github.com/jenkinsci/test-results-aggregator-plugin.git</connection>
 		<developerConnection>scm:git:https://github.com/jenkinsci/test-results-aggregator-plugin.git</developerConnection>
 		<url>https://github.com/jenkinsci/test-results-aggregator-plugin</url>
-		<tag>HEAD</tag>
+		<tag>test-results-aggregator-1.0.11</tag>
 	</scm>
 	<developers>
 		<developer>
@@ -52,7 +52,7 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.9.10.1</version>
+			<version>2.9.10.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jenkins-ci.plugins</groupId>
@@ -63,15 +63,15 @@
 			<groupId>org.jenkins-ci.plugins</groupId>
 			<artifactId>mailer</artifactId>
 			<version>1.21</version>
-			<optional>true</optional>
 		</dependency>
+		<!-- <dependency> <groupId>org.jenkins-ci.plugins</groupId> <artifactId>structs</artifactId> 
+			<version>1.5</version> </dependency> -->
 	</dependencies>
 	<build>
 		<finalName>test-results-aggregator-plugin</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.5</version>
 				<configuration>
 					<goals>deploy</goals>
 				</configuration>

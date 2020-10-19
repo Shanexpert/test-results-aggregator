@@ -3,6 +3,9 @@ package com.jenkins.testresultsaggregator.helper;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.math.RoundingMode;
+import java.net.MalformedURLException;
 import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -17,6 +20,10 @@ import hudson.FilePath;
 import hudson.remoting.VirtualChannel;
 
 public class Helper {
+	
+	public static String encodeValue(String value) throws UnsupportedEncodingException, MalformedURLException {
+		return java.net.URLEncoder.encode(value, "UTF-8").replace("+", "%20").trim();
+	}
 	
 	public static String getTimeStamp(String timeStamp) {
 		if (Strings.isNullOrEmpty(timeStamp)) {
@@ -73,7 +80,7 @@ public class Helper {
 	
 	public static String urlNumberofChanges(String url, String number) {
 		if (!number.isEmpty()) {
-			return "<a href = '" + url + "'>" + number + "</a>";
+			return "<a href = '" + url + "' ><font color='" + Colors.htmlJOB_NAME_URL() + "'>" + number + "</font></a>";
 		}
 		return "";
 	}
@@ -93,6 +100,8 @@ public class Helper {
 			return colorize(result, Colors.ABORTED);
 		} else if (JobStatus.STILL_UNSTABLE.name().equals(result)) {
 			return colorize(result, Colors.UNSTABLE);
+		} else if (JobStatus.RUNNING.name().equals(result)) {
+			return colorize(result, Colors.RUNNING);
 		}
 		return result;
 	}
@@ -102,6 +111,9 @@ public class Helper {
 		if (results != null && results.getTotal() != 0) {
 			try {
 				percentage = singDoubleSingle((double) (results.getPass() + results.getSkip()) * 100 / results.getTotal());
+				if (percentage.equals("100")) {
+					return 100D;
+				}
 				double percentageDouble = 0;
 				try {
 					percentageDouble = Double.parseDouble(percentage);
@@ -135,13 +147,32 @@ public class Helper {
 	}
 	
 	public static String colorizePercentage(double percentageDouble) {
-		if (percentageDouble >= 100) {
-			return colorize(percentageDouble + "%", Colors.SUCCESS);
-		} else if (percentageDouble >= 95) {
-			return colorize(percentageDouble + "%", Colors.UNSTABLE);
-		} else {
-			return colorize(percentageDouble + "%", Colors.FAILED);
+		return colorizePercentage(percentageDouble, null, null);
+	}
+	
+	public static String colorizePercentage(Double percentageDouble, Integer fontSize, String jobStatus) {
+		Color color = null;
+		String percentageString = "";
+		if (JobStatus.RUNNING.toString().equalsIgnoreCase(jobStatus)) {
+			color = Colors.RUNNING;
 		}
+		if (percentageDouble >= 100) {
+			percentageString = "100";
+		} else if (percentageDouble == 0) {
+			percentageString = "0";
+		} else {
+			percentageString = percentageDouble.toString();
+		}
+		if (color == null) {
+			if (percentageDouble == 100) {
+				color = Colors.SUCCESS;
+			} else if (percentageDouble >= 95) {
+				color = Colors.UNSTABLE;
+			} else {
+				color = Colors.FAILED;
+			}
+		}
+		return colorize(percentageString + "%", color, fontSize);
 	}
 	
 	private static String singDoubleSingle(double value) {
@@ -149,6 +180,7 @@ public class Helper {
 			return "0";
 		} else {
 			DecimalFormat df = new DecimalFormat("#.##");
+			df.setRoundingMode(RoundingMode.DOWN);
 			String valueAsString = df.format(value);
 			value = Double.valueOf(valueAsString);
 			if (Math.abs(value) < 0.005) {
@@ -261,11 +293,21 @@ public class Helper {
 	}
 	
 	private static String colorize(String text, Color color) {
+		return colorize(text, color, null);
+	}
+	
+	private static String colorize(String text, Color color, Integer font) {
 		if (color == null) {
 			color = Colors.BLACK;
 		}
-		if (!Strings.isNullOrEmpty(text)) {
-			return "<font color='" + Colors.html(color) + "'>" + text + "</font>";
+		if (font != null) {
+			if (!Strings.isNullOrEmpty(text)) {
+				return "<font style='font-size: " + font + "px; color:" + Colors.html(color) + "'>" + text + "</font>";
+			}
+		} else {
+			if (!Strings.isNullOrEmpty(text)) {
+				return "<font style='color:" + Colors.html(color) + "'>" + text + "</font>";
+			}
 		}
 		return text;
 	}
@@ -329,5 +371,21 @@ public class Helper {
 		} else {
 			return currentResult;
 		}
+	}
+	
+	public static Double resolvePercentage(String percentage) {
+		if (Strings.isNullOrEmpty(percentage)) {
+			return -1D;
+		} else {
+			try {
+				Double doublePercentage = Double.valueOf(percentage);
+				if (doublePercentage >= 100) {
+					return 100D;
+				}
+				return doublePercentage;
+			} catch (NumberFormatException ex) {
+			}
+		}
+		return -1D;
 	}
 }

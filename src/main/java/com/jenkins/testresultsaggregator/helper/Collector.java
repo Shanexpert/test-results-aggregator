@@ -21,6 +21,8 @@ import com.jenkins.testresultsaggregator.data.CoberturaCoverage.Element;
 import com.jenkins.testresultsaggregator.data.Data;
 import com.jenkins.testresultsaggregator.data.Job;
 import com.jenkins.testresultsaggregator.data.JobInfo;
+import com.jenkins.testresultsaggregator.data.JobListDTO;
+import com.jenkins.testresultsaggregator.data.JobListDTO.JobDTO;
 import com.jenkins.testresultsaggregator.data.JobStatus;
 import com.jenkins.testresultsaggregator.data.ReportJob;
 import com.jenkins.testresultsaggregator.data.Results;
@@ -31,6 +33,7 @@ public class Collector {
 	
 	public static final String JOB = "job";
 	public static final String API_JSON_URL = "api/json";
+	public static final String API_JSON_JOBS = API_JSON_URL + "?tree=jobs[name,url]";
 	public static final String API_JSON_COBERTURA = "cobertura/" + API_JSON_URL + "?depth=2";
 	public static final String API_JSON_JACOCO = API_JSON_URL + "?depth=1";
 	public static final String LASTBUILD = "lastBuild";
@@ -38,9 +41,6 @@ public class Collector {
 	public static final String FAILCOUNT = "failCount";
 	public static final String SKIPCOUNT = "skipCount";
 	public static final String TOTALCOUNT = "totalCount";
-	public static final String CONSOLE_OUTPUT = "console";
-	public static final String TESTNG_REPORT = "testngreports";
-	public static final String JUNIT_REPORT = "testReport";
 	
 	public static final String JACOCO_BRANCH = "branchCoverage";
 	public static final String JACOCO_CLASS = "classCoverage";
@@ -101,36 +101,133 @@ public class Collector {
 		return Http.get(jobUrlAPI, authenticationString());
 	}
 	
-	public JobInfo getJobInfo(Job job) {
+	public void delay(int millisec) {
 		try {
-			URL jobUrlAPI = new URL(jenkinsUrl + "/" + JOB + "/" + job.getJobName() + "/" + API_JSON_URL);
-			String reply = Http.get(jobUrlAPI, authenticationString());
-			return Deserialize.initializeObjectMapper().readValue(reply, JobInfo.class);
-		} catch (IOException e) {
+			Thread.sleep(millisec);
+		} catch (InterruptedException e) {
 		}
-		return null;
+	}
+	
+	public JobListDTO getJobList() {
+		return getJobList(jenkinsUrl);
+	}
+	
+	public JobListDTO getJobList(String url) {
+		JobListDTO jobListDTO = null;
+		int retries = 1;
+		while (jobListDTO == null && retries <= 3) {
+			try {
+				URL jobUrlAPI = new URL(url + "/" + API_JSON_JOBS);
+				jobListDTO = Deserialize.initializeObjectMapper().readValue(Http.get(jobUrlAPI, authenticationString()), JobListDTO.class);
+			} catch (IOException e) {
+			}
+			retries++;
+			if (jobListDTO == null) {
+				delay(2000);
+			}
+		}
+		return jobListDTO;
+	}
+	
+	public List<Data> resolveJobs(List<Data> validatedData) {
+		List<JobDTO> allJobs = getAllJenkinsJobs();
+		// Get a list
+		for (Data group : validatedData) {
+			if (group.getJobs() != null && !group.getJobs().isEmpty()) {
+				for (Job jobInGroup : group.getJobs()) {
+					// Check if job name exists in list with all jenkins jobs
+					for (JobDTO temp : allJobs) {
+						if (jobInGroup.getJobName().equalsIgnoreCase(temp.getName())) {
+							// Found
+							jobInGroup.setUrl(temp.getUrl());
+							break;
+						}
+					}
+				}
+			}
+		}
+		return validatedData;
+	}
+	
+	public List<JobDTO> getAllJenkinsJobs() {
+		List<JobDTO> returnList = new ArrayList<>();
+		// Get a List with all jobs
+		JobListDTO original = getJobList();
+		for (JobDTO tempInOriginalList : original.getJobs()) {
+			if (!Strings.isNullOrEmpty(tempInOriginalList.getClassString()) && tempInOriginalList.getClassString().endsWith(".Folder")) {
+				// Get a List with all jobs insider the folder
+				JobListDTO listTemp = getJobList(tempInOriginalList.getUrl());
+				for (JobDTO temp : listTemp.getJobs()) {
+					if (!Strings.isNullOrEmpty(temp.getClassString()) && temp.getClassString().endsWith(".Folder")) {
+						// Do nothing , works only for one level of folders
+					} else {
+						temp.setFolder(tempInOriginalList.getName());
+						returnList.add(temp);
+					}
+				}
+			} else {
+				// Add to return list
+				tempInOriginalList.setFolder("root");
+				returnList.add(tempInOriginalList);
+			}
+		}
+		return returnList;
+	}
+	
+	public JobInfo getJobInfo(Job job) {
+		JobInfo jobInfo = null;
+		int retries = 1;
+		while (jobInfo == null && retries <= 3) {
+			try {
+				URL jobUrlAPI = null;
+				if (Strings.isNullOrEmpty(job.getUrl())) {
+					jobUrlAPI = new URL(jenkinsUrl + "/" + JOB + "/" + Helper.encodeValue(job.getJobName()) + "/" + API_JSON_URL);
+				} else {
+					jobUrlAPI = new URL(job.getUrl() + "/" + API_JSON_URL);
+				}
+				jobInfo = Deserialize.initializeObjectMapper().readValue(Http.get(jobUrlAPI, authenticationString()), JobInfo.class);
+			} catch (IOException e) {
+			}
+			if (jobInfo == null) {
+				delay(2000);
+			}
+			retries++;
+		}
+		return jobInfo;
 	}
 	
 	public BuildInfo getJobInfoLastBuild(Job dataJobDTO) {
-		try {
-			URL jobUrlAPILastBuild = new URL(dataJobDTO.getJobInfo().getUrl() + "/" + LASTBUILD + "/" + API_JSON_JACOCO);
-			// Get Latest
-			String reply = Http.get(jobUrlAPILastBuild, authenticationString());
-			return Deserialize.initializeObjectMapper().readValue(reply, BuildInfo.class);
-		} catch (IOException e) {
+		BuildInfo buildInfo = null;
+		int retries = 1;
+		while (buildInfo == null && retries <= 3) {
+			try {
+				URL jobUrlAPILastBuild = new URL(dataJobDTO.getJobInfo().getUrl() + "/" + LASTBUILD + "/" + API_JSON_JACOCO);
+				buildInfo = Deserialize.initializeObjectMapper().readValue(Http.get(jobUrlAPILastBuild, authenticationString()), BuildInfo.class);
+			} catch (IOException e) {
+			}
+			retries++;
+			if (buildInfo == null) {
+				delay(2000);
+			}
 		}
-		return null;
+		return buildInfo;
 	}
 	
 	public BuildInfo getJobInfo(String url) {
-		try {
-			URL jobUrlAPILastBuild = new URL(url + "/" + API_JSON_JACOCO);
-			// Get Latest
-			String reply = Http.get(jobUrlAPILastBuild, authenticationString());
-			return Deserialize.initializeObjectMapper().readValue(reply, BuildInfo.class);
-		} catch (IOException e) {
+		BuildInfo buildInfo = null;
+		int retries = 1;
+		while (buildInfo == null && retries <= 3) {
+			try {
+				URL jobUrlAPILastBuild = new URL(url + "/" + API_JSON_JACOCO);
+				buildInfo = Deserialize.initializeObjectMapper().readValue(Http.get(jobUrlAPILastBuild, authenticationString()), BuildInfo.class);
+			} catch (IOException e) {
+			}
+			retries++;
+			if (buildInfo == null) {
+				delay(2000);
+			}
 		}
-		return null;
+		return buildInfo;
 	}
 	
 	public CoberturaCoverage getCobertura(String url) {
@@ -169,143 +266,131 @@ public class Collector {
 			}
 			boolean foundJacocoResults = false;
 			boolean foundCoberturaResults = false;
-			// If Job is not running get results
-			if (!results.isBuilding()) {
-				for (HashMap<Object, Object> temp : job.getBuildInfo().getActions()) {
-					// Calculate FAIL,SKIP and TOTAL Test Results
-					if (temp.containsKey(FAILCOUNT)) {
-						results.setFail((Integer) temp.get(FAILCOUNT));
-					}
-					if (temp.containsKey(SKIPCOUNT)) {
-						results.setSkip((Integer) temp.get(SKIPCOUNT));
-					}
-					if (temp.containsKey(TOTALCOUNT)) {
-						results.setTotal((Integer) temp.get(TOTALCOUNT));
-					}
-					// Jacoco Coverage data exists on Default api url
-					if (temp.containsKey(JACOCO_BRANCH)) {
-						Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_BRANCH);
-						results.setCcConditions((Integer) tempMap.get("percentage"));
-						foundJacocoResults = true;
-					}
-					if (temp.containsKey(JACOCO_CLASS)) {
-						Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_CLASS);
-						results.setCcClasses((Integer) tempMap.get("percentage"));
-						foundJacocoResults = true;
-					}
-					if (temp.containsKey(JACOCO_LINES)) {
-						Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_LINES);
-						results.setCcLines((Integer) tempMap.get("percentage"));
-						foundJacocoResults = true;
-					}
-					if (temp.containsKey(JACOCO_METHODS)) {
-						Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_METHODS);
-						results.setCcMethods((Integer) tempMap.get("percentage"));
-						foundJacocoResults = true;
-					}
-					if (temp.containsKey(SONAR_URL)) {
-						results.setSonarUrl((String) temp.get(SONAR_URL));
-					}
-				}
-				if (!foundJacocoResults) {
-					// Check for Cobertura Results
-					foundCoberturaResults = coberturaCoverage(job, results);
-				}
-				// Calculate Pass Results
-				results.setPass(results.getTotal() - Math.abs(results.getFail()) - Math.abs(results.getSkip()));
-				// Calculate Percentage
-				results.setPercentage(Helper.countPercentage(results));
-				// Add Url
-				results.setConsoleUrl(job.getJobInfo().getUrl().toString() + job.getBuildInfo().getNumber() + "/" + CONSOLE_OUTPUT);
-				String testNGUrl = job.getJobInfo().getUrl().toString() + job.getBuildInfo().getNumber() + "/" + TESTNG_REPORT;
-				String junitsUrl = job.getJobInfo().getUrl().toString() + job.getBuildInfo().getNumber() + "/" + JUNIT_REPORT;
-				if (Http.getResponseCode(testNGUrl, authenticationString()) == 200) {
-					results.setReportUrl(testNGUrl);
-				} else if (Http.getResponseCode(junitsUrl, authenticationString()) == 200) {
-					results.setReportUrl(junitsUrl);
-				} else {
-					results.setReportUrl(results.getConsoleUrl());
-				}
-				// Calculate Previous Results and change sets
-				if (job.getBuildInfo().getPreviousBuild() != null) {
-					BuildInfo jenkinsPreviousBuildDTO = null;
-					if (job.getSavedJobUrl() == null) {
-						// There is no Saved Job , get Previous
-						jenkinsPreviousBuildDTO = getJobInfo(job.getBuildInfo().getPreviousBuild().getUrl().toString());
-						if (jenkinsPreviousBuildDTO != null) {
-							jenkinsPreviousBuildDTO.setUrl(job.getBuildInfo().getPreviousBuild().getUrl().toString());
-							job.setUpdated("");
+			if (results.isBuilding()) {
+				results.setCurrentResult(JobStatus.RUNNING.name());
+			} else {
+				// if job is not failed
+				if (!results.getCurrentResult().equalsIgnoreCase("FAILURE")) {
+					for (HashMap<Object, Object> temp : job.getBuildInfo().getActions()) {
+						// Calculate FAIL,SKIP and TOTAL Test Results
+						if (temp.containsKey(FAILCOUNT)) {
+							results.setFail((Integer) temp.get(FAILCOUNT));
 						}
-					} else {
-						String currentUrl = job.getJobInfo().getLastBuild().getUrl().toString();
-						if (currentUrl.equals(job.getSavedJobUrl())) {
-							// No new Run for this Job
+						if (temp.containsKey(SKIPCOUNT)) {
+							results.setSkip((Integer) temp.get(SKIPCOUNT));
+						}
+						if (temp.containsKey(TOTALCOUNT)) {
+							results.setTotal((Integer) temp.get(TOTALCOUNT));
+						}
+						// Jacoco Coverage data exists on Default api url
+						if (temp.containsKey(JACOCO_BRANCH)) {
+							Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_BRANCH);
+							results.setCcConditions((Integer) tempMap.get("percentage"));
+							foundJacocoResults = true;
+						}
+						if (temp.containsKey(JACOCO_CLASS)) {
+							Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_CLASS);
+							results.setCcClasses((Integer) tempMap.get("percentage"));
+							foundJacocoResults = true;
+						}
+						if (temp.containsKey(JACOCO_LINES)) {
+							Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_LINES);
+							results.setCcLines((Integer) tempMap.get("percentage"));
+							foundJacocoResults = true;
+						}
+						if (temp.containsKey(JACOCO_METHODS)) {
+							Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_METHODS);
+							results.setCcMethods((Integer) tempMap.get("percentage"));
+							foundJacocoResults = true;
+						}
+						if (temp.containsKey(SONAR_URL)) {
+							results.setSonarUrl((String) temp.get(SONAR_URL));
+						}
+					}
+					if (!foundJacocoResults) {
+						// Check for Cobertura Results
+						foundCoberturaResults = coberturaCoverage(job, results);
+					}
+					// Calculate Pass Results
+					results.setPass(results.getTotal() - Math.abs(results.getFail()) - Math.abs(results.getSkip()));
+					// Calculate Percentage
+					results.setPercentage(Helper.countPercentage(results));
+					// Calculate Previous Results and change sets
+					if (job.getBuildInfo().getPreviousBuild() != null) {
+						BuildInfo jenkinsPreviousBuildDTO = null;
+						if (job.getSavedJobUrl() == null) {
+							// There is no Saved Job , get Previous
 							jenkinsPreviousBuildDTO = getJobInfo(job.getBuildInfo().getPreviousBuild().getUrl().toString());
 							if (jenkinsPreviousBuildDTO != null) {
 								jenkinsPreviousBuildDTO.setUrl(job.getBuildInfo().getPreviousBuild().getUrl().toString());
 								job.setUpdated("");
 							}
 						} else {
-							jenkinsPreviousBuildDTO = getJobInfo(job.getSavedJobUrl());
-							if (jenkinsPreviousBuildDTO != null) {
-								jenkinsPreviousBuildDTO.setUrl(job.getSavedJobUrl());
-								job.setUpdated("");
+							String currentUrl = job.getJobInfo().getLastBuild().getUrl().toString();
+							if (currentUrl.equals(job.getSavedJobUrl())) {
+								// No new Run for this Job
+								jenkinsPreviousBuildDTO = getJobInfo(job.getBuildInfo().getPreviousBuild().getUrl().toString());
+								if (jenkinsPreviousBuildDTO != null) {
+									jenkinsPreviousBuildDTO.setUrl(job.getBuildInfo().getPreviousBuild().getUrl().toString());
+									job.setUpdated("");
+								}
+							} else {
+								jenkinsPreviousBuildDTO = getJobInfo(job.getSavedJobUrl());
+								if (jenkinsPreviousBuildDTO != null) {
+									jenkinsPreviousBuildDTO.setUrl(job.getSavedJobUrl());
+									job.setUpdated("");
+								}
 							}
 						}
+						int previouslyFail = 0;
+						int previouslyPass = 0;
+						int previouslySkip = 0;
+						if (jenkinsPreviousBuildDTO != null) {
+							results.setPreviousResult(jenkinsPreviousBuildDTO.getResult());
+							for (HashMap<Object, Object> temp : jenkinsPreviousBuildDTO.getActions()) {
+								// Calculate FAIL,SKIP and TOTAL of the Previous Test
+								if (temp.containsKey(FAILCOUNT)) {
+									results.setFailDif((Integer) temp.get(FAILCOUNT));
+									previouslyFail += (Integer) temp.get(FAILCOUNT);
+								}
+								if (temp.containsKey(SKIPCOUNT)) {
+									results.setSkipDif((Integer) temp.get(SKIPCOUNT));
+									previouslySkip += (Integer) temp.get(SKIPCOUNT);
+								}
+								if (temp.containsKey(TOTALCOUNT)) {
+									results.setTotalDif((Integer) temp.get(TOTALCOUNT));
+									previouslyPass += (Integer) temp.get(TOTALCOUNT);
+								}
+								if (foundJacocoResults) {
+									// Jacoco Coverage
+									if (temp.containsKey(JACOCO_BRANCH)) {
+										Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_BRANCH);
+										results.setCcConditionsDif((Integer) tempMap.get("percentage"));
+									}
+									if (temp.containsKey(JACOCO_CLASS)) {
+										Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_CLASS);
+										results.setCcClassesDif((Integer) tempMap.get("percentage"));
+									}
+									if (temp.containsKey(JACOCO_LINES)) {
+										Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_LINES);
+										results.setCcLinesDif((Integer) tempMap.get("percentage"));
+									}
+									if (temp.containsKey(JACOCO_METHODS)) {
+										Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_METHODS);
+										results.setCcMethodsDif((Integer) tempMap.get("percentage"));
+									}
+								}
+							}
+							if (foundCoberturaResults) {
+								// Check for Cobertura Results
+								coberturaCoverage(jenkinsPreviousBuildDTO.getUrl(), results);
+							}
+							calculateChangeSets(job, results, jenkinsPreviousBuildDTO);
+						}
+						// Calculate Pass Difference Results
+						results.setPassDif(previouslyPass - Math.abs(previouslyFail) - Math.abs(previouslySkip));
 					}
-					int previouslyFail = 0;
-					int previouslyPass = 0;
-					int previouslySkip = 0;
-					if (jenkinsPreviousBuildDTO != null) {
-						results.setPreviousResult(jenkinsPreviousBuildDTO.getResult());
-						for (HashMap<Object, Object> temp : jenkinsPreviousBuildDTO.getActions()) {
-							// Calculate FAIL,SKIP and TOTAL of the Previous Test
-							if (temp.containsKey(FAILCOUNT)) {
-								results.setFailDif((Integer) temp.get(FAILCOUNT));
-								previouslyFail += (Integer) temp.get(FAILCOUNT);
-							}
-							if (temp.containsKey(SKIPCOUNT)) {
-								results.setSkipDif((Integer) temp.get(SKIPCOUNT));
-								previouslySkip += (Integer) temp.get(SKIPCOUNT);
-							}
-							if (temp.containsKey(TOTALCOUNT)) {
-								results.setTotalDif((Integer) temp.get(TOTALCOUNT));
-								previouslyPass += (Integer) temp.get(TOTALCOUNT);
-							}
-							if (foundJacocoResults) {
-								// Jacoco Coverage
-								if (temp.containsKey(JACOCO_BRANCH)) {
-									Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_BRANCH);
-									results.setCcConditionsDif((Integer) tempMap.get("percentage"));
-								}
-								if (temp.containsKey(JACOCO_CLASS)) {
-									Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_CLASS);
-									results.setCcClassesDif((Integer) tempMap.get("percentage"));
-								}
-								if (temp.containsKey(JACOCO_LINES)) {
-									Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_LINES);
-									results.setCcLinesDif((Integer) tempMap.get("percentage"));
-								}
-								if (temp.containsKey(JACOCO_METHODS)) {
-									Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_METHODS);
-									results.setCcMethodsDif((Integer) tempMap.get("percentage"));
-								}
-							}
-						}
-						if (foundCoberturaResults) {
-							// Check for Cobertura Results
-							coberturaCoverage(jenkinsPreviousBuildDTO.getUrl(), results);
-						}
-						calculateChangeSets(job, results, jenkinsPreviousBuildDTO);
-					}
-					// Calculate Pass Difference Results
-					results.setPassDif(previouslyPass - Math.abs(previouslyFail) - Math.abs(previouslySkip));
 				}
-			} else {
-				results.setCurrentResult(JobStatus.RUNNING.name());
-				// Add Url
-				results.setConsoleUrl(job.getJobInfo().getUrl() + "/" + job.getBuildInfo().getNumber() + "/" + CONSOLE_OUTPUT);
-				results.setReportUrl(results.getConsoleUrl());
 			}
 			return results;
 		}
@@ -332,7 +417,7 @@ public class Collector {
 			for (int i = jenkinsPreviousBuildDTO.getNumber() + 1; i <= job.getBuildInfo().getNumber(); i++) {
 				// Get sets
 				BuildInfo temp = getJobInfo(job.getJobInfo().getUrl().toString() + i);
-				if (temp.getChangeSets() != null) {
+				if (temp != null && temp.getChangeSets() != null) {
 					for (ChangeSet tempI : temp.getChangeSets()) {
 						changes += tempI.getItems().size();
 					}
@@ -407,7 +492,6 @@ public class Collector {
 				job.setResults(new Results(JobStatus.NOT_FOUND.name(), null));
 				job.getResults().setUrl(null);
 				job.setReport(new ReportJob());
-				job.getReport().calculateReport(job.getResults());
 				logger.println(LocalMessages.COLLECT_DATA.toString() + " '" + job.getJobName() + "' " + LocalMessages.JOB_NOT_FOUND.toString());
 			} else if (!job.getJobInfo().getBuildable()) {
 				// Job is Disabled/ Not Buildable
@@ -416,7 +500,6 @@ public class Collector {
 				job.setResults(new Results(JobStatus.DISABLED.name(), null));
 				job.getResults().setUrl(tempUrl);
 				job.setReport(new ReportJob());
-				job.getReport().calculateReport(null);
 				logger.println(LocalMessages.COLLECT_DATA.toString() + " '" + job.getJobName() + "' " + LocalMessages.JOB_IS_DISABLED.toString());
 			} else if (job.getJobInfo() != null) {
 				// Job Found and is Buildable
@@ -430,4 +513,5 @@ public class Collector {
 			}
 		}
 	}
+	
 }

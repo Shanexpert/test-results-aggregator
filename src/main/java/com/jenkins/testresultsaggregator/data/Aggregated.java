@@ -1,9 +1,12 @@
 package com.jenkins.testresultsaggregator.data;
 
+import java.awt.Color;
 import java.util.Collection;
 import java.util.List;
 
+import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.TestResultsAggregator;
+import com.jenkins.testresultsaggregator.helper.Colors;
 import com.jenkins.testresultsaggregator.helper.Helper;
 
 import hudson.model.Run;
@@ -21,6 +24,7 @@ public class Aggregated extends BaseResult {
 	private int unstableJobs = 0;
 	private int keepUnstableJobs = 0;
 	private int abortedJobs = 0;
+	private int disabledJobs = 0;
 	private int totalJobs = 0;
 	private Long totalDuration = 0L;
 	private int totalNumberOfChanges = 0;
@@ -138,11 +142,43 @@ public class Aggregated extends BaseResult {
 		return false;
 	}
 	
-	public String calculatePercentage(boolean withColor) {
+	public String getPercentageSummary(boolean withColor) {
+		StringBuilder percentage = new StringBuilder("<br>");
+		int fontSize = 12;
+		String status = null;
+		if (runningJobs > 0) {
+			status = JobStatus.RUNNING.toString();
+		}
+		String jobPercentage = calculatePercentageOfJobs(false, fontSize, status);
+		String testPercentage = calculatePercentage(false, fontSize, status);
+		String fontColor = Colors.html(Color.gray);
+		if (!Strings.isNullOrEmpty(jobPercentage)) {
+			percentage.append(calculatePercentageOfJobs(withColor, fontSize, status));
+			if (!Strings.isNullOrEmpty(testPercentage)) {
+				percentage.append("<font style='font-size:" + (fontSize - 2) + "px;color:" + fontColor + "'> Jobs</font>").append("<br>");
+			}
+		}
+		if (!Strings.isNullOrEmpty(testPercentage)) {
+			percentage.append(calculatePercentage(withColor, fontSize, status));
+			if (!Strings.isNullOrEmpty(jobPercentage)) {
+				percentage.append("<font style='font-size:" + (fontSize - 2) + "px;color:" + fontColor + "'> Tests</font>");
+			}
+		}
+		return percentage.toString();
+	}
+	
+	public String calculatePercentage(boolean withColor, int fontSize, String status) {
 		if (withColor) {
-			return Helper.colorizePercentage(Helper.countPercentage(results));
+			return Helper.colorizePercentage(Helper.countPercentage(results), fontSize, status);
 		}
 		return Helper.countPercentage(results).toString();
+	}
+	
+	public String calculatePercentageOfJobs(boolean withColor, int fontSize, String status) {
+		if (withColor) {
+			return Helper.colorizePercentage(Helper.countPercentageD(successJobs + fixedJobs + unstableJobs + keepUnstableJobs, getTotalJobs()), fontSize, status);
+		}
+		return Helper.countPercentageD(successJobs + fixedJobs + unstableJobs + keepUnstableJobs, getTotalJobs()).toString();
 	}
 	
 	public String calculateTotalDuration() {
@@ -171,6 +207,14 @@ public class Aggregated extends BaseResult {
 	
 	public int getUnstable() {
 		return unstableJobs + keepUnstableJobs;
+	}
+	
+	public int getDisabledJobs() {
+		return disabledJobs;
+	}
+	
+	public void setDisabledJobs(int disabledJobs) {
+		this.disabledJobs = disabledJobs;
 	}
 	
 }

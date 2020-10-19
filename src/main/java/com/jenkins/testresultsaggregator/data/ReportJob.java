@@ -131,18 +131,6 @@ public class ReportJob implements Serializable {
 		setChanges(Helper.urlNumberofChanges(resultsDTO.getChangesUrl(), Helper.getNumber(resultsDTO.getNumberOfChanges())));
 	}
 	
-	public void calculateReport(Results resultsDTO) {
-		if (resultsDTO == null) {
-			setReportURL(null);
-		} else if (Strings.isNullOrEmpty(resultsDTO.getUrl())) {
-			setReportURL(null);
-		} else if (JobStatus.DISABLED.name().equalsIgnoreCase(resultsDTO.getCurrentResult())) {
-			setReportURL(resultsDTO.getUrl());
-		} else {
-			setReportURL(resultsDTO.getReportUrl());
-		}
-	}
-	
 	public String getTotal(boolean withLinktoResults) {
 		if (withLinktoResults) {
 			if (!Strings.isNullOrEmpty(getTotal()) && !"0".equals(getTotal())) {

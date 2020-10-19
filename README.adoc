@@ -10,29 +10,20 @@ It's a jenkins plugin that collects job and test results and reports them :
 * email, 
 * graphs
 
-|===
-|# | Status 
-
-|Latest Release: 
-|image:https://img.shields.io/jenkins/plugin/v/test-results-aggregator.svg[Jenkins Plugin,link=https://plugins.jenkins.io/test-results-aggregator]
-
-|Under Development: 
-|image:https://img.shields.io/github/release/jenkinsci/test-results-aggregator.svg?label=changelog[https://github.com/jenkinsci/role-strategy-plugin/releases/latest]
-
-|Build Status: 
-|image:https://ci.jenkins.io/buildStatus/icon?job=Plugins/test-results-aggregator-plugin/master[https://github.com/jenkinsci/role-strategy-plugin/releases/latest]
-
-| Installed: 
-| 
-|===
-
-//image:https://img.shields.io/jenkins/plugin/i/test-results-aggregator.svg?color=blue[Jenkins Plugin Installs,link=https://plugins.jenkins.io/test-results-aggregator]
-
 Test Results Aggregator can merge test results for : 
-https://plugins.jenkins.io/junit[Junit], https://plugins.jenkins.io/testng-plugin[TestNG]
+
+* https://plugins.jenkins.io/junit[Junit], 
+* https://plugins.jenkins.io/testng-plugin[TestNG]
 
 and code coverage results for : 
-https://plugins.jenkins.io/cobertura[Cobertura], https://plugins.jenkins.io/jacoco[JaCoCo]
+
+* https://plugins.jenkins.io/cobertura[Cobertura], 
+* https://plugins.jenkins.io/jacoco[JaCoCo]
+
+image:https://img.shields.io/jenkins/plugin/v/test-results-aggregator.svg[Jenkins Plugin,link=https://plugins.jenkins.io/test-results-aggregator]
+image:https://ci.jenkins.io/buildStatus/icon?job=Plugins/test-results-aggregator-plugin/master[https://github.com/jenkinsci/role-strategy-plugin/releases/latest]
+image:https://github.com/jenkinsci/test-results-aggregator-plugin/workflows/Java_CI/badge.svg[Build,link= https://github.com/jenkinsci/test-results-aggregator-plugin/workflows/Java_CI]
+image:https://img.shields.io/jenkins/plugin/i/test-results-aggregator.svg?color=blue[Jenkins Plugin Installs,link=https://plugins.jenkins.io/test-results-aggregator]
 
 == Important
 
@@ -52,10 +43,11 @@ image::Global_Configuration.png[Global Configuration,900,align="right"]
 
 In this section you can define : 
 
-* **Jenkins Base Url** : The HTTP address of the Jenkins installation, such as http://yourhost.yourdomain/jenkins/. This value is used to access Jenkins API.
+* **Jenkins Base Url** : The HTTP address of the Jenkins installation, such as http://yourhost.yourdomain/jenkins/ This is used to access Jenkins API, so you can fetch results from any jenkins installation.
 * **Jenkins Account Username** : username of the account that will be used to access Jenkins API and fetch job results.
 * **Jenkins Account password** : password of the account that will be used to access Jenkins API and fetch job results.
 * **Mail Notification From** : sender for the mail Notification. Default is "Jenkins".
+
 
 == Job Configuration
 
@@ -72,20 +64,20 @@ image::PostBuildAction.png[Post Build Action,900,align="right"]
 image::FreeStyleProject_Jobs.png[Jobs Configuraion,900,align="right"]
   
 * **Group/Team** : it's optional, it's used in report to group Jenkins jobs. For example teams , products or testing types.
-* **Job Name** : It's mandatory, it's the exact Jenkins job name to get results.
+* **Job Name** : It's mandatory, it's the exact Jenkins job name to get results. In case of a job inside a 'folder' use : folderName/jobName or folderName(s)/jobName
 * **Job Friendly Name** : it's optional, used only for reporting purposes, if null or empty then "Job Name" will be used in report.
  
 4.Add Recipients List , Before,After Body text, theme and Sort by option : 
 
 image::ReceipientsList.png[Recipients,900,align="right"]
 	
-* **Recipients List** : comma separated recipients list, ex : nick@some.com,mairy@some.com .if empty no email will be triggered.
-* **Subject prefix** : prefix for mail subject.
+* **Recipients List** : comma separated recipients list, ex : nick@some.com,mairy@some.com . if empty no email will be triggered. Supports also job variables.
+* **Subject prefix** : prefix for mail subject. Supports also job & env variables.
 * **Columns** : html & email report columns and the order of them, comma separated. Possible columns are : 
 
  ** Health, Job, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Description, Packages, Files, Classes, Methods, Lines, Conditions & Sonar
-* **Before body** : plain text or html code to add before report table.
-* **After body** : plain text or html code to add after report table.
+* **Before body** : plain text or html code to add before report table. Supports also job & env variables , for example ${WORKSPACE} or ${myVariable}
+* **After body** : plain text or html code to add after report table. Supports also job & env variables.
 * **Mail Theme** : Ligth or dark mail theme.
 * **Sort Results By** : report will be sorted accordingly. If there are Groups then sorting refers to jobs inside a group.
  
@@ -117,11 +109,4 @@ image::AggregatedView.png[Aggregated,900,align="right"]
 
 See the https://github.com/jenkinsci/test-results-aggregator-plugin/releases[Github releases page].
 
-=== 1.0.3 (12 Nov 2019)
- * Fix mail notification exception on remote slave
- 
-=== 1.0.2 (8 Nov 2019)
- * Fix Documentation Issue
- 
-=== 1.0.0 (4 Nov 2019)
- * Initial Release
+Jenkins CI https://ci.jenkins.io/job/Plugins/job/test-results-aggregator-plugin/

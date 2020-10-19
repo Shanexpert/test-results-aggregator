@@ -25,10 +25,9 @@ import jenkins.model.lazy.LazyBuildMixIn.LazyLoadingJob;
 /**
  * Action to associate the TestNG reports with the project
  */
-public class TestResultsAggregatorProjectAction extends TestResultProjectAction
-		implements ProminentProjectAction {
+public class TestResultsAggregatorProjectAction extends TestResultProjectAction implements ProminentProjectAction {
 	
-	// For Jobs
+	// For Graphs
 	public static final String SUCCESS = "Success";
 	public static final String FIXED = "Fixed";
 	public static final String FAILED = "Failed";
@@ -37,29 +36,31 @@ public class TestResultsAggregatorProjectAction extends TestResultProjectAction
 	public static final String UNSTABLE_KEEP = "KeepUnstable";
 	public static final String ABORTED = "Aborted";
 	public static final String RUNNING = "Running";
-	public static final String TOTAL = "Total";
-	public static final String TOTAL_P = "Total_P";
-	public static final String SUCCESS_P = "Success_P";
-	public static final String ABORTED_P = "Aborted_P";
-	public static final String FAILED_P = "Failed_P";
+	
+	// For Jobs
+	public static final String JOB_SUCCESS = "SUCCESS";
+	public static final String JOB_FIXED = "FIXED";
+	public static final String JOB_FAILED = "FAILED";
+	public static final String JOB_FAILED_KEEP = "KEEPFAILLING";
+	public static final String JOB_UNSTABLE = "UNSTABLE";
+	public static final String JOB_UNSTABLE_KEEP = "KEEPUNSTABLE";
+	public static final String JOB_ABORTED = "ABORTED";
+	public static final String JOB_RUNNING = "RUNNING";
+	public static final String JOB_TOTAL = "TOTAL";
 	
 	// For Tests
-	public static final String TOTAL_TEST = "Total_TEST";
-	public static final String TOTAL_P_TEST = "Total_P_TEST";
-	public static final String SUCCESS_TEST = "Success_TEST";
-	public static final String SUCCESS_P_TEST = "Success_P_TEST";
-	public static final String ABORTED_TEST = "Aborted_TEST";
-	public static final String ABORTED_P_TEST = "Aborted_P_TEST";
-	public static final String FAILED_TEST = "Failed_TEST";
-	public static final String FAILED_P_TEST = "Failed_P_TEST";
+	public static final String TEST_TOTAL = "TEST_TOTAL";
+	public static final String TEST_SUCCESS = "TEST_SUCCESS";
+	public static final String TEST_SKIPPED = "TEST_SKIPPED";
+	public static final String TEST_FAILED = "TEST_FAILED";
 	
 	// For Code Coverage
-	public static final String CC_PACKAGES = "CC_Packages";
-	public static final String CC_FILES = "CC_Files";
-	public static final String CC_CLASSES = "CC_Classes";
-	public static final String CC_METHODS = "CC_Methods";
-	public static final String CC_LINES = "CC_Lines";
-	public static final String CC_CONDTITIONALS = "CC_Conditionals";
+	public static final String CC_PACKAGES = "CC_PACKAGES";
+	public static final String CC_FILES = "CC_FILES";
+	public static final String CC_CLASSES = "CC_CLASSES";
+	public static final String CC_METHODS = "CC_METHODS";
+	public static final String CC_LINES = "CC_LINES";
+	public static final String CC_CONDTITIONALS = "CC_CONDITIONALS";
 	
 	public TestResultsAggregatorProjectAction(Job<?, ?> project) {
 		super(project);

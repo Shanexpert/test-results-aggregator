@@ -1,7 +1,15 @@
 package com.jenkins.testresultsaggregator.reporter;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,11 +39,14 @@ public class MailNotification {
 	private PrintStream logger;
 	private List<Data> dataJob;
 	private FilePath workspace;
+	private File rootDirectory;
+	private boolean useImages = true;
 	
-	public MailNotification(PrintStream logger, List<Data> dataJob, FilePath workspace) {
+	public MailNotification(PrintStream logger, List<Data> dataJob, FilePath workspace, File rootDirectory) {
 		this.logger = logger;
 		this.dataJob = dataJob;
 		this.workspace = workspace;
+		this.rootDirectory = rootDirectory;
 	}
 	
 	private boolean validateResults() {
@@ -51,9 +62,11 @@ public class MailNotification {
 		return allJobsNotFound;
 	}
 	
-	public void send(String mailTo, String mailFrom, String subject, String body, Map<String, ImageData> images, String preBodyText, String afterBodyText) throws MessagingException, IOException, InterruptedException {
+	public void send(String mailTo, String mailFrom, String subject, String body, Map<String, ImageData> images, String preBodyText, String afterBodyText)
+			throws Exception {
 		logger.print(LocalMessages.GENERATE.toString() + " " + LocalMessages.EMAIL_REPORT.toString());
 		MimeMessageBuilder mimeMessageBuilder = new MimeMessageBuilder();
+		MimeMessage message = null;
 		if (validateResults()) {
 			logger.println(LocalMessages.VALIDATION_MAIL_NOT_FOUND_JOBS.toString());
 		} else if (Strings.isNullOrEmpty(mailTo)) {
@@ -67,6 +80,7 @@ public class MailNotification {
 				// Add Body before
 				StringBuffer messageBody = new StringBuffer();
 				if (!Strings.isNullOrEmpty(preBodyText)) {
+					preBodyText = resolveVariables(preBodyText);
 					messageBody.append(preBodyText);
 					messageBody.append("<br></br>");
 				}
@@ -74,6 +88,7 @@ public class MailNotification {
 				messageBody.append(body);
 				// Add Body before and after text
 				if (!Strings.isNullOrEmpty(afterBodyText)) {
+					afterBodyText = resolveVariables(afterBodyText);
 					messageBody.append("<br></br>");
 					messageBody.append(afterBodyText);
 				}
@@ -83,43 +98,87 @@ public class MailNotification {
 				mimeMessageBuilder.setSubject(subject);
 				// Set type
 				mimeMessageBuilder.setMimeType("text/html");
+				
 				// Build
-				MimeMessage message = mimeMessageBuilder.buildMimeMessage();
+				message = mimeMessageBuilder.buildMimeMessage();
 				message.setFrom(new InternetAddress(mailFrom));
-				
-				MimeBodyPart messageBodyPart = new MimeBodyPart();
-				messageBodyPart.setContent(messageBody.toString(), "text/html");
-				Multipart multipart = new MimeMultipart();
-				multipart.addBodyPart(messageBodyPart);
-				
-				if (images != null && !images.isEmpty()) {
-					Set<String> setImageID = images.keySet();
-					for (String contentId : setImageID) {
-						multipart.addBodyPart(addImagePart(contentId, workspace));
-					}
-					message.setContent(multipart);
-				}
+				useImages(messageBody, images, message);
 				// Save Message
 				message.saveChanges();
 				// Send Message
-				Transport.send(message);
+				sendMessage(message);
 				logger.println(LocalMessages.SEND_MAIL_TO.toString());
 				logger.println("" + mailTo);
-			} catch (MessagingException ex) {
-				logger.println("");
+			} catch (Exception ex) {
+				// Send Mail with no images
 				logger.printf(LocalMessages.ERROR_OCCURRED.toString() + ": " + ex.getMessage());
+				logger.println(LocalMessages.SEND_MAIL_TO.toString());
+				if (message != null) {
+					message = mimeMessageBuilder.buildMimeMessage();
+					message.setFrom(new InternetAddress(mailFrom));
+					// Save Message
+					message.saveChanges();
+					sendMessage(message);
+				}
 				ex.printStackTrace();
 				logger.println("");
 			}
 		}
 	}
 	
-	private MimeBodyPart addImagePart(String contentId, FilePath workspace) throws MessagingException, IOException, InterruptedException {
+	private void sendMessage(MimeMessage message) throws Exception {
+		Transport.send(message);
+	}
+	
+	private void useImages(StringBuffer messageBody, Map<String, ImageData> images, MimeMessage message) throws MessagingException, IOException, InterruptedException, URISyntaxException {
+		MimeBodyPart messageBodyPart = new MimeBodyPart();
+		messageBodyPart.setContent(messageBody.toString(), "text/html");
+		Multipart multipart = new MimeMultipart();
+		multipart.addBodyPart(messageBodyPart);
+		// Disable images
+		if (useImages) {
+			if (images != null && !images.isEmpty()) {
+				Set<String> setImageID = images.keySet();
+				for (String contentId : setImageID) {
+					multipart.addBodyPart(addImagePart(contentId));
+				}
+				message.setContent(multipart);
+			}
+		}
+	}
+	
+	private MimeBodyPart addImagePart(String contentId) throws MessagingException, IOException, InterruptedException, URISyntaxException {
+		ImageData imageData = ImagesMap.getImages().get(contentId);
 		MimeBodyPart imagePart = new MimeBodyPart();
 		imagePart.setHeader("Content-ID", "<" + contentId + ">");
 		imagePart.setDisposition(MimeBodyPart.INLINE);
-		FilePath imageFile = Helper.createFile(workspace, ImagesMap.getImages().get(contentId).getSourcePath());
-		imagePart.attachFile(imageFile.getRemote());
+		// Get File
+		FilePath localFile = Helper.createFile(workspace, imageData.getSourcePath());
+		File copied = new File(rootDirectory + "/" + imageData.getFileName());
+		try (
+				InputStream in = new BufferedInputStream(new FileInputStream(localFile.getRemote()));
+				OutputStream out = new BufferedOutputStream(new FileOutputStream(copied))) {
+			byte[] buffer = new byte[1024];
+			int lengthRead;
+			while ((lengthRead = in.read(buffer)) > 0) {
+				out.write(buffer, 0, lengthRead);
+				out.flush();
+			}
+		}
+		imagePart.attachFile(copied);
 		return imagePart;
+	}
+	
+	protected File copyStream(String sourceFile, String destinationFile, File directory) throws IOException, InterruptedException {
+		InputStream inputUrl = HTMLReporter.class.getResource(sourceFile).openStream();
+		// Create Destination File
+		Helper.createFile(new FilePath(directory), destinationFile).copyFrom(inputUrl);
+		return new File(directory + destinationFile);
+	}
+	
+	private String resolveVariables(String text) {
+		// String newText = Matcher.quoteReplacement(text);
+		// newText = TokenMacro.expandAll(context.getRun(), context.getWorkspace(), context.getListener(), newText, false, null);
+		return text != null ? text.trim() : "";
 	}
 }

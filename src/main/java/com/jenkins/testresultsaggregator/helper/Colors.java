@@ -10,7 +10,7 @@ public class Colors {
 	public static final Color FAILED = new Color(245, 15, 25);// Color.RED;
 	public static final Color RUNNING = new Color(0, 25, 235);// Color.BLUE;
 	public static final Color UNSTABLE = new Color(255, 205, 10); // Color.ORANGE;
-	public static final Color HEADER = new Color(0, 0, 0);
+	public static final Color HEADER = Color.WHITE;
 	public static final Color FOOTER = Color.WHITE;
 	public static final Color FOOTER_TEXT = Color.BLACK;
 	public static final Color LINE_SEPERATOR = new Color(204, 204, 179);
