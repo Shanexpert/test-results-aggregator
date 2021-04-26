@@ -104,7 +104,7 @@ if (my.result.failedJobs > 0) {
 		tbody() {
 			for (data in my.result.getData()) {
 				for (job in data.getJobs()) {
-					if("${JobStatus.FAILURE.name()}".equalsIgnoreCase(job.getResults().getStatus())) {
+					if(job.getResults()!=null && "${JobStatus.FAILURE.name()}".equalsIgnoreCase(job.getResults().getStatus())) {
 						tr() {
 							td(align: "left") {
 								text("${job.getJobName()}")
