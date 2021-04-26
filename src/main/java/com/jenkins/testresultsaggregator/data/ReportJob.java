@@ -271,7 +271,6 @@ public class ReportJob implements Serializable {
 	public String calculatePercentage(Results results) {
 		if (results.getCurrentResult().equalsIgnoreCase(JobStatus.ABORTED.name()) ||
 				results.getCurrentResult().equalsIgnoreCase(JobStatus.DISABLED.name()) ||
-				results.getCurrentResult().equalsIgnoreCase(JobStatus.FAILURE.name()) ||
 				results.getCurrentResult().equalsIgnoreCase(JobStatus.NOT_FOUND.name()) ||
 				results.getCurrentResult().equalsIgnoreCase(JobStatus.RUNNING.name())) {
 			setPercentage(null);
