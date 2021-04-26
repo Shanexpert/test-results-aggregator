@@ -43,7 +43,10 @@ public class ReportJob implements Serializable {
 	}
 	
 	private String fixStatusName(String jobStatus) {
-		return jobStatus.replaceAll("_", " ");
+		if (jobStatus != null) {
+			return jobStatus.replace("_", " ");
+		}
+		return jobStatus;
 	}
 	
 	public void calculateTimestamp(Results resultsDTO, String outOfDateResults) {
@@ -112,7 +115,7 @@ public class ReportJob implements Serializable {
 	}
 	
 	public String getStatusColor() {
-		return Helper.colorizeResultStatus(status);
+		return fixStatusName(Helper.colorizeResultStatus(status));
 	}
 	
 	public void setStatus(String status) {
