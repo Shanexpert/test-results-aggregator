@@ -261,7 +261,7 @@ public class Collector {
 				results.setCurrentResult(JobStatus.RUNNING.name());
 			} else {
 				// if job is not failed
-				if (!results.getCurrentResult().equalsIgnoreCase("FAILURE")) {
+				if (results.getCurrentResult() != null) {
 					for (HashMap<Object, Object> temp : job.getBuildInfo().getActions()) {
 						// Calculate FAIL,SKIP and TOTAL Test Results
 						if (temp.containsKey(FAILCOUNT)) {
