@@ -287,7 +287,7 @@ public class ReportJob implements Serializable {
 	
 	public String getPercentage(boolean withColor, boolean withLink) {
 		if (withColor && !Strings.isNullOrEmpty(percentage)) {
-			String temp = Helper.colorizePercentage(Double.valueOf(percentage));
+			String temp = Helper.colorizePercentage(Double.valueOf(percentage), null, null);
 			if (withLink) {
 				return "<a href='" + getReportURL() + "' style='text-decoration:none;'>" + temp + "</a>";
 			}

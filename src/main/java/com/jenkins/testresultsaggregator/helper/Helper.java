@@ -107,7 +107,7 @@ public class Helper {
 	}
 	
 	public static Double countPercentage(Results results) {
-		String percentage = "0";
+		String percentage;
 		if (results != null && results.getTotal() != 0) {
 			try {
 				percentage = singDoubleSingle((double) (results.getPass() + results.getSkip()) * 100 / results.getTotal());
@@ -125,17 +125,17 @@ public class Helper {
 				
 			}
 		} else {
-			percentage = null;
+			return null;
 		}
 		return -1D;
 	}
 	
 	public static String countPercentage(int pass, int total) {
-		Results results = new Results();
-		results.setPass(pass);
-		results.setSkip(0);
-		results.setTotal(total);
-		return countPercentage(results).toString();
+		Double percentage = countPercentageD(pass, total);
+		if (percentage != null) {
+			return percentage.toString();
+		}
+		return null;
 	}
 	
 	public static Double countPercentageD(int pass, int total) {
@@ -144,10 +144,6 @@ public class Helper {
 		results.setSkip(0);
 		results.setTotal(total);
 		return countPercentage(results);
-	}
-	
-	public static String colorizePercentage(double percentageDouble) {
-		return colorizePercentage(percentageDouble, null, null);
 	}
 	
 	public static String colorizePercentage(Double percentageDouble, Integer fontSize, String jobStatus) {
@@ -181,15 +177,11 @@ public class Helper {
 		} else {
 			DecimalFormat df = new DecimalFormat("#.##");
 			df.setRoundingMode(RoundingMode.DOWN);
-			String valueAsString = df.format(value);
-			value = Double.valueOf(valueAsString);
 			if (Math.abs(value) < 0.005) {
 				return "";
 			} else if (Math.abs(value) == 0) {
 				return "";
-			} else if (value < 0.00) {
-				return df.format(value);
-			} else if (value > 0) {
+			} else if (value < 0.00 || value > 0) {
 				return df.format(value);
 			} else {
 				return "";
