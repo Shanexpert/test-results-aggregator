@@ -197,28 +197,19 @@ public class Collector {
 	}
 	
 	public BuildInfo getJobInfoLastBuild(Job dataJobDTO) {
-		BuildInfo buildInfo = null;
-		int retries = 1;
-		while (buildInfo == null && retries <= 3) {
-			try {
-				URL jobUrlAPILastBuild = new URL(dataJobDTO.getJobInfo().getUrl() + "/" + LASTBUILD + "/" + API_JSON_JACOCO);
-				buildInfo = Deserialize.initializeObjectMapper().readValue(Http.get(jobUrlAPILastBuild, authenticationString()), BuildInfo.class);
-			} catch (IOException e) {
-			}
-			retries++;
-			if (buildInfo == null) {
-				delay(2000);
-			}
-		}
-		return buildInfo;
+		return getJobInfoWithUrl(dataJobDTO.getJobInfo().getUrl() + "/" + LASTBUILD + "/" + API_JSON_JACOCO);
 	}
 	
 	public BuildInfo getJobInfo(String url) {
+		return getJobInfoWithUrl(url + "/" + API_JSON_JACOCO);
+	}
+	
+	private BuildInfo getJobInfoWithUrl(String url) {
 		BuildInfo buildInfo = null;
 		int retries = 1;
 		while (buildInfo == null && retries <= 3) {
 			try {
-				URL jobUrlAPILastBuild = new URL(url + "/" + API_JSON_JACOCO);
+				URL jobUrlAPILastBuild = new URL(url);
 				buildInfo = Deserialize.initializeObjectMapper().readValue(Http.get(jobUrlAPILastBuild, authenticationString()), BuildInfo.class);
 			} catch (IOException e) {
 			}
