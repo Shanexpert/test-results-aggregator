@@ -9,7 +9,7 @@ public class JobInfo implements Serializable {
 	private static final long serialVersionUID = 74223666L;
 	
 	private URL url;
-	private Boolean buildable;
+	private boolean buildable;
 	private Boolean inQueue;
 	private BuildDTO lastBuild;
 	private BuildDTO lastCompletedBuild;
@@ -22,11 +22,11 @@ public class JobInfo implements Serializable {
 		setUrl(url);
 	}
 	
-	public Boolean getBuildable() {
+	public boolean getBuildable() {
 		return buildable;
 	}
 	
-	public void setBuildable(Boolean buildable) {
+	public void setBuildable(boolean buildable) {
 		this.buildable = buildable;
 	}
 	
