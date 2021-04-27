@@ -176,7 +176,7 @@ public class Analyzer {
 			data.getReportGroup().setOnlyTests(isOnlyTestIntoGroup);
 			// Calculate Percentage Per Group based on Jobs
 			if (!isOnlyTestIntoGroup) {
-				data.getReportGroup().setPercentageForJobs(Helper.countPercentageD(jobSuccess + jobUnstable, jobSuccess + jobRunning + jobAborted + jobUnstable + jobFailed).toString());
+				data.getReportGroup().setPercentageForJobs(Helper.countPercentage(jobSuccess + jobUnstable, jobSuccess + jobRunning + jobAborted + jobUnstable + jobFailed));
 			}
 			// Calculate Percentage Per Group based on Tests
 			// Skip tests are calculated as success into test percentage

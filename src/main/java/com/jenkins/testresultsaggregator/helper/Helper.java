@@ -124,8 +124,6 @@ public class Helper {
 			} catch (Exception ex) {
 				
 			}
-		} else {
-			return null;
 		}
 		return -1D;
 	}
