@@ -8,16 +8,19 @@ import org.kohsuke.stapler.DataBoundSetter;
 import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.helper.Colors;
 
+import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
+import hudson.model.Descriptor;
 
 public class Job extends AbstractDescribableImpl<Job> implements Serializable {
 	
 	private static final long serialVersionUID = 34911974223666L;
 	
-	private String folder;
 	private String jobName;
 	
 	private String jobFriendlyName;
+	//
+	private String folder;
 	private String updated;
 	//
 	private JobInfo jobInfo;
@@ -27,7 +30,20 @@ public class Job extends AbstractDescribableImpl<Job> implements Serializable {
 	private String savedUrl;
 	private String url;
 	
+	@Extension
+	public static class JobDescriptor extends Descriptor<Job> {
+		@Override
+		public String getDisplayName() {
+			return "";
+		}
+		
+	}
+	
 	@DataBoundConstructor
+	public Job() {
+		
+	}
+	
 	public Job(String jobName, String jobFriendlyName) {
 		setJobName(jobName);
 		setJobFriendlyName(jobFriendlyName);

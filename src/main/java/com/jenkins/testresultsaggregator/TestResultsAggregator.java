@@ -12,7 +12,10 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.annotation.CheckForNull;
+
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -46,6 +49,7 @@ import net.sf.json.JSONObject;
 public class TestResultsAggregator extends Notifier {
 	
 	private static final String displayName = "Aggregate Test Results";
+	
 	private String subject;
 	private String recipientsList;
 	private String beforebody;
@@ -55,7 +59,6 @@ public class TestResultsAggregator extends Notifier {
 	private String outOfDateResults;
 	private String selectedColumns;
 	private List<LocalMessages> columns;
-	
 	private List<Data> data;
 	
 	private Properties properties;
@@ -123,7 +126,7 @@ public class TestResultsAggregator extends Notifier {
 			logger.println(LocalMessages.START_AGGREGATE.toString());
 			// Set up Properties
 			properties = new Properties();
-			properties.put(AggregatorProperties.OUT_OF_DATE_RESULTS_ARG.name(), outOfDateResults);
+			properties.put(AggregatorProperties.OUT_OF_DATE_RESULTS_ARG.name(), getOutOfDateResults());
 			properties.put(AggregatorProperties.TEST_PERCENTAGE_PREFIX.name(), "");
 			properties.put(AggregatorProperties.THEME.name(), getTheme());
 			properties.put(AggregatorProperties.TEXT_BEFORE_MAIL_BODY.name(), getBeforebody());
@@ -134,7 +137,7 @@ public class TestResultsAggregator extends Notifier {
 			// Resolve Variables
 			resolveVariables(properties, build, listener);
 			// Resolve Columns
-			columns = calculateColumns(selectedColumns);
+			columns = calculateColumns(getSelectedColumns());
 			// Get Previous Saved Results
 			Aggregated previousSavedAggregatedResults = TestResultHistoryUtil.getTestResults(build.getPreviousSuccessfulBuild());
 			// Validate Input Data
@@ -148,7 +151,7 @@ public class TestResultsAggregator extends Notifier {
 			Aggregated aggregated = new Analyzer(logger).analyze(validatedData, properties);
 			// Reporter for HTML and mail
 			Reporter reporter = new Reporter(logger, build.getProject().getSomeWorkspace(), build.getRootDir(), desc.getMailNotificationFrom());
-			reporter.publishResuts(aggregated, properties, columns, build.getRootDir());
+			reporter.publishResuts(aggregated, properties, getColumns(), build.getRootDir());
 			// Add Build Action
 			build.addAction(new TestResultsAggregatorTestResultBuildAction(aggregated));
 		} catch (Exception e) {
@@ -157,6 +160,98 @@ public class TestResultsAggregator extends Notifier {
 		}
 		logger.println(LocalMessages.FINISHED_AGGREGATE.toString());
 		return true;
+	}
+	
+	@Override
+	public Descriptor getDescriptor() {
+		return (Descriptor) super.getDescriptor();
+	}
+	
+	@Extension
+	public static class Descriptor extends BuildStepDescriptor<Publisher> {
+		/**
+		 * Global configuration information variables.
+		 */
+		private String jenkinsUrl;
+		private String username;
+		private Secret password;
+		private String mailNotificationFrom;
+		
+		public String getUsername() {
+			return username;
+		}
+		
+		public Secret getPassword() {
+			return password;
+		}
+		
+		public String getJenkinsUrl() {
+			return jenkinsUrl;
+		}
+		
+		public String getMailNotificationFrom() {
+			return mailNotificationFrom;
+		}
+		
+		public String defaultMailNotificationFrom() {
+			return "Jenkins";
+		}
+		
+		/**
+		 * In order to load the persisted global configuration, you have to call load() in the constructor.
+		 */
+		public Descriptor() {
+			load();
+		}
+		
+		@Override
+		public boolean isApplicable(@SuppressWarnings("rawtypes") Class<? extends AbstractProject> jobType) {
+			// Indicates that this builder can be used with all kinds of project types.
+			return jobType == FreeStyleProject.class;
+		}
+		
+		@Override
+		public String getDisplayName() {
+			return displayName;
+		}
+		
+		@Override
+		public boolean configure(StaplerRequest req, JSONObject jsonObject) throws FormException {
+			username = jsonObject.getString("username");
+			password = Secret.fromString((String) jsonObject.get("password"));
+			jenkinsUrl = jsonObject.getString("jenkinsUrl");
+			mailNotificationFrom = jsonObject.getString("mailNotificationFrom");
+			save();
+			return super.configure(req, jsonObject);
+		}
+		
+		public FormValidation doCheckOutOfDateResults(@QueryParameter final String outOfDateResults) {
+			if (!Strings.isNullOrEmpty(outOfDateResults)) {
+				try {
+					int hours = Integer.parseInt(outOfDateResults);
+					if (hours < 0) {
+						return FormValidation.error(LocalMessages.VALIDATION_POSITIVE_NUMBER.toString());
+					} else {
+						return FormValidation.ok();
+					}
+				} catch (NumberFormatException e) {
+					return FormValidation.error(LocalMessages.VALIDATION_INTEGER_NUMBER.toString());
+				}
+			} else {
+				// No OutOfDate
+				return FormValidation.ok();
+			}
+		}
+		
+		public FormValidation doTestApiConnection(@QueryParameter final String jenkinsUrl, @QueryParameter final String username, @QueryParameter final Secret password) {
+			try {
+				new Collector(null, username, password, jenkinsUrl).getAPIConnection();
+				return FormValidation.ok(LocalMessages.SUCCESS.toString());
+			} catch (Exception e) {
+				return FormValidation.error(LocalMessages.ERROR_OCCURRED.toString() + ": " + e.getMessage());
+			}
+			
+		}
 	}
 	
 	private void resolveVariables(Properties properties, AbstractBuild build, BuildListener listener) throws IOException, InterruptedException {
@@ -262,99 +357,6 @@ public class TestResultsAggregator extends Notifier {
 		return columns;
 	}
 	
-	@Override
-	public Descriptor getDescriptor() {
-		return (Descriptor) super.getDescriptor();
-	}
-	
-	@Extension
-	public static class Descriptor extends BuildStepDescriptor<Publisher> {
-		
-		/**
-		 * Global configuration information variables. If you don't want fields to be persisted, use <tt>transient</tt>.
-		 */
-		private String jenkinsUrl;
-		private String username;
-		private Secret password;
-		private String mailNotificationFrom;
-		
-		public String getUsername() {
-			return username;
-		}
-		
-		public Secret getPassword() {
-			return password;
-		}
-		
-		public String getJenkinsUrl() {
-			return jenkinsUrl;
-		}
-		
-		public String getMailNotificationFrom() {
-			return mailNotificationFrom;
-		}
-		
-		public String defaultMailNotificationFrom() {
-			return "Jenkins";
-		}
-		
-		/**
-		 * In order to load the persisted global configuration, you have to call load() in the constructor.
-		 */
-		public Descriptor() {
-			load();
-		}
-		
-		@Override
-		public boolean isApplicable(@SuppressWarnings("rawtypes") Class<? extends AbstractProject> jobType) {
-			// Indicates that this builder can be used with all kinds of project types.
-			return jobType == FreeStyleProject.class;
-		}
-		
-		@Override
-		public String getDisplayName() {
-			return displayName;
-		}
-		
-		@Override
-		public boolean configure(StaplerRequest req, JSONObject jsonObject) throws FormException {
-			username = jsonObject.getString("username");
-			password = Secret.fromString((String) jsonObject.get("password"));
-			jenkinsUrl = jsonObject.getString("jenkinsUrl");
-			mailNotificationFrom = jsonObject.getString("mailNotificationFrom");
-			save();
-			return super.configure(req, jsonObject);
-		}
-		
-		public FormValidation doCheckOutOfDateResults(@QueryParameter final String outOfDateResults) {
-			if (!Strings.isNullOrEmpty(outOfDateResults)) {
-				try {
-					int hours = Integer.parseInt(outOfDateResults);
-					if (hours < 0) {
-						return FormValidation.error(LocalMessages.VALIDATION_POSITIVE_NUMBER.toString());
-					} else {
-						return FormValidation.ok();
-					}
-				} catch (NumberFormatException e) {
-					return FormValidation.error(LocalMessages.VALIDATION_INTEGER_NUMBER.toString());
-				}
-			} else {
-				// No OutOfDate
-				return FormValidation.ok();
-			}
-		}
-		
-		public FormValidation doTestApiConnection(@QueryParameter final String jenkinsUrl, @QueryParameter final String username, @QueryParameter final Secret password) {
-			try {
-				new Collector(null, username, password, jenkinsUrl).getAPIConnection();
-				return FormValidation.ok(LocalMessages.SUCCESS.toString());
-			} catch (Exception e) {
-				return FormValidation.error(LocalMessages.ERROR_OCCURRED.toString() + ": " + e.getMessage());
-			}
-			
-		}
-	}
-	
 	private List<Data> validateInputData(List<Data> data, String jenkinsUrl) throws UnsupportedEncodingException, MalformedURLException {
 		List<Data> validateData = new ArrayList<>();
 		for (Data tempDataDTO : data) {
@@ -407,6 +409,56 @@ public class TestResultsAggregator extends Notifier {
 		return BuildStepMonitor.NONE;
 	}
 	
+	@DataBoundSetter
+	public void setData(@CheckForNull List<Data> data) {
+		this.data = data;
+	}
+	
+	@DataBoundSetter
+	public void setRecipientsList(@CheckForNull String recipientsList) {
+		this.recipientsList = recipientsList;
+	}
+	
+	@DataBoundSetter
+	public void setOutOfDateResults(@CheckForNull String outOfDateResults) {
+		this.outOfDateResults = outOfDateResults;
+	}
+	
+	@DataBoundSetter
+	public void setBeforebody(@CheckForNull String beforebody) {
+		this.beforebody = beforebody;
+	}
+	
+	@DataBoundSetter
+	public void setAfterbody(@CheckForNull String afterbody) {
+		this.afterbody = afterbody;
+	}
+	
+	@DataBoundSetter
+	public void setTheme(@CheckForNull String theme) {
+		this.theme = theme;
+	}
+	
+	@DataBoundSetter
+	public void setSortresults(@CheckForNull String sortresults) {
+		this.sortresults = sortresults;
+	}
+	
+	@DataBoundSetter
+	public void setSubject(@CheckForNull String subject) {
+		this.subject = subject;
+	}
+	
+	@DataBoundSetter
+	public void setColumns(@CheckForNull List<LocalMessages> columns) {
+		this.columns = columns;
+	}
+	
+	@DataBoundSetter
+	public void setSelectedColumns(@CheckForNull String selectedColumns) {
+		this.selectedColumns = selectedColumns;
+	}
+	
 	public String getRecipientsList() {
 		return recipientsList;
 	}
@@ -419,48 +471,12 @@ public class TestResultsAggregator extends Notifier {
 		return data;
 	}
 	
-	public void setData(List<Data> data) {
-		this.data = data;
+	public List<LocalMessages> getColumns() {
+		return columns;
 	}
 	
-	public void setRecipientsList(String recipientsList) {
-		this.recipientsList = recipientsList;
-	}
-	
-	public void setOutOfDateResults(String outOfDateResults) {
-		this.outOfDateResults = outOfDateResults;
-	}
-	
-	public String getBeforebody() {
-		return beforebody;
-	}
-	
-	public void setBeforebody(String beforebody) {
-		this.beforebody = beforebody;
-	}
-	
-	public String getAfterbody() {
-		return afterbody;
-	}
-	
-	public void setAfterbody(String afterbody) {
-		this.afterbody = afterbody;
-	}
-	
-	public String getTheme() {
-		return theme;
-	}
-	
-	public void setTheme(String theme) {
-		this.theme = theme;
-	}
-	
-	public String getSortresults() {
-		return sortresults;
-	}
-	
-	public void setSortresults(String sortresults) {
-		this.sortresults = sortresults;
+	public String getSelectedColumns() {
+		return selectedColumns;
 	}
 	
 	public String getSubject() {
@@ -470,24 +486,19 @@ public class TestResultsAggregator extends Notifier {
 		return subject;
 	}
 	
-	public void setSubject(String subject) {
-		this.subject = subject;
+	public String getSortresults() {
+		return sortresults;
 	}
 	
-	public List<LocalMessages> getColumns() {
-		return columns;
+	public String getTheme() {
+		return theme;
 	}
 	
-	public void setColumns(List<LocalMessages> columns) {
-		this.columns = columns;
+	public String getBeforebody() {
+		return beforebody;
 	}
 	
-	public String getSelectedColumns() {
-		return selectedColumns;
+	public String getAfterbody() {
+		return afterbody;
 	}
-	
-	public void setSelectedColumns(String selectedColumns) {
-		this.selectedColumns = selectedColumns;
-	}
-	
 }
