@@ -42,7 +42,7 @@ if (my.result.abortedJobs > 0) {
 		tbody() {
 			for (data in my.result.getData()) {
 				for (job in data.getJobs()) {
-					if("${JobStatus.ABORTED.name()}".equalsIgnoreCase(job.getResults().getStatus())) {
+					if(job.getResults()!=null && "${JobStatus.ABORTED.name()}".equalsIgnoreCase(job.getResults().getStatus())) {
 						tr() {
 							td(align: "left") {
 								text("${job.getJobName()}")
@@ -228,7 +228,7 @@ if (my.result.unstableJobs > 0) {
 		tbody() {
 			for (data in my.result.getData()) {
 				for (job in data.getJobs()) {
-					if("${JobStatus.UNSTABLE.name()}".equalsIgnoreCase(job.getResults().getStatus())) {
+					if(job.getResults()!=null && "${JobStatus.UNSTABLE.name()}".equalsIgnoreCase(job.getResults().getStatus())) {
 						tr() {
 							td(align: "left") {
 								text("${job.getJobName()}")
@@ -290,7 +290,7 @@ if (my.result.keepUnstableJobs > 0) {
 		tbody() {
 			for (data in my.result.getData()) {
 				for (job in data.getJobs()) {
-					if("${JobStatus.STILL_UNSTABLE.name()}".equalsIgnoreCase(job.getResults().getStatus())) {
+					if(job.getResults()!=null && "${JobStatus.STILL_UNSTABLE.name()}".equalsIgnoreCase(job.getResults().getStatus())) {
 						tr() {
 							td(align: "left") {
 								text("${job.getJobName()}")
@@ -352,7 +352,7 @@ if (my.result.fixedJobs > 0) {
 		tbody() {
 			for (data in my.result.getData()) {
 				for (job in data.getJobs()) {
-					if("${JobStatus.FIXED.name()}".equalsIgnoreCase(job.getResults().getStatus())) {
+					if(job.getResults()!=null && "${JobStatus.FIXED.name()}".equalsIgnoreCase(job.getResults().getStatus())) {
 						tr() {
 							td(align: "left") {
 								text("${job.getJobName()}")
@@ -414,7 +414,7 @@ if (my.result.successJobs > 0) {
 		tbody() {
 			for (data in my.result.getData()) {
 				for (job in data.getJobs()) {
-					if("${JobStatus.SUCCESS.name()}".equalsIgnoreCase(job.getResults().getStatus())) {
+					if(job.getResults()!=null && "${JobStatus.SUCCESS.name()}".equalsIgnoreCase(job.getResults().getStatus())) {
 						tr() {
 							td(align: "left") {
 								text("${job.getJobName()}")
@@ -476,7 +476,7 @@ if (my.result.runningJobs > 0) {
 		tbody() {
 			for (data in my.result.getData()) {
 				for (job in data.getJobs()) {
-					if("${JobStatus.RUNNING.name()}".equalsIgnoreCase(job.getResults().getStatus())) {
+					if(job.getResults()!=null && "${JobStatus.RUNNING.name()}".equalsIgnoreCase(job.getResults().getStatus())) {
 						tr() {
 							td(align: "left") {
 								text("${job.getJobName()}")
