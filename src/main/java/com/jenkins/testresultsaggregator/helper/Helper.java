@@ -129,11 +129,7 @@ public class Helper {
 	}
 	
 	public static String countPercentage(int pass, int total) {
-		Double percentage = countPercentageD(pass, total);
-		if (percentage != null) {
-			return percentage.toString();
-		}
-		return null;
+		return countPercentageD(pass, total).toString();
 	}
 	
 	public static Double countPercentageD(int pass, int total) {
