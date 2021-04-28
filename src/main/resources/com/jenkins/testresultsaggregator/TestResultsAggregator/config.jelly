@@ -5,7 +5,7 @@
 	
         <f:repeatable var="data" items="${instance.data}" noAddButton="false" minimum="1">
             
-            <table width="95%">
+            <div width="95%">
                     
                     <f:entry title="${%groupName}" field="groupName"><f:textbox value="${data.groupName}"/></f:entry>
                     
@@ -13,7 +13,7 @@
         					
         					<f:repeatable var="jobs" items="${data.jobs}" noAddButton="false" minimum="1">
                     			
-                    			<table width="90%">
+                    			<div width="90%">
                     			
                     				<f:entry title="${%jobName}" field="jobName"><f:textbox value="${jobs.jobName}"/></f:entry>
                     			
@@ -28,7 +28,7 @@
                     					</div>
                     				</f:entry>
                     			
-                    			</table>
+                    			</div>
         				
         					</f:repeatable>
     				
@@ -44,7 +44,7 @@
                     
                     </f:entry>
                     
-            </table>
+            </div>
             
         </f:repeatable>
     

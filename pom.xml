@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
-		<version>2.37</version>
+		<version>4.18</version>
 		<relativePath />
 	</parent>
 	<artifactId>test-results-aggregator</artifactId>
@@ -13,7 +13,8 @@
 	<description>Aggregate Test and Job Results in a single HTML/email report.</description>
 	<url>https://github.com/jenkinsci/test-results-aggregator-plugin</url>
 	<properties>
-		<jenkins.version>2.0</jenkins.version>
+		<jenkins.version>2.277</jenkins.version>
+		<java.level>8</java.level>
 	</properties>
 	<licenses>
 		<license>
@@ -57,15 +58,13 @@
 		<dependency>
 			<groupId>org.jenkins-ci.plugins</groupId>
 			<artifactId>junit</artifactId>
-			<version>1.7</version>
+			<version>1.21</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jenkins-ci.plugins</groupId>
 			<artifactId>mailer</artifactId>
 			<version>1.21</version>
 		</dependency>
-		<!-- <dependency> <groupId>org.jenkins-ci.plugins</groupId> <artifactId>structs</artifactId> 
-			<version>1.5</version> </dependency> -->
 	</dependencies>
 	<build>
 		<finalName>test-results-aggregator-plugin</finalName>
