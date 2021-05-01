@@ -62,7 +62,7 @@ public class Collector {
 		this.logger = logger;
 	}
 	
-	public void collectResults(List<Data> dataJob) throws InterruptedException {
+	public void collectResults(List<Data> dataJob, boolean compareWithPreviousRun) throws InterruptedException {
 		List<Job> allDataJobDTO = new ArrayList<>();
 		for (Data temp : dataJob) {
 			if (temp.getJobs() != null && !temp.getJobs().isEmpty()) {
@@ -72,7 +72,7 @@ public class Collector {
 		ReportThread[] threads = new ReportThread[allDataJobDTO.size()];
 		int index = 0;
 		for (Job tempDataJobDTO : allDataJobDTO) {
-			threads[index] = new ReportThread(tempDataJobDTO);
+			threads[index] = new ReportThread(tempDataJobDTO, compareWithPreviousRun);
 			index++;
 		}
 		index = 0;
@@ -232,7 +232,7 @@ public class Collector {
 		return null;
 	}
 	
-	public Results calculateResults(Job job) {
+	public Results calculateResults(Job job, boolean compareWithPreviousRun) {
 		if (job != null && job.getBuildInfo() != null) {
 			Results results = new Results();
 			// Set Urls
@@ -260,7 +260,6 @@ public class Collector {
 			if (results.isBuilding()) {
 				results.setCurrentResult(JobStatus.RUNNING.name());
 			} else {
-				// if job is not failed
 				if (results.getCurrentResult() != null) {
 					for (HashMap<Object, Object> temp : job.getBuildInfo().getActions()) {
 						// Calculate FAIL,SKIP and TOTAL Test Results
@@ -307,7 +306,7 @@ public class Collector {
 					// Calculate Percentage
 					results.setPercentage(Helper.countPercentage(results));
 					// Calculate Previous Results and change sets
-					if (job.getBuildInfo().getPreviousBuild() != null) {
+					if (compareWithPreviousRun && job.getBuildInfo().getPreviousBuild() != null) {
 						BuildInfo jenkinsPreviousBuildDTO = null;
 						if (job.getSavedJobUrl() == null) {
 							// There is no Saved Job , get Previous
@@ -468,9 +467,11 @@ public class Collector {
 	public class ReportThread extends Thread {
 		
 		Job job;
+		boolean compareWithPreviousRun;
 		
-		public ReportThread(Job job) {
+		public ReportThread(Job job, boolean compareWithPreviousRun) {
 			this.job = job;
+			this.compareWithPreviousRun = compareWithPreviousRun;
 		}
 		
 		@Override
@@ -497,7 +498,7 @@ public class Collector {
 				// Get Job Results
 				job.setBuildInfo(getJobInfoLastBuild(job));
 				// Get Actual Results
-				job.setResults(calculateResults(job));
+				job.setResults(calculateResults(job, compareWithPreviousRun));
 				logger.println(LocalMessages.COLLECT_DATA.toString() + " '" + job.getJobName() + "' " + LocalMessages.FINISHED.toString());
 			} else {
 				logger.println("...");

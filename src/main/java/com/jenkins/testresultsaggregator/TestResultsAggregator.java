@@ -57,6 +57,7 @@ public class TestResultsAggregator extends Notifier {
 	private String theme;
 	private String sortresults;
 	private String outOfDateResults;
+	private Boolean compareWithPreviousRun;
 	private String selectedColumns;
 	private List<LocalMessages> columns;
 	private List<Data> data;
@@ -106,7 +107,7 @@ public class TestResultsAggregator extends Notifier {
 	
 	@DataBoundConstructor
 	public TestResultsAggregator(final String subject, final String recipientsList, final String outOfDateResults, final List<Data> data, String beforebody, String afterbody, String theme, String sortresults,
-			String selectedColumns) {
+			String selectedColumns, Boolean compareWithPreviousRun) {
 		this.setRecipientsList(recipientsList);
 		this.setOutOfDateResults(outOfDateResults);
 		this.setData(data);
@@ -116,6 +117,7 @@ public class TestResultsAggregator extends Notifier {
 		this.setSortresults(sortresults);
 		this.setSubject(subject);
 		this.setSelectedColumns(selectedColumns);
+		this.setCompareWithPreviousRun(compareWithPreviousRun);
 	}
 	
 	@Override
@@ -138,15 +140,17 @@ public class TestResultsAggregator extends Notifier {
 			resolveVariables(properties, build, listener);
 			// Resolve Columns
 			columns = calculateColumns(getSelectedColumns());
-			// Get Previous Saved Results
-			Aggregated previousSavedAggregatedResults = TestResultHistoryUtil.getTestResults(build.getPreviousSuccessfulBuild());
 			// Validate Input Data
 			List<Data> validatedData = validateInputData(getData(), desc.getJenkinsUrl());
-			// Check previous Data
-			previousSavedResults(validatedData, previousSavedAggregatedResults);
+			if (compareWithPrevious()) {
+				// Get Previous Saved Results
+				Aggregated previousSavedAggregatedResults = TestResultHistoryUtil.getTestResults(build.getPreviousSuccessfulBuild());
+				// Check previous Data
+				previousSavedResults(validatedData, previousSavedAggregatedResults);
+			}
 			// Collect Data
 			Collector collector = new Collector(logger, desc.getUsername(), desc.getPassword(), desc.getJenkinsUrl());
-			collector.collectResults(validatedData);
+			collector.collectResults(validatedData, compareWithPrevious());
 			// Analyze Results
 			Aggregated aggregated = new Analyzer(logger).analyze(validatedData, properties);
 			// Reporter for HTML and mail
@@ -459,6 +463,11 @@ public class TestResultsAggregator extends Notifier {
 		this.selectedColumns = selectedColumns;
 	}
 	
+	@DataBoundSetter
+	public void setCompareWithPreviousRun(Boolean compareWithPreviousRun) {
+		this.compareWithPreviousRun = compareWithPreviousRun;
+	}
+	
 	public String getRecipientsList() {
 		return recipientsList;
 	}
@@ -501,4 +510,16 @@ public class TestResultsAggregator extends Notifier {
 	public String getAfterbody() {
 		return afterbody;
 	}
+	
+	public Boolean isCompareWithPreviousRun() {
+		return compareWithPreviousRun;
+	}
+	
+	public boolean compareWithPrevious() {
+		if (compareWithPreviousRun == null) {
+			compareWithPreviousRun = true;
+		}
+		return compareWithPreviousRun.booleanValue();
+	}
+	
 }
