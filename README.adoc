@@ -87,6 +87,12 @@ image::OutofDate.png[OutofDate,900,align="right"]
 	
 **Out Of Date Results in Hours** : jobs with results more than X hours ago will be marked with 'red' color under 'Last Run' column report. Otherwise (if blank) column 'Last Run' will just have the timestamp of job completion.
 
+6.Compare with previous run :
+
+image::CompareWithPrevious.png[CompareWithPrevious,900,align="right"]
+
+**Compare with previous** : current run will be compared with the previous about job statuses and tests results.
+
 == Reports
 
 1.Jobs and Tests graphs, see a sample :
