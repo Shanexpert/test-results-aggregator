@@ -91,7 +91,7 @@ image::OutofDate.png[OutofDate,900,align="right"]
 
 image::CompareWithPrevious.png[CompareWithPrevious,900,align="right"]
 
-**Compare with previous** : current run will be compared with the previous about job statuses and tests results.
+**Compare with previous** : current run will be compared with the previous regarding job statuses and tests results.
 
 == Reports
 
