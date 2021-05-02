@@ -88,8 +88,8 @@
 	
  	<f:entry name="compareWithPreviousRun" title="${%compareWithPreviousRun}" field="compareWithPreviousRun">
  		<select name="compareWithPreviousRun">
- 			<option value="true" selected="true">true</option>
-    		<option value="false" selected="${instance.compareWithPreviousRun.equals('false')? 'false':null}">false</option>
+ 			<option value="true" selected="${instance.compareWithPrevious()== true? true :null}">true</option>
+    		<option value="false" selected="${instance.compareWithPrevious()==false? false :null}">false</option>
   		</select>
   	</f:entry>
   	
