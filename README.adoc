@@ -71,6 +71,7 @@ image::FreeStyleProject_Jobs.png[Jobs Configuraion,900,align="right"]
 
 image::ReceipientsList.png[Recipients,900,align="right"]
 	
+	
 * Recipients List : comma separated recipients list, ex : nick@some.com,mairy@some.com . if empty no email will be triggered. Supports also job variables.
 * Subject prefix : prefix for mail subject. Supports also job & env variables.
 * Columns : html & email report columns and the order of them, comma separated. Possible columns are : 
@@ -85,17 +86,20 @@ image::ReceipientsList.png[Recipients,900,align="right"]
 
 image::OutofDate.png[OutofDate,900,align="right"]
 	
-Out Of Date Results in Hours : jobs with results more than X hours ago will be marked with 'red' color under 'Last Run' column report. Otherwise (if blank) column 'Last Run' will just have the timestamp of job completion.
+	
+Jobs with results more than X hours ago will be marked with 'red' color under 'Last Run' column report. Otherwise (if blank) column 'Last Run' will just have the timestamp of job completion.
 
 **6. Compare with previous run **
 
 image::CompareWithPrevious.png[CompareWithPrevious,900,align="right"]
 
-Compare with previous : current run will be compared with the previous regarding job statuses and tests results.
+Compared with the previous regarding job statuses and tests results. No diffs in report.
 
 **7. Ignore Jobs from report by status **
 
 image::IgnoreJobs.png[IgnoreJobs,900,align="right"]
+
+Igonre from report jobs with status NOT_FOUND, DISABLED or ABORTED.
 
 == Reports
 
