@@ -51,52 +51,51 @@ In this section you can define :
 
 == Job Configuration
 
-1.Test Result Aggregator Plugin can be used as a "Free Style Project". Create a new by : 
+**1. Test Result Aggregator Plugin can be used as a "Free Style Project". ** 
 
 image::FreeStyleProject.png[Free Style Project,900,align="right"]
 
-2.Select "Add Post Build" action and scroll to "Aggregate Test Results" action.
+**2. Select "Add Post Build" action and scroll to "Aggregate Test Results" action. **
 
 image::PostBuildAction.png[Post Build Action,900,align="right"]
 
-3.Add Groups/Teams and Jenkins Jobs : 
+**3. Add Groups/Teams and Jenkins Jobs **
 
 image::FreeStyleProject_Jobs.png[Jobs Configuraion,900,align="right"]
   
-* **Group/Team** : it's optional, it's used in report to group Jenkins jobs. For example teams , products or testing types.
-* **Job Name** : It's mandatory, it's the exact Jenkins job name to get results. In case of a job inside a 'folder' use : folderName/jobName or folderName(s)/jobName
-* **Job Friendly Name** : it's optional, used only for reporting purposes, if null or empty then "Job Name" will be used in report.
+* Group/Team : it's optional, it's used in report to group Jenkins jobs. For example teams , products or testing types.
+* Job Name : It's mandatory, it's the exact Jenkins job name to get results. In case of a job inside a 'folder' use : folderName/jobName or folderName(s)/jobName
+* Job Friendly Name : it's optional, used only for reporting purposes, if null or empty then "Job Name" will be used in report.
  
-4.Add Recipients List , Before,After Body text, theme and Sort by option : 
+**4. Add Recipients List , Before,After Body text, theme and Sort by option **
 
 image::ReceipientsList.png[Recipients,900,align="right"]
 	
-* **Recipients List** : comma separated recipients list, ex : nick@some.com,mairy@some.com . if empty no email will be triggered. Supports also job variables.
-* **Subject prefix** : prefix for mail subject. Supports also job & env variables.
-* **Columns** : html & email report columns and the order of them, comma separated. Possible columns are : 
+* Recipients List : comma separated recipients list, ex : nick@some.com,mairy@some.com . if empty no email will be triggered. Supports also job variables.
+* Subject prefix : prefix for mail subject. Supports also job & env variables.
+* Columns : html & email report columns and the order of them, comma separated. Possible columns are : 
 
  ** Health, Job, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Description, Packages, Files, Classes, Methods, Lines, Conditions & Sonar
-* **Before body** : plain text or html code to add before report table. Supports also job & env variables , for example ${WORKSPACE} or ${myVariable}
-* **After body** : plain text or html code to add after report table. Supports also job & env variables.
-* **Mail Theme** : Ligth or dark mail theme.
-* **Sort Results By** : report will be sorted accordingly. If there are Groups then sorting refers to jobs inside a group.
+* Before body : plain text or html code to add before report table. Supports also job & env variables , for example ${WORKSPACE} or ${myVariable}
+* After body : plain text or html code to add after report table. Supports also job & env variables.
+* Mail Theme : Ligth or dark mail theme.
+* Sort Results By : report will be sorted accordingly. If there are Groups then sorting refers to jobs inside a group.
  
-5.Outdated results : 
+**5. Outdated results **
 
 image::OutofDate.png[OutofDate,900,align="right"]
 	
-**Out Of Date Results in Hours** : jobs with results more than X hours ago will be marked with 'red' color under 'Last Run' column report. Otherwise (if blank) column 'Last Run' will just have the timestamp of job completion.
+Out Of Date Results in Hours : jobs with results more than X hours ago will be marked with 'red' color under 'Last Run' column report. Otherwise (if blank) column 'Last Run' will just have the timestamp of job completion.
 
-6.Compare with previous run :
+**6. Compare with previous run **
 
 image::CompareWithPrevious.png[CompareWithPrevious,900,align="right"]
 
-**Compare with previous** : current run will be compared with the previous regarding job statuses and tests results.
+Compare with previous : current run will be compared with the previous regarding job statuses and tests results.
 
-7.Ignore Jobs from report by status
+**7. Ignore Jobs from report by status **
 
 image::IgnoreJobs.png[IgnoreJobs,900,align="right"]
-
 
 == Reports
 
