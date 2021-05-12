@@ -93,6 +93,10 @@ image::CompareWithPrevious.png[CompareWithPrevious,900,align="right"]
 
 **Compare with previous** : current run will be compared with the previous regarding job statuses and tests results.
 
+7.Ignore Jobs from report by status
+image::IgnoreJobs.png[IgnoreJobs,900,align="right"]
+
+
 == Reports
 
 1.Jobs and Tests graphs, see a sample :

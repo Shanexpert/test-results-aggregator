@@ -1,6 +1,7 @@
 package com.jenkins.testresultsaggregator.data;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -217,4 +218,30 @@ public class Aggregated extends BaseResult {
 		this.disabledJobs = disabledJobs;
 	}
 	
+	public Aggregated copy() {
+		Aggregated aggregatedCopy = new Aggregated();
+		aggregatedCopy.setAbortedJobs(abortedJobs);
+		List<Data> copiedDataList = new ArrayList<>();
+		for (Data tempData : data) {
+			copiedDataList.add(tempData.copy());
+		}
+		aggregatedCopy.setData(copiedDataList);
+		// aggregatedCopy.setDescription(description);
+		aggregatedCopy.setDisabledJobs(disabledJobs);
+		aggregatedCopy.setFailedJobs(failedJobs);
+		aggregatedCopy.setFixedJobs(fixedJobs);
+		aggregatedCopy.setKeepFailJobs(keepFailJobs);
+		aggregatedCopy.setKeepUnstableJobs(keepUnstableJobs);
+		// aggregatedCopy.setParent(aggregatedCopy);
+		// aggregatedCopy.setParentAction(aggregatedCopy);
+		aggregatedCopy.setResults(results);
+		// aggregatedCopy.setRun(owner);
+		aggregatedCopy.setRunningJobs(runningJobs);
+		aggregatedCopy.setSuccessJobs(successJobs);
+		aggregatedCopy.setTotalDuration(totalDuration);
+		aggregatedCopy.setTotalJobs(totalJobs);
+		aggregatedCopy.setTotalNumberOfChanges(totalNumberOfChanges);
+		aggregatedCopy.setUnstableJobs(keepUnstableJobs);
+		return aggregatedCopy;
+	}
 }

@@ -1,6 +1,7 @@
 package com.jenkins.testresultsaggregator.data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -66,4 +67,11 @@ public class Data extends AbstractDescribableImpl<Data> implements Serializable 
 		this.reportGroup = reportGroup;
 	}
 	
+	public Data copy() {
+		Data dt = new Data();
+		dt.setGroupName(groupName);
+		dt.setReportGroup(reportGroup);
+		dt.setJobs(new ArrayList<>(jobs));
+		return dt;
+	}
 }

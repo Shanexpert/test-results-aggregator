@@ -1,0 +1,7 @@
+http://jenkins-master.internal.upstreamsystems.com:8080/api/json?tree=jobs[name,url]
+
+
+http://jenkins-master.internal.upstreamsystems.com:8080/view/Continuous_Integration/job/Continuous_Integration_Dryad_GUI/api/json?depth=1
+
+http://jenkins-master.internal.upstreamsystems.com:8080/job/k8s-misc/job/demo-mobisite/
+http://jenkins-master.internal.upstreamsystems.com:8080/view/all/job/k8s-misc/api/json

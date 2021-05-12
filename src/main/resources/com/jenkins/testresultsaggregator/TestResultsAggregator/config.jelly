@@ -86,12 +86,32 @@
   	
   	<f:entry title="${%outOfDateResults}" field="outOfDateResults"><f:textbox /></f:entry>
 	
- 	<f:entry name="compareWithPreviousRun" title="${%compareWithPreviousRun}" field="compareWithPreviousRun">
+  	<f:entry name="compareWithPreviousRun" title="${%compareWithPreviousRun}" field="compareWithPreviousRun">
  		<select name="compareWithPreviousRun">
- 			<option value="true" selected="${instance.compareWithPrevious()== true? true :null}">true</option>
-    		<option value="false" selected="${instance.compareWithPrevious()==false? false :null}">false</option>
+ 			<option value="true" selected="${instance.compareWithPrevious() == true? true :null}">true</option>
+    		<option value="false" selected="${instance.compareWithPrevious() == false? false :null}">false</option>
   		</select>
   	</f:entry>
-  	
+
+  	<f:entry name="ignoreNotFoundJobs" title="${%ignoreNotFoundJobs}" field="ignoreNotFoundJobs">
+ 		<select name="ignoreNotFoundJobs">
+    		<option value="false" selected="${instance.ignoreNotFoundJobs() == false? false :null}">false</option>
+    		<option value="true" selected="${instance.ignoreNotFoundJobs() == true? true :null}">true</option>
+  		</select>
+  	</f:entry>
+
+  	<f:entry name="ignoreDisabledJobs" title="${%ignoreDisabledJobs}" field="ignoreDisabledJobs">
+ 		<select name="ignoreDisabledJobs">
+    		<option value="false" selected="${instance.ignoreDisabledJobs() == false? false :null}">false</option>
+    		<option value="true" selected="${instance.ignoreDisabledJobs() == true? true :null}">true</option>
+  		</select>
+  	</f:entry>
+
+  	<f:entry name="ignoreAbortedJobs" title="${%ignoreAbortedJobs}" field="ignoreAbortedJobs">
+ 		<select name="ignoreAbortedJobs">
+    		<option value="false" selected="${instance.ignoreAbortedJobs() == false? false :null}">false</option>
+    		<option value="true" selected="${instance.ignoreAbortedJobs() == true? true :null}">true</option>
+  		</select>
+  	</f:entry>
 	</div>
 </j:jelly>

@@ -58,6 +58,9 @@ public class TestResultsAggregator extends Notifier {
 	private String sortresults;
 	private String outOfDateResults;
 	private Boolean compareWithPreviousRun;
+	private Boolean ignoreNotFoundJobs;
+	private Boolean ignoreDisabledJobs;
+	private Boolean ignoreAbortedJobs;
 	private String selectedColumns;
 	private List<LocalMessages> columns;
 	private List<Data> data;
@@ -107,7 +110,7 @@ public class TestResultsAggregator extends Notifier {
 	
 	@DataBoundConstructor
 	public TestResultsAggregator(final String subject, final String recipientsList, final String outOfDateResults, final List<Data> data, String beforebody, String afterbody, String theme, String sortresults,
-			String selectedColumns, Boolean compareWithPreviousRun) {
+			String selectedColumns, Boolean compareWithPreviousRun, Boolean ignoreNotFoundJobs, Boolean ignoreDisabledJobs, Boolean ignoreAbortedJobs) {
 		this.setRecipientsList(recipientsList);
 		this.setOutOfDateResults(outOfDateResults);
 		this.setData(data);
@@ -118,6 +121,9 @@ public class TestResultsAggregator extends Notifier {
 		this.setSubject(subject);
 		this.setSelectedColumns(selectedColumns);
 		this.setCompareWithPreviousRun(compareWithPreviousRun);
+		this.setIgnoreDisabledJobs(ignoreDisabledJobs);
+		this.setIgnoreNotFoundJobs(ignoreNotFoundJobs);
+		this.setIgnoreAbortedJobs(ignoreAbortedJobs);
 	}
 	
 	@Override
@@ -154,7 +160,7 @@ public class TestResultsAggregator extends Notifier {
 			// Analyze Results
 			Aggregated aggregated = new Analyzer(logger).analyze(validatedData, properties);
 			// Reporter for HTML and mail
-			Reporter reporter = new Reporter(logger, build.getProject().getSomeWorkspace(), build.getRootDir(), desc.getMailNotificationFrom());
+			Reporter reporter = new Reporter(logger, build.getProject().getSomeWorkspace(), build.getRootDir(), desc.getMailNotificationFrom(), ignoreDisabledJobs, ignoreNotFoundJobs, ignoreAbortedJobs);
 			reporter.publishResuts(aggregated, properties, getColumns(), build.getRootDir());
 			// Add Build Action
 			build.addAction(new TestResultsAggregatorTestResultBuildAction(aggregated));
@@ -468,6 +474,21 @@ public class TestResultsAggregator extends Notifier {
 		this.compareWithPreviousRun = compareWithPreviousRun;
 	}
 	
+	@DataBoundSetter
+	public void setIgnoreNotFoundJobs(Boolean ignoreNotFoundJobs) {
+		this.ignoreNotFoundJobs = ignoreNotFoundJobs;
+	}
+	
+	@DataBoundSetter
+	public void setIgnoreDisabledJobs(Boolean ignoreDisabledJobs) {
+		this.ignoreDisabledJobs = ignoreDisabledJobs;
+	}
+	
+	@DataBoundSetter
+	public void setIgnoreAbortedJobs(Boolean ignoreAbortedJobs) {
+		this.ignoreAbortedJobs = ignoreAbortedJobs;
+	}
+	
 	public String getRecipientsList() {
 		return recipientsList;
 	}
@@ -522,4 +543,32 @@ public class TestResultsAggregator extends Notifier {
 		return compareWithPreviousRun.booleanValue();
 	}
 	
+	public Boolean isIgnoreNotFoundJobs() {
+		return ignoreNotFoundJobs;
+	}
+	
+	public Boolean isIgnoreDisabledJobs() {
+		return ignoreDisabledJobs;
+	}
+	
+	public boolean ignoreNotFoundJobs() {
+		if (ignoreNotFoundJobs == null) {
+			ignoreNotFoundJobs = false;
+		}
+		return ignoreNotFoundJobs.booleanValue();
+	}
+	
+	public boolean ignoreDisabledJobs() {
+		if (ignoreDisabledJobs == null) {
+			ignoreDisabledJobs = false;
+		}
+		return ignoreDisabledJobs.booleanValue();
+	}
+	
+	public boolean ignoreAbortedJobs() {
+		if (ignoreAbortedJobs == null) {
+			ignoreAbortedJobs = false;
+		}
+		return ignoreAbortedJobs.booleanValue();
+	}
 }
