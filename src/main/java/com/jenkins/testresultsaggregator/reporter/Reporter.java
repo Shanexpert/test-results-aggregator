@@ -80,10 +80,10 @@ public class Reporter {
 	}
 	
 	private void ignoreJobsFromReport(List<Data> list, JobStatus status) {
-		List<Job> tempList = new ArrayList<>();
 		for (Data tempData : list) {
+			List<Job> tempList = new ArrayList<>();
 			for (Job temp : tempData.getJobs()) {
-				if (!temp.getResults().getStatus().equalsIgnoreCase(status.name())) {
+				if (temp.getResults() != null && !status.name().equalsIgnoreCase(temp.getResults().getStatus())) {
 					tempList.add(temp);
 				}
 			}
