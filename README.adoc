@@ -93,13 +93,13 @@ Jobs with results more than X hours ago will be marked with 'red' color under 'L
 
 image::CompareWithPrevious.png[CompareWithPrevious,900,align="right"]
 
-Compared with the previous regarding job statuses and tests results. No diffs in report.
+Compared with the previous run regarding job statuses and tests results. If false then no diffs in report (no signs + -).
 
 **7. Ignore Jobs from report by status **
 
 image::IgnoreJobs.png[IgnoreJobs,900,align="right"]
 
-Igonre from report jobs with status NOT_FOUND, DISABLED or ABORTED.
+Ignore from report jobs with status NOT_FOUND, DISABLED or ABORTED.
 
 == Reports
 
