@@ -123,7 +123,8 @@ image::AggregatedView.png[Aggregated,900,align="right"]
 
 See the https://github.com/jenkinsci/test-results-aggregator-plugin/releases[Github releases page].
 
-Jenkins CI https://ci.jenkins.io/job/Plugins/job/test-results-aggregator-plugin/
-
 * 1.1.x Requires Jenkins < 2.277
 * 1.2.x Requires Jenkins >= 2.277
+
+Jenkins CI https://ci.jenkins.io/job/Plugins/job/test-results-aggregator-plugin/
+
