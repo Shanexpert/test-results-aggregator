@@ -241,7 +241,7 @@ public class Aggregated extends BaseResult {
 		aggregatedCopy.setTotalDuration(totalDuration);
 		aggregatedCopy.setTotalJobs(totalJobs);
 		aggregatedCopy.setTotalNumberOfChanges(totalNumberOfChanges);
-		aggregatedCopy.setUnstableJobs(keepUnstableJobs);
+		aggregatedCopy.setUnstableJobs(unstableJobs);
 		return aggregatedCopy;
 	}
 }
