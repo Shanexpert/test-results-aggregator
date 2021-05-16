@@ -49,6 +49,7 @@ public class Collector {
 	public static final String JACOCO_INSTRUCTION = "instructionCoverage";
 	
 	public static final String SONAR_URL = "sonarqubeDashboardUrl";
+	public static final int MAXRETRIES = 3;
 	
 	private String username;
 	private Secret password;
@@ -84,7 +85,7 @@ public class Collector {
 			}
 		}
 		for (ReportThread thread : threads) {
-			thread.join();
+			thread.join(Http.HTTPTIMEOUT * MAXRETRIES);
 		}
 	}
 	
@@ -115,7 +116,7 @@ public class Collector {
 	public JobListDTO getJobList(String url) {
 		JobListDTO jobListDTO = null;
 		int retries = 1;
-		while (jobListDTO == null && retries <= 3) {
+		while (jobListDTO == null && retries <= MAXRETRIES) {
 			try {
 				URL jobUrlAPI = new URL(url + "/" + API_JSON_JOBS);
 				jobListDTO = Deserialize.initializeObjectMapper().readValue(Http.get(jobUrlAPI, authenticationString()), JobListDTO.class);
@@ -177,7 +178,7 @@ public class Collector {
 	public JobInfo getJobInfo(Job job) {
 		JobInfo jobInfo = null;
 		int retries = 1;
-		while (jobInfo == null && retries <= 3) {
+		while (jobInfo == null && retries <= MAXRETRIES) {
 			try {
 				URL jobUrlAPI = null;
 				if (Strings.isNullOrEmpty(job.getUrl())) {
@@ -207,7 +208,7 @@ public class Collector {
 	private BuildInfo getJobInfoWithUrl(String url) {
 		BuildInfo buildInfo = null;
 		int retries = 1;
-		while (buildInfo == null && retries <= 3) {
+		while (buildInfo == null && retries <= MAXRETRIES) {
 			try {
 				URL jobUrlAPILastBuild = new URL(url);
 				buildInfo = Deserialize.initializeObjectMapper().readValue(Http.get(jobUrlAPILastBuild, authenticationString()), BuildInfo.class);

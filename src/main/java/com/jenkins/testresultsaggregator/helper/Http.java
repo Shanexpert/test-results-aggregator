@@ -8,6 +8,8 @@ import java.net.URL;
 
 public class Http {
 	
+	public static final int HTTPTIMEOUT = 10000;
+	
 	public static String get(String url, String authentication) throws IOException {
 		return get(new URL(url), authentication);
 	}
@@ -16,7 +18,7 @@ public class Http {
 		StringBuilder buf = new StringBuilder();
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setRequestMethod("GET");
-		conn.setConnectTimeout(10000);
+		conn.setConnectTimeout(HTTPTIMEOUT);
 		conn.setRequestProperty("User-Agent", "Mozilla/5.0");
 		conn.setDoOutput(true);
 		if (authentication != null) {
