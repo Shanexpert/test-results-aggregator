@@ -93,7 +93,7 @@ Jobs with results more than X hours ago will be marked with 'red' color under 'L
 
 image::CompareWithPrevious.png[CompareWithPrevious,900,align="right"]
 
-Compared with the previous run regarding job statuses and tests results. If false then no diffs in report (no signs + -).
+Compare next run with the previous regarding job statuses, tests results and code coverage metrics. If false then no differences are displayed in report , no signs + -
 
 **7. Ignore Jobs from report by status **
 
@@ -123,4 +123,8 @@ image::AggregatedView.png[Aggregated,900,align="right"]
 
 See the https://github.com/jenkinsci/test-results-aggregator-plugin/releases[Github releases page].
 
+* 1.1.x Requires Jenkins < 2.277
+* 1.2.x Requires Jenkins >= 2.277
+
 Jenkins CI https://ci.jenkins.io/job/Plugins/job/test-results-aggregator-plugin/
+
