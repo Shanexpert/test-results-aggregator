@@ -50,7 +50,11 @@ public class Helper {
 			long bDays = currentHours / 24;
 			if (d.getSeconds() > outOfDate) {
 				if (bDays > 0) {
-					return colorize(bDays + "d:" + bDours + "h ago", Colors.FAILED);
+					if (bDays >= 2) {
+						return colorize(bDays + "d" + " ago", Colors.FAILED);
+					} else {
+						return colorize(bDays + "d:" + bDours + "h ago", Colors.FAILED);
+					}
 				} else {
 					return colorize(bDours + "h ago", Colors.FAILED);
 				}
