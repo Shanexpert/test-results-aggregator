@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.TestResultsAggregator.AggregatorProperties;
 import com.jenkins.testresultsaggregator.data.Aggregated;
 import com.jenkins.testresultsaggregator.data.Data;
@@ -46,6 +47,14 @@ public class Reporter {
 	}
 	
 	public void publishResuts(Aggregated aggregated, Properties properties, List<LocalMessages> columns, File rootDirectory) throws Exception {
+		List<Data> dataJob = aggregated.getData();
+		foundAtLeastOneGroupName = false;
+		for (Data data : dataJob) {
+			if (!Strings.isNullOrEmpty(data.getGroupName())) {
+				foundAtLeastOneGroupName = true;
+				break;
+			}
+		}
 		// Generate XML Report
 		new XMLReporter(logger, rootDir).generateXMLReport(aggregated);
 		// Calculate and Generate Columns
