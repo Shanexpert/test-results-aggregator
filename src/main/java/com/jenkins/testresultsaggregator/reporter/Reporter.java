@@ -31,9 +31,9 @@ public class Reporter {
 	private FilePath workspace;
 	private File rootDir;
 	private String mailNotificationFrom;
-	private boolean ignoreNotFoundJobs;
-	private boolean ignoreDisabledJobs;
-	private boolean ignoreAbortedJobs;
+	private Boolean ignoreNotFoundJobs;
+	private Boolean ignoreDisabledJobs;
+	private Boolean ignoreAbortedJobs;
 	private boolean foundAtLeastOneGroupName;
 	
 	public Reporter(PrintStream logger, FilePath workspace, File rootDir, String mailNotificationFrom, Boolean ignoreDisabledJobs, Boolean ignoreNotFoundJobs, Boolean ignoreAbortedJobs) {
@@ -62,13 +62,13 @@ public class Reporter {
 			columns.remove(LocalMessages.COLUMN_GROUP);
 		}
 		Aggregated aggregatedCopy = aggregated.copy();
-		if (ignoreDisabledJobs) {
+		if (ignoreDisabledJobs != null && ignoreDisabledJobs) {
 			ignoreJobsFromReport(aggregatedCopy.getData(), JobStatus.DISABLED);
 		}
-		if (ignoreNotFoundJobs) {
+		if (ignoreNotFoundJobs != null && ignoreNotFoundJobs) {
 			ignoreJobsFromReport(aggregatedCopy.getData(), JobStatus.NOT_FOUND);
 		}
-		if (ignoreAbortedJobs) {
+		if (ignoreAbortedJobs != null && ignoreAbortedJobs) {
 			ignoreJobsFromReport(aggregatedCopy.getData(), JobStatus.ABORTED);
 		}
 		// Generate HTML Report
