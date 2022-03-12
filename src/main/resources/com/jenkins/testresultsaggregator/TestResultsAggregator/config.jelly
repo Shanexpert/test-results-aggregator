@@ -56,7 +56,7 @@
   	
   	<f:entry title="${%subject}" field="subject"><f:textbox /></f:entry>
   	
-  	<f:entry title="${%selectedColumns}" field="selectedColumns"><f:textbox default="Health, Job, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Description, Packages, Files, Classes, Methods, Lines, Conditions, Sonar"/></f:entry>
+  	<f:entry title="${%selectedColumns}" field="selectedColumns"><f:textbox default="Health, Job, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Description, Packages, Files, Classes, Methods, Lines, Conditions, Sonar, Build"/></f:entry>
   	
   	<f:entry title="${%beforebody}" field="beforebody"><f:textarea /></f:entry>
   	
@@ -81,6 +81,7 @@
 		    <option value="COMMITS" selected="${instance.sortresults.equals('COMMITS')? 'true':null}">${%commits}</option>
 		    <option value="LAST_RUN" selected="${instance.sortresults.equals('LAST_RUN')? 'true':null}">${%time}</option>
 		    <option value="DURATION" selected="${instance.sortresults.equals('DURATION')? 'true':null}">${%duration}</option>
+		    <option value="BUILD_NUMBER" selected="${instance.sortresults.equals('BUILD_NUMBER')? 'true':null}">${%build}</option>
   		</select>
   	</f:entry>
   	

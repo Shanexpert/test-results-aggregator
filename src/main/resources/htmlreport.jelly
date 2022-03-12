@@ -102,6 +102,9 @@
 							<j:if test="${column.name() == 'COLUMN_SONAR_URL'}">
 								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getReport().getSonarUrl()}</td>
 							</j:if>
+							<j:if test="${column.name() == 'COLUMN_BUILD_NUMBER'}">
+								<td style="border-bottom:${line} solid ${lineSeperatorcolor};text-align: center">${job.getBuildInfo().getBuildNumberUrl()}</td>
+							</j:if>
 						</j:forEach>
 					</tr>
 				</j:forEach>
@@ -166,6 +169,9 @@
 								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center"></td>
 							</j:if>
 							<j:if test="${column.name() == 'COLUMN_SONAR_URL'}">
+								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center"></td>
+							</j:if>
+							<j:if test="${column.name() == 'COLUMN_BUILD_NUMBER'}">
 								<td style="border-bottom:2px solid ${lineSeperatorcolor};text-align: center"></td>
 							</j:if>
 				</j:forEach>

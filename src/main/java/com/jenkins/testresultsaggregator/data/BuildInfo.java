@@ -20,6 +20,7 @@ public class BuildInfo implements Serializable {
 	private List<ChangeSet> changeSets;
 	private Long timestamp;
 	private String url;
+	private String buildNumberUrl;
 	
 	public BuildInfo() {
 		
@@ -123,6 +124,10 @@ public class BuildInfo implements Serializable {
 	
 	public void setUrl(String url) {
 		this.url = url;
+	}
+	
+	public String getBuildNumberUrl() {
+		return "<a href='" + url + "' style='text-decoration:none;'>" + number + "</a>";
 	}
 	
 }

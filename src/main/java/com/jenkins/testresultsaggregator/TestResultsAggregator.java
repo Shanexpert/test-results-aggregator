@@ -100,7 +100,8 @@ public class TestResultsAggregator extends Notifier {
 		CC_METHODS,
 		CC_LINES,
 		CC_CONDITIONS,
-		SONAR_URL
+		SONAR_URL,
+		BUILD_NUMBER
 	}
 	
 	public enum Theme {
@@ -360,6 +361,8 @@ public class TestResultsAggregator extends Notifier {
 						columns.add(LocalMessages.COLUMN_CC_CONDITIONS);
 					} else if (temp.equalsIgnoreCase("Sonar")) {
 						columns.add(LocalMessages.COLUMN_SONAR_URL);
+					} else if (temp.equalsIgnoreCase("Build")) {
+						columns.add(LocalMessages.COLUMN_BUILD_NUMBER);
 					}
 				}
 			}

@@ -210,6 +210,8 @@ public class Analyzer {
 							return dataJobDTO1.getResults().getDuration().compareTo(dataJobDTO2.getResults().getDuration());
 						} else if (TestResultsAggregator.SortResultsBy.PERCENTAGE.name().equalsIgnoreCase(orderBy)) {
 							return dataJobDTO1.getResults().getPercentage().compareTo(dataJobDTO2.getResults().getPercentage());
+						} else if (TestResultsAggregator.SortResultsBy.BUILD_NUMBER.name().equalsIgnoreCase(orderBy)) {
+							return Integer.toString(dataJobDTO1.getBuildInfo().getNumber()).compareTo(Integer.toString(dataJobDTO2.getBuildInfo().getNumber()));
 						} else {
 							// Default
 							return dataJobDTO1.getJobNameFromFriendlyName().compareTo(dataJobDTO2.getJobNameFromFriendlyName());
