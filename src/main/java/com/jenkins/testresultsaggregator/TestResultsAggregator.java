@@ -223,7 +223,7 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 			build.addAction(new TestResultsAggregatorTestResultBuildAction(aggregated));
 		} catch (Exception e) {
 			logger.printf(LocalMessages.ERROR_OCCURRED.toString() + " : %s ", e);
-			e.printStackTrace();
+			e.printStackTrace(logger);
 		}
 		logger.println(LocalMessages.FINISHED_AGGREGATE.toString());
 		return true;
