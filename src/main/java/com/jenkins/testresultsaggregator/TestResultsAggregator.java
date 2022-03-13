@@ -11,9 +11,11 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.CheckForNull;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -22,6 +24,7 @@ import org.kohsuke.stapler.StaplerRequest;
 import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.data.Aggregated;
 import com.jenkins.testresultsaggregator.data.Data;
+import com.jenkins.testresultsaggregator.data.DataPipeline;
 import com.jenkins.testresultsaggregator.data.Job;
 import com.jenkins.testresultsaggregator.helper.Analyzer;
 import com.jenkins.testresultsaggregator.helper.Collector;
@@ -32,11 +35,13 @@ import com.jenkins.testresultsaggregator.reporter.Reporter;
 
 import hudson.EnvVars;
 import hudson.Extension;
+import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.BuildListener;
-import hudson.model.FreeStyleProject;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Notifier;
@@ -44,9 +49,10 @@ import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
 import hudson.util.Secret;
 import hudson.util.VariableResolver;
+import jenkins.tasks.SimpleBuildStep;
 import net.sf.json.JSONObject;
 
-public class TestResultsAggregator extends Notifier {
+public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 	
 	private static final String displayName = "Aggregate Test Results";
 	
@@ -57,13 +63,14 @@ public class TestResultsAggregator extends Notifier {
 	private String theme;
 	private String sortresults;
 	private String outOfDateResults;
-	private Boolean compareWithPreviousRun;
-	private Boolean ignoreNotFoundJobs;
-	private Boolean ignoreDisabledJobs;
-	private Boolean ignoreAbortedJobs;
+	public Boolean compareWithPreviousRun;
+	public Boolean ignoreNotFoundJobs;
+	public Boolean ignoreDisabledJobs;
+	public Boolean ignoreAbortedJobs;
 	private String selectedColumns;
 	private List<LocalMessages> columns;
 	private List<Data> data;
+	private List<DataPipeline> jobs;
 	
 	private Properties properties;
 	public static final String DISPLAY_NAME = "Job Results Aggregated";
@@ -110,7 +117,8 @@ public class TestResultsAggregator extends Notifier {
 	}
 	
 	@DataBoundConstructor
-	public TestResultsAggregator(final String subject, final String recipientsList, final String outOfDateResults, final List<Data> data, String beforebody, String afterbody, String theme, String sortresults,
+	public TestResultsAggregator(final String subject, final String recipientsList, final String outOfDateResults, final List<Data> data, final List<DataPipeline> jobs, String beforebody, String afterbody, String theme,
+			String sortresults,
 			String selectedColumns, Boolean compareWithPreviousRun, Boolean ignoreNotFoundJobs, Boolean ignoreDisabledJobs, Boolean ignoreAbortedJobs) {
 		this.setRecipientsList(recipientsList);
 		this.setOutOfDateResults(outOfDateResults);
@@ -125,6 +133,54 @@ public class TestResultsAggregator extends Notifier {
 		this.setIgnoreDisabledJobs(ignoreDisabledJobs);
 		this.setIgnoreNotFoundJobs(ignoreNotFoundJobs);
 		this.setIgnoreAbortedJobs(ignoreAbortedJobs);
+		this.setJobs(jobs);
+	}
+	
+	@Override
+	public void perform(Run<?, ?> run, FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener) {
+		PrintStream logger = listener.getLogger();
+		Descriptor desc = getDescriptor();
+		try {
+			logger.println(LocalMessages.START_AGGREGATE.toString());
+			// Set up Properties
+			properties = new Properties();
+			properties.put(AggregatorProperties.OUT_OF_DATE_RESULTS_ARG.name(), getOutOfDateResults() != null ? getOutOfDateResults() : "");
+			// properties.put(AggregatorProperties.TEST_PERCENTAGE_PREFIX.name(), "");
+			properties.put(AggregatorProperties.THEME.name(), getTheme() != null ? getTheme() : "Light");
+			properties.put(AggregatorProperties.TEXT_BEFORE_MAIL_BODY.name(), getBeforebody() != null ? getBeforebody() : "");
+			properties.put(AggregatorProperties.TEXT_AFTER_MAIL_BODY.name(), getAfterbody() != null ? getAfterbody() : "");
+			properties.put(AggregatorProperties.SORT_JOBS_BY.name(), getSortresults() != null ? getSortresults() : "Job Name");
+			properties.put(AggregatorProperties.SUBJECT_PREFIX.name(), getSubject() != null ? getSubject() : "");
+			properties.put(AggregatorProperties.RECIPIENTS_LIST.name(), getRecipientsList() != null ? getRecipientsList() : "");
+			// Resolve Variables
+			// VariableResolver<?> buildVars = build.getBuildVariableResolver();
+			// EnvVars envVars = build.getEnvironment(listener);
+			resolveVariables(properties, null, run.getEnvironment(listener));
+			// Resolve Columns
+			columns = calculateColumns(getSelectedColumns());
+			// Validate Input Data
+			List<Data> validatedData = validateInputData(getDataFromDataPipeline(), desc.getJenkinsUrl());
+			if (compareWithPrevious()) {
+				// Get Previous Saved Results
+				Aggregated previousSavedAggregatedResults = TestResultHistoryUtil.getTestResults(run.getPreviousSuccessfulBuild());
+				// Check previous Data
+				previousSavedResults(validatedData, previousSavedAggregatedResults);
+			}
+			// Collect Data
+			Collector collector = new Collector(logger, desc.getUsername(), desc.getPassword(), desc.getJenkinsUrl());
+			collector.collectResults(validatedData, compareWithPrevious());
+			// Analyze Results
+			Aggregated aggregated = new Analyzer(logger).analyze(validatedData, properties);
+			// Reporter for HTML and mail
+			Reporter reporter = new Reporter(logger, workspace, run.getRootDir(), desc.getMailNotificationFrom(), ignoreDisabledJobs, ignoreNotFoundJobs, ignoreAbortedJobs);
+			reporter.publishResuts(aggregated, properties, getColumns(), run.getRootDir());
+			// Add Build Action
+			run.addAction(new TestResultsAggregatorTestResultBuildAction(aggregated));
+		} catch (Exception e) {
+			logger.printf(LocalMessages.ERROR_OCCURRED.toString() + " : %s ", e);
+			e.printStackTrace(logger);
+		}
+		logger.println(LocalMessages.FINISHED_AGGREGATE.toString());
 	}
 	
 	@Override
@@ -144,7 +200,7 @@ public class TestResultsAggregator extends Notifier {
 			properties.put(AggregatorProperties.SUBJECT_PREFIX.name(), getSubject());
 			properties.put(AggregatorProperties.RECIPIENTS_LIST.name(), getRecipientsList());
 			// Resolve Variables
-			resolveVariables(properties, build, listener);
+			resolveVariables(properties, build.getBuildVariableResolver(), build.getEnvironment(listener));
 			// Resolve Columns
 			columns = calculateColumns(getSelectedColumns());
 			// Validate Input Data
@@ -179,6 +235,7 @@ public class TestResultsAggregator extends Notifier {
 	}
 	
 	@Extension
+	@Symbol("testResultsAggregator")
 	public static class Descriptor extends BuildStepDescriptor<Publisher> {
 		/**
 		 * Global configuration information variables.
@@ -218,7 +275,8 @@ public class TestResultsAggregator extends Notifier {
 		@Override
 		public boolean isApplicable(@SuppressWarnings("rawtypes") Class<? extends AbstractProject> jobType) {
 			// Indicates that this builder can be used with all kinds of project types.
-			return jobType == FreeStyleProject.class;
+			// return jobType == FreeStyleProject.class;
+			return true;
 		}
 		
 		@Override
@@ -265,10 +323,8 @@ public class TestResultsAggregator extends Notifier {
 		}
 	}
 	
-	private void resolveVariables(Properties properties, AbstractBuild build, BuildListener listener) throws IOException, InterruptedException {
+	private void resolveVariables(Properties properties, VariableResolver<?> buildVars, EnvVars envVars) throws IOException, InterruptedException {
 		// Variables
-		VariableResolver<?> buildVars = build.getBuildVariableResolver();
-		EnvVars envVars = build.getEnvironment(listener);
 		Set<Entry<Object, Object>> entrySet = properties.entrySet();
 		Iterator<Entry<Object, Object>> iterator = entrySet.iterator();
 		while (iterator.hasNext()) {
@@ -509,7 +565,8 @@ public class TestResultsAggregator extends Notifier {
 	}
 	
 	public String getSelectedColumns() {
-		return selectedColumns;
+		// Health, Job, Build, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Packages, Files, Classes, Methods, Lines, Conditions, Sonar
+		return selectedColumns != null ? selectedColumns : "Job, Build, Status";
 	}
 	
 	public String getSubject() {
@@ -573,5 +630,44 @@ public class TestResultsAggregator extends Notifier {
 			ignoreAbortedJobs = false;
 		}
 		return ignoreAbortedJobs.booleanValue();
+	}
+	
+	public List<DataPipeline> getJobs() {
+		return jobs;
+	}
+	
+	public void setJobs(List<DataPipeline> pipelineJobs) {
+		this.jobs = pipelineJobs;
+	}
+	
+	public List<Data> getDataFromDataPipeline() {
+		List<Data> data = new ArrayList<>();
+		List<String> groups = jobs.stream().map(DataPipeline::getGroupName).distinct().collect(Collectors.toList());
+		if (!groups.isEmpty()) {
+			//
+			for (String group : groups) {
+				List<DataPipeline> listOfJobs = jobs.stream().filter(x -> group == x.getGroupName()).collect(Collectors.toList());
+				List<Job> listOfJobsIntoGroup = new ArrayList<>();
+				for (DataPipeline temp : listOfJobs) {
+					listOfJobsIntoGroup.add(new Job(temp.getJobName(), temp.getJobFriendlyName()));
+				}
+				// Handle Data with null group name
+				if (group == null) {
+					data.add(new Data("", listOfJobsIntoGroup));
+				} else {
+					data.add(new Data(group, listOfJobsIntoGroup));
+				}
+				
+			}
+		} else {
+			// No Groups
+			List<DataPipeline> dataPipelineItems = jobs.stream().filter(x -> x.getJobName() != null).distinct().collect(Collectors.toList());
+			List<Job> jobs = new ArrayList<>();
+			for (DataPipeline dataPipeline : dataPipelineItems) {
+				jobs.add(new Job(dataPipeline.getJobName(), dataPipeline.getJobFriendlyName()));
+			}
+			data.add(new Data(null, jobs));
+		}
+		return data;
 	}
 }
