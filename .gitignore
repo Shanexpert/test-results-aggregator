@@ -7,3 +7,4 @@ work/
 .idea
 *.iml
 /bin
+/work*
