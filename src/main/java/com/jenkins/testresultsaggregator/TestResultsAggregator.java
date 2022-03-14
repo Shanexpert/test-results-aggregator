@@ -150,7 +150,7 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 			properties.put(AggregatorProperties.TEXT_BEFORE_MAIL_BODY.name(), getBeforebody() != null ? getBeforebody() : "");
 			properties.put(AggregatorProperties.TEXT_AFTER_MAIL_BODY.name(), getAfterbody() != null ? getAfterbody() : "");
 			properties.put(AggregatorProperties.SORT_JOBS_BY.name(), getSortresults() != null ? getSortresults() : "Job Name");
-			properties.put(AggregatorProperties.SUBJECT_PREFIX.name(), getSubject() != null ? getSubject() : "");
+			properties.put(AggregatorProperties.SUBJECT_PREFIX.name(), getSubject());
 			properties.put(AggregatorProperties.RECIPIENTS_LIST.name(), getRecipientsList() != null ? getRecipientsList() : "");
 			// Resolve Variables
 			// VariableResolver<?> buildVars = build.getBuildVariableResolver();
@@ -646,7 +646,7 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 		if (!groups.isEmpty()) {
 			//
 			for (String group : groups) {
-				List<DataPipeline> listOfJobs = jobs.stream().filter(x -> group == x.getGroupName()).collect(Collectors.toList());
+				List<DataPipeline> listOfJobs = jobs.stream().filter(x -> group.equalsIgnoreCase(x.getGroupName())).collect(Collectors.toList());
 				List<Job> listOfJobsIntoGroup = new ArrayList<>();
 				for (DataPipeline temp : listOfJobs) {
 					listOfJobsIntoGroup.add(new Job(temp.getJobName(), temp.getJobFriendlyName()));
