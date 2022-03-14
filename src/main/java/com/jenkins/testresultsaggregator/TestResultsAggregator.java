@@ -136,6 +136,7 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 		this.setJobs(jobs);
 	}
 	
+	/* In use from Pipeline Syntax */
 	@Override
 	public void perform(Run<?, ?> run, FilePath workspace, EnvVars env, Launcher launcher, TaskListener listener) {
 		PrintStream logger = listener.getLogger();
@@ -183,6 +184,7 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 		logger.println(LocalMessages.FINISHED_AGGREGATE.toString());
 	}
 	
+	/* In use from Free Style Project */
 	@Override
 	public boolean perform(final AbstractBuild build, final Launcher launcher, final BuildListener listener) {
 		PrintStream logger = listener.getLogger();
