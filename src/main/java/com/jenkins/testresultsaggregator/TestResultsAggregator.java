@@ -143,19 +143,9 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 		Descriptor desc = getDescriptor();
 		try {
 			logger.println(LocalMessages.START_AGGREGATE.toString());
-			// Set up Properties
-			properties = new Properties();
-			properties.put(AggregatorProperties.OUT_OF_DATE_RESULTS_ARG.name(), getOutOfDateResults() != null ? getOutOfDateResults() : "");
-			// properties.put(AggregatorProperties.TEST_PERCENTAGE_PREFIX.name(), "");
-			properties.put(AggregatorProperties.THEME.name(), getTheme() != null ? getTheme() : "Light");
-			properties.put(AggregatorProperties.TEXT_BEFORE_MAIL_BODY.name(), getBeforebody() != null ? getBeforebody() : "");
-			properties.put(AggregatorProperties.TEXT_AFTER_MAIL_BODY.name(), getAfterbody() != null ? getAfterbody() : "");
-			properties.put(AggregatorProperties.SORT_JOBS_BY.name(), getSortresults() != null ? getSortresults() : "Job Name");
-			properties.put(AggregatorProperties.SUBJECT_PREFIX.name(), getSubject());
-			properties.put(AggregatorProperties.RECIPIENTS_LIST.name(), getRecipientsList() != null ? getRecipientsList() : "");
+			//
+			initProperties();
 			// Resolve Variables
-			// VariableResolver<?> buildVars = build.getBuildVariableResolver();
-			// EnvVars envVars = build.getEnvironment(listener);
 			resolveVariables(properties, null, run.getEnvironment(listener));
 			// Resolve Columns
 			columns = calculateColumns(getSelectedColumns());
@@ -191,16 +181,8 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 		Descriptor desc = getDescriptor();
 		try {
 			logger.println(LocalMessages.START_AGGREGATE.toString());
-			// Set up Properties
-			properties = new Properties();
-			properties.put(AggregatorProperties.OUT_OF_DATE_RESULTS_ARG.name(), getOutOfDateResults());
-			properties.put(AggregatorProperties.TEST_PERCENTAGE_PREFIX.name(), "");
-			properties.put(AggregatorProperties.THEME.name(), getTheme());
-			properties.put(AggregatorProperties.TEXT_BEFORE_MAIL_BODY.name(), getBeforebody());
-			properties.put(AggregatorProperties.TEXT_AFTER_MAIL_BODY.name(), getAfterbody());
-			properties.put(AggregatorProperties.SORT_JOBS_BY.name(), getSortresults());
-			properties.put(AggregatorProperties.SUBJECT_PREFIX.name(), getSubject());
-			properties.put(AggregatorProperties.RECIPIENTS_LIST.name(), getRecipientsList());
+			//
+			initProperties();
 			// Resolve Variables
 			resolveVariables(properties, build.getBuildVariableResolver(), build.getEnvironment(listener));
 			// Resolve Columns
@@ -229,6 +211,20 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 		}
 		logger.println(LocalMessages.FINISHED_AGGREGATE.toString());
 		return true;
+	}
+	
+	private void initProperties() {
+		// Set up Properties
+		properties = new Properties();
+		properties.put(AggregatorProperties.OUT_OF_DATE_RESULTS_ARG.name(), getOutOfDateResults() != null ? getOutOfDateResults() : "");
+		// properties.put(AggregatorProperties.TEST_PERCENTAGE_PREFIX.name(), "");
+		properties.put(AggregatorProperties.THEME.name(), getTheme() != null ? getTheme() : "Light");
+		properties.put(AggregatorProperties.TEXT_BEFORE_MAIL_BODY.name(), getBeforebody() != null ? getBeforebody() : "");
+		properties.put(AggregatorProperties.TEXT_AFTER_MAIL_BODY.name(), getAfterbody() != null ? getAfterbody() : "");
+		properties.put(AggregatorProperties.SORT_JOBS_BY.name(), getSortresults() != null ? getSortresults() : "Job Name");
+		properties.put(AggregatorProperties.SUBJECT_PREFIX.name(), getSubject());
+		properties.put(AggregatorProperties.RECIPIENTS_LIST.name(), getRecipientsList() != null ? getRecipientsList() : "");
+		
 	}
 	
 	@Override
@@ -338,8 +334,11 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 					if (originalValue.contains("${")) {
 						tempValue = originalValue.substring(originalValue.indexOf("${") + 2, originalValue.indexOf('}'));
 					}
+					Object buildVariable = null;
 					// Resolve from building variables
-					Object buildVariable = buildVars.resolve(tempValue);
+					if (buildVars != null) {
+						buildVariable = buildVars.resolve(tempValue);
+					}
 					// If null try resolve it from env variables
 					if (buildVariable == null) {
 						buildVariable = envVars.get(tempValue);
