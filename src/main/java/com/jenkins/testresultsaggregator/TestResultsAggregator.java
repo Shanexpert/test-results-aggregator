@@ -647,18 +647,12 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 		if (!groups.isEmpty()) {
 			//
 			for (String group : groups) {
-				List<DataPipeline> listOfJobs = jobs.stream().filter(x -> group.equalsIgnoreCase(x.getGroupName())).collect(Collectors.toList());
+				List<DataPipeline> listOfJobs = jobs.stream().filter(x -> x.getGroupName().equalsIgnoreCase(group)).collect(Collectors.toList());
 				List<Job> listOfJobsIntoGroup = new ArrayList<>();
 				for (DataPipeline temp : listOfJobs) {
 					listOfJobsIntoGroup.add(new Job(temp.getJobName(), temp.getJobFriendlyName()));
 				}
-				// Handle Data with null group name
-				if (group == null) {
-					data.add(new Data("", listOfJobsIntoGroup));
-				} else {
-					data.add(new Data(group, listOfJobsIntoGroup));
-				}
-				
+				data.add(new Data(group, listOfJobsIntoGroup));
 			}
 		} else {
 			// No Groups

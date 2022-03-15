@@ -39,11 +39,9 @@ public class DataPipeline extends AbstractDescribableImpl<DataPipeline> implemen
 	public String getGroupName() {
 		if (groupName != null) {
 			return groupName.trim();
-		} else {
-			// Empty String for null groupName
-			groupName = "";
 		}
-		return groupName;
+		// Empty String for null groupName
+		return "";
 	}
 	
 	@DataBoundSetter
