@@ -641,28 +641,31 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 		this.jobs = pipelineJobs;
 	}
 	
-	public List<Data> getDataFromDataPipeline() {
+	public List<Data> getDataFromDataPipeline() throws Exception {
 		List<Data> data = new ArrayList<>();
-		List<String> groups = jobs.stream().map(DataPipeline::getGroupName).distinct().collect(Collectors.toList());
-		if (!groups.isEmpty()) {
-			//
-			for (String group : groups) {
-				List<DataPipeline> listOfJobs = jobs.stream().filter(x -> x.getGroupName().equalsIgnoreCase(group)).collect(Collectors.toList());
-				List<Job> listOfJobsIntoGroup = new ArrayList<>();
-				for (DataPipeline temp : listOfJobs) {
-					listOfJobsIntoGroup.add(new Job(temp.getJobName(), temp.getJobFriendlyName()));
+		if (jobs != null && !jobs.isEmpty()) {
+			List<String> groups = jobs.stream().map(DataPipeline::getGroupName).distinct().collect(Collectors.toList());
+			if (!groups.isEmpty()) {
+				//
+				for (String group : groups) {
+					List<DataPipeline> listOfJobs = jobs.stream().filter(x -> x.getGroupName().equalsIgnoreCase(group)).collect(Collectors.toList());
+					List<Job> listOfJobsIntoGroup = new ArrayList<>();
+					for (DataPipeline temp : listOfJobs) {
+						listOfJobsIntoGroup.add(new Job(temp.getJobName(), temp.getJobFriendlyName()));
+					}
+					data.add(new Data(group, listOfJobsIntoGroup));
 				}
-				data.add(new Data(group, listOfJobsIntoGroup));
+			} else {
+				// No Groups
+				List<DataPipeline> dataPipelineItems = jobs.stream().filter(x -> x.getJobName() != null).distinct().collect(Collectors.toList());
+				List<Job> jobs = new ArrayList<>();
+				for (DataPipeline dataPipeline : dataPipelineItems) {
+					jobs.add(new Job(dataPipeline.getJobName(), dataPipeline.getJobFriendlyName()));
+				}
+				data.add(new Data(null, jobs));
 			}
-		} else {
-			// No Groups
-			List<DataPipeline> dataPipelineItems = jobs.stream().filter(x -> x.getJobName() != null).distinct().collect(Collectors.toList());
-			List<Job> jobs = new ArrayList<>();
-			for (DataPipeline dataPipeline : dataPipelineItems) {
-				jobs.add(new Job(dataPipeline.getJobName(), dataPipeline.getJobFriendlyName()));
-			}
-			data.add(new Data(null, jobs));
+			return data;
 		}
-		return data;
+		throw new Exception("No data");
 	}
 }
