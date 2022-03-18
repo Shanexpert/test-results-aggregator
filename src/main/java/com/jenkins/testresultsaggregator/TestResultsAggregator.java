@@ -218,7 +218,7 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 		properties = new Properties();
 		properties.put(AggregatorProperties.OUT_OF_DATE_RESULTS_ARG.name(), getOutOfDateResults() != null ? getOutOfDateResults() : "");
 		// properties.put(AggregatorProperties.TEST_PERCENTAGE_PREFIX.name(), "");
-		properties.put(AggregatorProperties.THEME.name(), getTheme() != null ? getTheme() : "Light");
+		properties.put(AggregatorProperties.THEME.name(), getTheme() != null ? getTheme() : "light");
 		properties.put(AggregatorProperties.TEXT_BEFORE_MAIL_BODY.name(), getBeforebody() != null ? getBeforebody() : "");
 		properties.put(AggregatorProperties.TEXT_AFTER_MAIL_BODY.name(), getAfterbody() != null ? getAfterbody() : "");
 		properties.put(AggregatorProperties.SORT_JOBS_BY.name(), getSortresults() != null ? getSortresults() : "Job Name");
