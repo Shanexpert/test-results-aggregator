@@ -29,7 +29,7 @@ image:https://img.shields.io/jenkins/plugin/i/test-results-aggregator.svg?color=
 
 It's advisable to be used as the last step in a CI/CD pipeline.
 
-Supports 'free style project' and 'pipeline' after https://github.com/jenkinsci/test-results-aggregator-plugin/releases/1.2.7[1.2.7], samples see below.
+Supports 'free style project' and 'pipeline' after https://github.com/jenkinsci/test-results-aggregator-plugin/releases/tag/test-results-aggregator-1.2.7[1.2.7], samples see below.
 
 Requires both global and job configuration.
 
