@@ -74,7 +74,7 @@ image::ReceipientsList.png[Recipients,900,align="right"]
 * Subject prefix : prefix for mail subject. Supports also job & env variables.
 * Columns : html & email report columns and the order of them, comma separated. Possible columns are : 
 
- ** Health, Job, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Description, Packages, Files, Classes, Methods, Lines, Conditions & Sonar
+ ** Health, Job, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Description, Packages, Files, Classes, Methods, Lines, Conditions, Sonar, Build
 * Before body : plain text or html code to add before report table. Supports also job & env variables , for example ${WORKSPACE} or ${myVariable}
 * After body : plain text or html code to add after report table. Supports also job & env variables.
 * Mail Theme : Ligth or dark mail theme.
