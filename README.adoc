@@ -24,81 +24,139 @@ image:https://img.shields.io/jenkins/plugin/v/test-results-aggregator.svg[Jenkin
 image:https://ci.jenkins.io/buildStatus/icon?job=Plugins/test-results-aggregator-plugin/master[https://github.com/jenkinsci/role-strategy-plugin/releases/latest]
 image:https://github.com/jenkinsci/test-results-aggregator-plugin/workflows/Java_CI/badge.svg[Build,link= https://github.com/jenkinsci/test-results-aggregator-plugin/workflows/Java_CI]
 image:https://img.shields.io/jenkins/plugin/i/test-results-aggregator.svg?color=blue[Jenkins Plugin Installs,link=https://plugins.jenkins.io/test-results-aggregator]
+ +
+ +
+
+Samples:
+
+[cols="1,1"]  
+|===
+|image::htmlView2.png[Html View,350,align="right"]
+|image::MainView.png[Main View,350,align="right"]
+|=== 
+
 
 == Important
 
-It's advisable to be used as the last step in a CI/CD pipeline.
+Can be used as the last step in a CI/CD pipeline.
 
-Supports 'free style project' and 'pipeline' after https://github.com/jenkinsci/test-results-aggregator-plugin/releases/tag/test-results-aggregator-1.2.7[1.2.7], samples see below.
+Supports 'free style project' and 'pipeline' after https://github.com/jenkinsci/test-results-aggregator-plugin/releases/1.2.7[1.2.7], samples see below.
 
 Requires both global and job configuration.
-
+ +
+ +
+ 
 == Global Configuration
 
 After installing this plugin, navigate to Global Configuration. Scroll down for Test Result Aggregator :
 
 image::Global_Configuration.png[Global Configuration,900,align="right"]
-
+ +
+ +
 In this section you can define : 
 
-* **Jenkins Base Url** : The HTTP address of the Jenkins installation, such as http://yourhost.yourdomain/jenkins/ This is used to access Jenkins API, so you can fetch results from any jenkins installation.
-* **Jenkins Account Username** : username of the account that will be used to access Jenkins API and fetch job results.
-* **Jenkins Account password** : password of the account that will be used to access Jenkins API and fetch job results.
-* **Mail Notification From** : sender for the mail Notification. Default is "Jenkins".
-		 
+[cols="1,1"]  
+|===
+|Jenkins Base Url
+|The HTTP address of the Jenkins installation, such as http://yourhost.yourdomain/jenkins/ .This is used to access Jenkins API.
 
+|Jenkins Account Username
+|username of the account that will be used to access Jenkins API and fetch job results.
+
+|Jenkins Account password
+|password of the account that will be used to access Jenkins API and fetch job results.
+
+|Mail Notification From
+|sender for the mail Notification. Default is "Jenkins".
+
+|=== 
+ +
+ +
+ 
 == Free Style Job Configuration
 
 **1. Test Result Aggregator Plugin can be used as a "Free Style Project". ** 
 
 image::FreeStyleProject.png[Free Style Project,900,align="right"]
-
+ +
+ +
 **2. Select "Add Post Build" action and scroll to "Aggregate Test Results" action. **
 
 image::PostBuildAction.png[Post Build Action,900,align="right"]
-
+ +
+ +
 **3. Add Groups/Teams and Jenkins Jobs **
 
 image::FreeStyleProject_Jobs.png[Jobs Configuraion,900,align="right"]
-  
-* Group/Team : it's optional, it's used in report to group Jenkins jobs. For example teams , products or testing types.
-* Job Name : It's mandatory, it's the exact Jenkins job name to get results. In case of a job inside a 'folder' use : folderName/jobName or folderName(s)/jobName
-* Job Friendly Name : it's optional, used only for reporting purposes, if null or empty then "Job Name" will be used in report.
- 
+
+[cols="3,3,3"] 
+|===
+|Group/Team
+|optional
+|it's used in report to group Jenkins jobs. For example teams , products or testing types.
+
+|Job Name
+|mandatory
+|it's the exact Jenkins job name to get results. In case of a job inside a 'folder' use : folderName/jobName , for multi-folders use folder path for example folder1/folder2/jobName .
+
+|Job Friendly Name
+|optional
+|it in use only for reporting purposes, if null or empty then "Job Name" will be used in report.
+|===
+ +
+ +
+   
 **4. Add Recipients List , Before,After Body text, theme and Sort by option **
 
 image::ReceipientsList.png[Recipients,900,align="right"]
 	
-	
-* Recipients List : comma separated recipients list, ex : nick@some.com,mairy@some.com . if empty no email will be triggered. Supports also job variables.
-* Subject prefix : prefix for mail subject. Supports also job & env variables.
-* Columns : html & email report columns and the order of them, comma separated. Possible columns are : 
+[cols="2,2"] 
+|===
+|Recipients List
+|comma separated recipients list, ex : nick@some.com,mairy@some.com . if empty no email will be triggered. Supports job variables.
 
- ** Health, Job, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Description, Packages, Files, Classes, Methods, Lines, Conditions, Sonar, Build
-* Before body : plain text or html code to add before report table. Supports also job & env variables , for example ${WORKSPACE} or ${myVariable}
-* After body : plain text or html code to add after report table. Supports also job & env variables.
-* Mail Theme : Ligth or dark mail theme.
-* Sort Results By : report will be sorted accordingly. If there are Groups then sorting refers to jobs inside a group.
+|Subject prefix 
+|prefix for email's subject. Supports job & env variables.
+
+|Columns
+|html & email report columns and the order of them, comma separated. Possible columns are : 
+ + 
+ Health, Job, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Description, Packages, Files, Classes, Methods, Lines, Conditions, Sonar, Build
+ 
+|Text Before body mail
+|plain text or html code to add before report table. Supports job & env variables , for example ${WORKSPACE} or ${myVariable}
+
+|Text After body mail
+|plain text or html code to add after report table. Supports also job & env variables , for example ${WORKSPACE} or ${myVariable}
+
+|Mail Theme 
+|mail theme : 
++
+Ligth or dark
+
+|Sort Results By 
+|report will be sorted accordingly. If there are Groups then sorting refers to jobs inside a group.
+
+|===
+ +
  
 **5. Outdated results **
-
 image::OutofDate.png[OutofDate,900,align="right"]
-	
-	
 Jobs with results more than X hours ago will be marked with 'red' color under 'Last Run' column report. Otherwise (if blank) column 'Last Run' will just have the timestamp of job completion.
-
+ +
+ +
 **6. Compare with previous run **
-
 image::CompareWithPrevious.png[CompareWithPrevious,900,align="right"]
-
 Compare next run with the previous regarding job statuses, tests results and code coverage metrics. If false then no differences are displayed in report , no signs + -
-
+ +
+ +
 **7. Ignore Jobs from report by status **
-
 image::IgnoreJobs.png[IgnoreJobs,900,align="right"]
-
 Ignore from report jobs with status NOT_FOUND, DISABLED or ABORTED.
 
+ +
+ +
+  
 == Reports
 
 1.Jobs and Tests graphs, see a sample :
@@ -116,6 +174,8 @@ image::htmlView2.png[Html View,900,align="right"]
 
 image::AggregatedView.png[Aggregated,900,align="right"]
 
+ +
+ 
 == Pipeline Syntax
 
 Example 1 : Minimum
@@ -143,7 +203,7 @@ Example 2 : Report and publish via html publisher plugin.
 	
 				
 
-== TestResultsAggregator parameters & values :
+== For testResultsAggregator parameters & values :
  			
 * columns: Specify HTML & email report columns and the order of them, comma separated. Possible values are : 
 		** Health, Job, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Description, Packages, Files, Classes, Methods, Lines, Conditions, Sonar, Build
@@ -162,6 +222,8 @@ Example 2 : Report and publish via html publisher plugin.
 * ignoreDisabledJobs: Ignore from report jobs with status DISABLED. Options true/false
 * ignoreNotFoundJobs: Ignore from report jobs with status NOT_FOUND. Options true/false
 
+ +
+ 
 == Release Notes
 
 See the https://github.com/jenkinsci/test-results-aggregator-plugin/releases[Github releases page].
@@ -169,6 +231,8 @@ See the https://github.com/jenkinsci/test-results-aggregator-plugin/releases[Git
 * 1.1.x Requires Jenkins < 2.277
 * 1.2.x Requires Jenkins >= 2.277
 
+ +
+ 
 == Jenkins CI 
 
 https://ci.jenkins.io/job/Plugins/job/test-results-aggregator-plugin/
