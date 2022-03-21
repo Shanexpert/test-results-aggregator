@@ -24,15 +24,15 @@ image:https://img.shields.io/jenkins/plugin/v/test-results-aggregator.svg[Jenkin
 image:https://ci.jenkins.io/buildStatus/icon?job=Plugins/test-results-aggregator-plugin/master[https://github.com/jenkinsci/role-strategy-plugin/releases/latest]
 image:https://github.com/jenkinsci/test-results-aggregator-plugin/workflows/Java_CI/badge.svg[Build,link= https://github.com/jenkinsci/test-results-aggregator-plugin/workflows/Java_CI]
 image:https://img.shields.io/jenkins/plugin/i/test-results-aggregator.svg?color=blue[Jenkins Plugin Installs,link=https://plugins.jenkins.io/test-results-aggregator]
- +
- +
+ 
+ 
 
 Samples:
 
 [cols="1,1"]  
 |===
-|image::htmlView2.png[Html View,350,align="right"]
-|image::MainView.png[Main View,350,align="right"]
+a|image::htmlView2.png[Html View,350,align="right"]
+a|image::MainView.png[Main View,350,align="right"]
 |=== 
 
 
@@ -43,16 +43,14 @@ Can be used as the last step in a CI/CD pipeline.
 Supports 'free style project' and 'pipeline' after https://github.com/jenkinsci/test-results-aggregator-plugin/releases/1.2.7[1.2.7], samples see below.
 
 Requires both global and job configuration.
- +
- +
  
 == Global Configuration
 
 After installing this plugin, navigate to Global Configuration. Scroll down for Test Result Aggregator :
 
 image::Global_Configuration.png[Global Configuration,900,align="right"]
- +
- +
+
+
 In this section you can define : 
 
 [cols="1,1"]  
@@ -70,21 +68,21 @@ In this section you can define :
 |sender for the mail Notification. Default is "Jenkins".
 
 |=== 
- +
- +
- 
+
+
+
 == Free Style Job Configuration
 
 **1. Test Result Aggregator Plugin can be used as a "Free Style Project". ** 
 
 image::FreeStyleProject.png[Free Style Project,900,align="right"]
- +
- +
+ 
+ 
 **2. Select "Add Post Build" action and scroll to "Aggregate Test Results" action. **
 
 image::PostBuildAction.png[Post Build Action,900,align="right"]
- +
- +
+ 
+ 
 **3. Add Groups/Teams and Jenkins Jobs **
 
 image::FreeStyleProject_Jobs.png[Jobs Configuraion,900,align="right"]
@@ -103,8 +101,8 @@ image::FreeStyleProject_Jobs.png[Jobs Configuraion,900,align="right"]
 |optional
 |it in use only for reporting purposes, if null or empty then "Job Name" will be used in report.
 |===
- +
- +
+ 
+ 
    
 **4. Add Recipients List , Before,After Body text, theme and Sort by option **
 
@@ -120,7 +118,7 @@ image::ReceipientsList.png[Recipients,900,align="right"]
 
 |Columns
 |html & email report columns and the order of them, comma separated. Possible columns are : 
- + 
+  
  Health, Job, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Description, Packages, Files, Classes, Methods, Lines, Conditions, Sonar, Build
  
 |Text Before body mail
@@ -131,31 +129,31 @@ image::ReceipientsList.png[Recipients,900,align="right"]
 
 |Mail Theme 
 |mail theme : 
-+
+
 Ligth or dark
 
 |Sort Results By 
 |report will be sorted accordingly. If there are Groups then sorting refers to jobs inside a group.
 
 |===
- +
+ 
  
 **5. Outdated results **
 image::OutofDate.png[OutofDate,900,align="right"]
 Jobs with results more than X hours ago will be marked with 'red' color under 'Last Run' column report. Otherwise (if blank) column 'Last Run' will just have the timestamp of job completion.
- +
- +
+ 
+ 
 **6. Compare with previous run **
 image::CompareWithPrevious.png[CompareWithPrevious,900,align="right"]
 Compare next run with the previous regarding job statuses, tests results and code coverage metrics. If false then no differences are displayed in report , no signs + -
- +
- +
+ 
+ 
 **7. Ignore Jobs from report by status **
 image::IgnoreJobs.png[IgnoreJobs,900,align="right"]
 Ignore from report jobs with status NOT_FOUND, DISABLED or ABORTED.
 
- +
- +
+ 
+ 
   
 == Reports
 
@@ -174,7 +172,7 @@ image::htmlView2.png[Html View,900,align="right"]
 
 image::AggregatedView.png[Aggregated,900,align="right"]
 
- +
+ 
  
 == Pipeline Syntax
 
@@ -222,7 +220,7 @@ Example 2 : Report and publish via html publisher plugin.
 * ignoreDisabledJobs: Ignore from report jobs with status DISABLED. Options true/false
 * ignoreNotFoundJobs: Ignore from report jobs with status NOT_FOUND. Options true/false
 
- +
+ 
  
 == Release Notes
 
@@ -231,7 +229,7 @@ See the https://github.com/jenkinsci/test-results-aggregator-plugin/releases[Git
 * 1.1.x Requires Jenkins < 2.277
 * 1.2.x Requires Jenkins >= 2.277
 
- +
+ 
  
 == Jenkins CI 
 
