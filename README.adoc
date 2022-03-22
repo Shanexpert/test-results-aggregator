@@ -200,7 +200,7 @@ Example 2 : Report and publish via html publisher plugin.
     testResultsAggregator columns: 'Job, Build, Status, Percentage, Total, Pass, Fail',
                           recipientsList: 'nick@some.com,mairy@some.com',
                           outOfDateResults: '10', 
-                          sortresults: 'Name',
+                          sortresults: 'Job Name',
                           subject: 'Test Results'
                         	 jobs: [
                                 [jobName: 'My CI Job1', jobFriendlyName: 'Job 1', groupName: 'TeamA'],
