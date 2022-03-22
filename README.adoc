@@ -40,7 +40,7 @@ a|image::MainView.png[Main View,350,align="right"]
 
 Can be used as the last step in a CI/CD pipeline.
 
-Supports 'free style project' and 'pipeline' after https://github.com/jenkinsci/test-results-aggregator-plugin/releases/1.2.7[1.2.7], samples see below.
+Supports 'free style project' and 'pipeline' after https://github.com/jenkinsci/test-results-aggregator-plugin/releases/1.2.7[1.2.7], samples see https://plugins.jenkins.io/test-results-aggregator/#plugin-content-pipeline-syntax[below].
 
 Requires both global and job configuration.
  
