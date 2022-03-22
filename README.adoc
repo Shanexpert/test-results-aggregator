@@ -207,7 +207,7 @@ Example 2 : Report and publish via html publisher plugin.
 	
 				
 
-== For testResultsAggregator parameters & values :
+==  testResultsAggregator parameters & values :
  			
 * columns: Specify HTML & email report columns and the order of them, comma separated. Possible values are : 
 		** Health, Job, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Description, Packages, Files, Classes, Methods, Lines, Conditions, Sonar, Build
