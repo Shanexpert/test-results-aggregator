@@ -167,6 +167,8 @@ Ignore from report jobs with status NOT_FOUND, DISABLED or ABORTED.
 
 image::MainView.png[Main View,900,align="right"]
 
+
+
 2.HTML Report , sample :
 
 image::htmlView2.png[Html View,900,align="right"]
