@@ -139,17 +139,23 @@ Ligth or dark
  
  
 **5. Outdated results **
+
 image::OutofDate.png[OutofDate,900,align="right"]
+
 Jobs with results more than X hours ago will be marked with 'red' color under 'Last Run' column report. Otherwise (if blank) column 'Last Run' will just have the timestamp of job completion.
  
  
 **6. Compare with previous run **
+
 image::CompareWithPrevious.png[CompareWithPrevious,900,align="right"]
+
 Compare next run with the previous regarding job statuses, tests results and code coverage metrics. If false then no differences are displayed in report , no signs + -
  
  
 **7. Ignore Jobs from report by status **
+
 image::IgnoreJobs.png[IgnoreJobs,900,align="right"]
+
 Ignore from report jobs with status NOT_FOUND, DISABLED or ABORTED.
 
  
