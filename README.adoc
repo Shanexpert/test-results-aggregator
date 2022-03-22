@@ -32,11 +32,19 @@ Samples:
 [cols="2,2"]  
 |===
 
-a|image::Untitled2.png[Main View,350,align="right"]
-a|image::MainView.png[Main View,350,align="right"]
+a|[#img-sunset] 
+.Job Results Aggregated per Build
+image::Untitled2.png[Main View,350,align="right"]
+a|[#img-sunset] 
+.Job Results Aggregated history
+image::MainView.png[Main View,350,align="right"]
 
-a|image::Untitled1.png[Html View,350,align="right"]
-a|image::htmlView2.png[Html View,350,align="right"]
+a|[#img-sunset] 
+.Job Results Aggregated history main view
+image::Untitled1.png[Html View,350,align="right"]
+a|[#img-sunset] 
+.Html/Email Report
+image::htmlView2.png[Html View,350,align="right"]
 |=== 
 
 
@@ -214,25 +222,47 @@ Example 2 : Report and publish via html publisher plugin.
 				
 
 ==  testResultsAggregator parameters & values :
- 			
-* columns: Specify HTML & email report columns and the order of them, comma separated. Possible values are : 
-		** Health, Job, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Description, Packages, Files, Classes, Methods, Lines, Conditions, Sonar, Build
-* recipientsList: Comma separated recipients list , ex : 'nick@some.com,mairy@some.com' If empty or blank no email will be triggered. Supports job variables, for example '${my_parameter_for_mail}'.
-* subject: Mail Subject prefix. Supports job & env variables.
-* beforebody: Text before mail body. Static text or HTML code. Supports also job & env variables , for example ${WORKSPACE} or ${myVariable}
-* afterbody: Text after mail body. Static text or HTML code. Supports also job & env variables , for example ${WORKSPACE} or ${myVariable}
-* theme: Mail theme , possible values are : 
-		** light, dark
-* sortresults: Sort Results using one of the following available options: 
-		** Job Name, Job Status, Total Tests, Pass Tests, Failed Tests, Skipped Tests, Percentage, Commits, Time Stamp, Duration, Build Number. 
-		If there are Groups then sorting refers to jobs inside a group.
-* outOfDateResults: Completed Jenkins Jobs with results more than X hours ago will be marked with 'red' color under 'Last Run' column report. Otherwise if blank or empty then column 'Last Run' will just have the timestamp of job completion.
-* compareWithPreviousRun: Compare next run with the previous regarding job statuses, tests results and code coverage metrics. If false then no differences are displayed in report , no signs + - ,options true/false
-* ignoreAbortedJobs: Ignore from report jobs with status ABORTED. Options true/false
-* ignoreDisabledJobs: Ignore from report jobs with status DISABLED. Options true/false
-* ignoreNotFoundJobs: Ignore from report jobs with status NOT_FOUND. Options true/false
-
  
+[cols="2,2"] 
+|===
+|columns
+|Comma separated with possible values : Health, Job, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Description, Packages, Files, Classes, Methods, Lines, Conditions, Sonar, Build
+
+|recipientsList
+|Comma separated recipients list , ex : 'nick@some.com,mairy@some.com' If empty or blank no email will be triggered. Supports job variables, for example '${my_parameter_for_mail}'.
+
+|subject
+|Mail Subject prefix. Supports job & env variables.
+
+|beforebody
+|Text before mail body. Static text or HTML code. Supports also job & env variables , for example ${WORKSPACE} or ${myVariable}
+
+|afterbody
+|Text after mail body. Static text or HTML code. Supports also job & env variables , for example ${WORKSPACE} or ${myVariable}
+
+|theme
+|Mail theme , possible values are: light, dark
+
+|sortresults
+|Sort Results using one of the following available options: Job Name, Job Status, Total Tests, Pass Tests, Failed Tests, Skipped Tests, Percentage, Commits, Time Stamp, Duration, Build Number
+
+|outOfDateResults
+|Completed Jenkins Jobs with results more than X hours ago will be marked with 'red' color under 'Last Run' column report. Otherwise if blank or empty then column 'Last Run' will just have the timestamp of job completion.
+
+|compareWithPreviousRun
+|Compare next run with the previous regarding job statuses, tests results and code coverage metrics. If false then no differences are displayed in report , no signs + - ,options true/false
+
+|ignoreAbortedJobs
+|Ignore from report jobs with status ABORTED. Options true/false
+
+|ignoreDisabledJobs
+|Ignore from report jobs with status DISABLED. Options true/false
+
+|ignoreNotFoundJobs
+|Ignore from report jobs with status NOT_FOUND. Options true/false
+
+|===
+
  
 == Release Notes
 
