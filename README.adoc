@@ -29,10 +29,14 @@ image:https://img.shields.io/jenkins/plugin/i/test-results-aggregator.svg?color=
 
 Samples:
 
-[cols="1,1"]  
+[cols="2,2"]  
 |===
-a|image::htmlView2.png[Html View,350,align="right"]
-a|image::MainView.png[Main View,350,align="right"]
+
+|image::Untitled2.png[Main View,350,align="right"]
+|image::MainView.png[Main View,350,align="right"]
+
+|image::Untitled1.png[Html View,350,align="right"]
+|image::htmlView2.png[Html View,350,align="right"]
 |=== 
 
 
