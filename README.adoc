@@ -32,11 +32,11 @@ Samples:
 [cols="2,2"]  
 |===
 
-|image::Untitled2.png[Main View,350,align="right"]
-|image::MainView.png[Main View,350,align="right"]
+a|image::Untitled2.png[Main View,350,align="right"]
+a|image::MainView.png[Main View,350,align="right"]
 
-|image::Untitled1.png[Html View,350,align="right"]
-|image::htmlView2.png[Html View,350,align="right"]
+a|image::Untitled1.png[Html View,350,align="right"]
+a|image::htmlView2.png[Html View,350,align="right"]
 |=== 
 
 
