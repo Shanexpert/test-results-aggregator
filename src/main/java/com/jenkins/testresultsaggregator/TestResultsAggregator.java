@@ -68,7 +68,6 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 	public Boolean ignoreDisabledJobs;
 	public Boolean ignoreAbortedJobs;
 	private String columns;
-	private List<LocalMessages> localizedColumns;
 	private List<Data> data;
 	private List<DataPipeline> jobs;
 	
@@ -148,7 +147,7 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 			// Resolve Variables
 			resolveVariables(properties, null, run.getEnvironment(listener));
 			// Resolve Columns
-			localizedColumns = calculateColumns(getColumns());
+			List<LocalMessages> localizedColumns = calculateColumns(getColumns());
 			// Validate Input Data
 			List<Data> validatedData = validateInputData(getDataFromDataPipeline(), desc.getJenkinsUrl());
 			if (compareWithPrevious()) {
@@ -164,7 +163,7 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 			Aggregated aggregated = new Analyzer(logger).analyze(validatedData, properties);
 			// Reporter for HTML and mail
 			Reporter reporter = new Reporter(logger, workspace, run.getRootDir(), desc.getMailNotificationFrom(), ignoreDisabledJobs, ignoreNotFoundJobs, ignoreAbortedJobs);
-			reporter.publishResuts(aggregated, properties, getLocalizedColumns(), run.getRootDir());
+			reporter.publishResuts(aggregated, properties, localizedColumns, run.getRootDir());
 			// Add Build Action
 			run.addAction(new TestResultsAggregatorTestResultBuildAction(aggregated));
 		} catch (Exception e) {
@@ -186,7 +185,7 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 			// Resolve Variables
 			resolveVariables(properties, build.getBuildVariableResolver(), build.getEnvironment(listener));
 			// Resolve Columns
-			localizedColumns = calculateColumns(getColumns());
+			List<LocalMessages> localizedColumns = calculateColumns(getColumns());
 			// Validate Input Data
 			List<Data> validatedData = validateInputData(getData(), desc.getJenkinsUrl());
 			if (compareWithPrevious()) {
@@ -202,7 +201,7 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 			Aggregated aggregated = new Analyzer(logger).analyze(validatedData, properties);
 			// Reporter for HTML and mail
 			Reporter reporter = new Reporter(logger, build.getProject().getSomeWorkspace(), build.getRootDir(), desc.getMailNotificationFrom(), ignoreDisabledJobs, ignoreNotFoundJobs, ignoreAbortedJobs);
-			reporter.publishResuts(aggregated, properties, getLocalizedColumns(), build.getRootDir());
+			reporter.publishResuts(aggregated, properties, localizedColumns, build.getRootDir());
 			// Add Build Action
 			build.addAction(new TestResultsAggregatorTestResultBuildAction(aggregated));
 		} catch (Exception e) {
@@ -373,10 +372,10 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 		}
 	}
 	
-	private List<LocalMessages> calculateColumns(String selectedColumns) {
+	private List<LocalMessages> calculateColumns(String userSelectionColumns) {
 		List<LocalMessages> columns = new ArrayList<>(Arrays.asList(LocalMessages.COLUMN_GROUP));
-		if (!Strings.isNullOrEmpty(selectedColumns)) {
-			String[] splitter = selectedColumns.split(",");
+		if (!Strings.isNullOrEmpty(userSelectionColumns)) {
+			String[] splitter = userSelectionColumns.split(",");
 			for (String temp : splitter) {
 				if (temp != null) {
 					temp = temp.trim();
@@ -520,11 +519,6 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 	}
 	
 	@DataBoundSetter
-	public void setLocalizedColumns(@CheckForNull List<LocalMessages> localizedColumns) {
-		this.localizedColumns = localizedColumns;
-	}
-	
-	@DataBoundSetter
 	public void setColumns(@CheckForNull String columns) {
 		this.columns = columns;
 	}
@@ -559,10 +553,6 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 	
 	public List<Data> getData() {
 		return data;
-	}
-	
-	public List<LocalMessages> getLocalizedColumns() {
-		return localizedColumns;
 	}
 	
 	public String getColumns() {
