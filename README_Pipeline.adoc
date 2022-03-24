@@ -34,7 +34,21 @@ Example 2 : Report and publish via html publisher plugin.
 [cols="2,2"] 
 |===
 |columns
-|Comma separated with possible values : Health, Job, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Description, Packages, Files, Classes, Methods, Lines, Conditions, Sonar, Build
+|Comma separated with possible values : 
+ +
+ 
+ Health, Job, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Description, Packages, Files, Classes, Methods, Lines, Conditions, Sonar, Build
+
+|jobs
+|List of 3 items : jobName,jobFriendlyName and groupName. 
+ +
+jobName is mandatory, it's the exact Jenkins job name to get results. In case of a job inside a 'folder' use : folderName/jobName , for multi-folders use folder path for example folder1/folder2/jobName.
+ +
+ 
+jobFriendlyName is optional, is in use only for reporting purposes, if null or empty then "Job Name" will be used in report.
+ +
+ 
+groupName is optional, it's used in report to group Jenkins jobs. For example teams , products or testing types. 
 
 |recipientsList
 |Comma separated recipients list , ex : 'nick@some.com,mairy@some.com' If empty or blank no email will be triggered. Supports job variables, for example '${my_parameter_for_mail}'.
