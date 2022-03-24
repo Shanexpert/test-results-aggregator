@@ -29,23 +29,26 @@ image:https://img.shields.io/jenkins/plugin/i/test-results-aggregator.svg?color=
 
 Samples:
 
+
 [cols="2,2"]  
+
 |===
 
-a|[#img-sunset] 
+|[#img-Untitled2] 
 .Job Results Aggregated per Build
 image::Untitled2.png[Main View,350,align="right"]
-a|[#img-sunset] 
+a|[#img-MainView] 
 .Job Results Aggregated history
 image::MainView.png[Main View,350,align="right"]
 
-a|[#img-sunset] 
+a|[#img-Untitled1] 
 .Job Results Aggregated history main view
 image::Untitled1.png[Html View,350,align="right"]
-a|[#img-sunset] 
+a|[#img-htmlView2] 
 .Html/Email Report
 image::htmlView2.png[Html View,350,align="right"]
 |=== 
+
 
 
 == Important
@@ -80,190 +83,11 @@ In this section you can define :
 |sender for the mail Notification. Default is "Jenkins".
 
 |=== 
-
-
-
-== Free Style Job Configuration
-
-**1. Test Result Aggregator Plugin can be used as a "Free Style Project". ** 
-
-image::FreeStyleProject.png[Free Style Project,900,align="right"]
  
  
-**2. Select "Add Post Build" action and scroll to "Aggregate Test Results" action. **
+ * https://github.com/jenkinsci/test-results-aggregator-plugin/README_FreeStyle.adoc[Free Style Job Configuration]
+ * https://github.com/jenkinsci/test-results-aggregator-plugin/README_Pipeline.adoc[Pipeline Syntax]
 
-image::PostBuildAction.png[Post Build Action,900,align="right"]
- 
- 
-**3. Add Groups/Teams and Jenkins Jobs **
-
-image::FreeStyleProject_Jobs.png[Jobs Configuraion,900,align="right"]
-
-[cols="3,3,3"] 
-|===
-|Group/Team
-|optional
-|it's used in report to group Jenkins jobs. For example teams , products or testing types.
-
-|Job Name
-|mandatory
-|it's the exact Jenkins job name to get results. In case of a job inside a 'folder' use : folderName/jobName , for multi-folders use folder path for example folder1/folder2/jobName .
-
-|Job Friendly Name
-|optional
-|it in use only for reporting purposes, if null or empty then "Job Name" will be used in report.
-|===
- 
- 
-   
-**4. Add Recipients List , Before,After Body text, theme and Sort by option **
-
-image::ReceipientsList.png[Recipients,900,align="right"]
-	
-[cols="2,2"] 
-|===
-|Recipients List
-|comma separated recipients list, ex : nick@some.com,mairy@some.com . if empty no email will be triggered. Supports job variables.
-
-|Subject prefix 
-|prefix for email's subject. Supports job & env variables.
-
-|Columns
-|html & email report columns and the order of them, comma separated. Possible columns are : 
-  
- Health, Job, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Description, Packages, Files, Classes, Methods, Lines, Conditions, Sonar, Build
- 
-|Text Before body mail
-|plain text or html code to add before report table. Supports job & env variables , for example ${WORKSPACE} or ${myVariable}
-
-|Text After body mail
-|plain text or html code to add after report table. Supports also job & env variables , for example ${WORKSPACE} or ${myVariable}
-
-|Mail Theme 
-|mail theme : 
-
-Ligth or dark
-
-|Sort Results By 
-|report will be sorted accordingly. If there are Groups then sorting refers to jobs inside a group.
-
-|===
- 
- 
-**5. Outdated results **
-
-image::OutofDate.png[OutofDate,900,align="right"]
-
-Jobs with results more than X hours ago will be marked with 'red' color under 'Last Run' column report. Otherwise (if blank) column 'Last Run' will just have the timestamp of job completion.
- 
- 
-**6. Compare with previous run **
-
-image::CompareWithPrevious.png[CompareWithPrevious,900,align="right"]
-
-Compare next run with the previous regarding job statuses, tests results and code coverage metrics. If false then no differences are displayed in report , no signs + -
- 
- 
-**7. Ignore Jobs from report by status **
-
-image::IgnoreJobs.png[IgnoreJobs,900,align="right"]
-
-Ignore from report jobs with status NOT_FOUND, DISABLED or ABORTED.
-
- 
- 
-  
-== Reports
-
-1.Jobs and Tests graphs, see a sample :
-
-image::MainView.png[Main View,900,align="right"]
-
-
-
-2.HTML Report , sample :
-
-image::htmlView2.png[Html View,900,align="right"]
-  
-    * the html report is generated under workspace/html/index.html and can be published also via https://plugins.jenkins.io/htmlpublisher[HTML Publisher Plugin] 
-    * the same report is send via mail. You should configure in 'Global Configuration' the 'SMTP server' under 'E-mail Notification' configuration section.
- 
-3.Aggregated view , sample : 
-
-image::AggregatedView.png[Aggregated,900,align="right"]
-
- 
- 
-== Pipeline Syntax
-
-Example 1 : Minimum
-	
-	stage ("Report"){
-		testResultsAggregator jobs:[[jobName: 'My CI Job1'], [jobName: 'My CI Job2'], [jobName: 'My CI Job3']]}
-	}
-	
-
-Example 2 : Report and publish via html publisher plugin.
-
-    testResultsAggregator columns: 'Job, Build, Status, Percentage, Total, Pass, Fail',
-                          recipientsList: 'nick@some.com,mairy@some.com',
-                          outOfDateResults: '10', 
-                          sortresults: 'Job Name',
-                          subject: 'Test Results'
-                        	 jobs: [
-                                [jobName: 'My CI Job1', jobFriendlyName: 'Job 1', groupName: 'TeamA'],
-                                [jobName: 'My CI Job2', jobFriendlyName: 'Job 2', groupName: 'TeamA'],
-                                [jobName: 'My CI Job3', groupName: 'TeamB'], // jobFriendlyName is optional
-                                [jobName: 'My CI Job4'] // groupName is optional
-                            ]
-		
-	publishHTML(target: [allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "html", reportFiles: 'index.html', reportName: "Results"])
-	
-				
-
-==  testResultsAggregator parameters & values :
- 
-[cols="2,2"] 
-|===
-|columns
-|Comma separated with possible values : Health, Job, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Description, Packages, Files, Classes, Methods, Lines, Conditions, Sonar, Build
-
-|recipientsList
-|Comma separated recipients list , ex : 'nick@some.com,mairy@some.com' If empty or blank no email will be triggered. Supports job variables, for example '${my_parameter_for_mail}'.
-
-|subject
-|Mail Subject prefix. Supports job & env variables.
-
-|beforebody
-|Text before mail body. Static text or HTML code. Supports also job & env variables , for example ${WORKSPACE} or ${myVariable}
-
-|afterbody
-|Text after mail body. Static text or HTML code. Supports also job & env variables , for example ${WORKSPACE} or ${myVariable}
-
-|theme
-|Mail theme , possible values are: light, dark
-
-|sortresults
-|Sort Results using one of the following available options: Job Name, Job Status, Total Tests, Pass Tests, Failed Tests, Skipped Tests, Percentage, Commits, Time Stamp, Duration, Build Number
-
-|outOfDateResults
-|Completed Jenkins Jobs with results more than X hours ago will be marked with 'red' color under 'Last Run' column report. Otherwise if blank or empty then column 'Last Run' will just have the timestamp of job completion.
-
-|compareWithPreviousRun
-|Compare next run with the previous regarding job statuses, tests results and code coverage metrics. If false then no differences are displayed in report , no signs + - ,options true/false
-
-|ignoreAbortedJobs
-|Ignore from report jobs with status ABORTED. Options true/false
-
-|ignoreDisabledJobs
-|Ignore from report jobs with status DISABLED. Options true/false
-
-|ignoreNotFoundJobs
-|Ignore from report jobs with status NOT_FOUND. Options true/false
-
-|===
-
- 
 == Release Notes
 
 See the https://github.com/jenkinsci/test-results-aggregator-plugin/releases[Github releases page].
@@ -271,9 +95,7 @@ See the https://github.com/jenkinsci/test-results-aggregator-plugin/releases[Git
 * 1.1.x Requires Jenkins < 2.277
 * 1.2.x Requires Jenkins >= 2.277
 
- 
- 
+  
 == Jenkins CI 
 
 https://ci.jenkins.io/job/Plugins/job/test-results-aggregator-plugin/
-
