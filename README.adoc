@@ -34,7 +34,7 @@ Samples:
 
 |===
 
-|[#img-Untitled2] 
+a|[#img-Untitled2] 
 .Job Results Aggregated per Build
 image::Untitled2.png[Main View,350,align="right"]
 a|[#img-MainView] 
@@ -55,7 +55,7 @@ image::htmlView2.png[Html View,350,align="right"]
 
 Can be used as the last step in a CI/CD pipeline.
 
-Supports 'https://plugins.jenkins.io/test-results-aggregator/#plugin-content-free-style-job-configuration[free style project]' and 'https://plugins.jenkins.io/test-results-aggregator/#plugin-content-pipeline-syntax[pipeline]' (after https://github.com/jenkinsci/test-results-aggregator-plugin/releases/1.2.7[1.2.7]).
+Supports 'https://github.com/jenkinsci/test-results-aggregator-plugin/blob/master/README_FreeStyle.adoc[free style project]' and 'https://github.com/jenkinsci/test-results-aggregator-plugin/blob/master/README_Pipeline.adoc[pipeline]' (after https://github.com/jenkinsci/test-results-aggregator-plugin/releases/1.2.7[1.2.7]).
 
 Requires both ** global ** and ** job configuration ** .
  
@@ -83,10 +83,9 @@ In this section you can define :
 |sender for the mail Notification. Default is "Jenkins".
 
 |=== 
- 
- 
- * https://github.com/jenkinsci/test-results-aggregator-plugin/README_FreeStyle.adoc[Free Style Job Configuration]
- * https://github.com/jenkinsci/test-results-aggregator-plugin/README_Pipeline.adoc[Pipeline Syntax]
+
+ * https://github.com/jenkinsci/test-results-aggregator-plugin/blob/master/README_FreeStyle.adoc[Free Style Job Configuration]
+ * https://github.com/jenkinsci/test-results-aggregator-plugin/blob/master/README_Pipeline.adoc[Pipeline Syntax]
 
 == Release Notes
 
