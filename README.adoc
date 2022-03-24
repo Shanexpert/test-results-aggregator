@@ -102,4 +102,4 @@ https://ci.jenkins.io/job/Plugins/job/test-results-aggregator-plugin/
 
 == Misc
 
-https://github.com/jenkinsci/test-results-aggregator-plugin/projects/1[Kanban]
+https://github.com/jenkinsci/test-results-aggregator-plugin/projects/1[Test Results Aggregator Kanban]
