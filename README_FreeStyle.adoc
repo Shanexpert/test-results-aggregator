@@ -1,0 +1,90 @@
+= Test Results Aggregator
+:imagesdir: screenshots
+:icons:
+
+== Free Style Job Configuration
+
+**1. Test Result Aggregator Plugin can be used as a "Free Style Project". ** 
+
+image::FreeStyleProject.png[Free Style Project,900,align="right"]
+ 
+ 
+**2. Select "Add Post Build" action and scroll to "Aggregate Test Results" action. **
+
+image::PostBuildAction.png[Post Build Action,900,align="right"]
+ 
+ 
+**3. Add Groups/Teams and Jenkins Jobs **
+
+image::FreeStyleProject_Jobs.png[Jobs Configuraion,900,align="right"]
+
+[cols="3,3,3"] 
+|===
+|Group/Team
+|optional
+|it's used in report to group Jenkins jobs. For example teams , products or testing types.
+
+|Job Name
+|mandatory
+|it's the exact Jenkins job name to get results. In case of a job inside a 'folder' use : folderName/jobName , for multi-folders use folder path for example folder1/folder2/jobName .
+
+|Job Friendly Name
+|optional
+|it in use only for reporting purposes, if null or empty then "Job Name" will be used in report.
+|===
+ 
+ 
+   
+**4. Add Recipients List , Before,After Body text, theme and Sort by option **
+
+image::ReceipientsList.png[Recipients,900,align="right"]
+	
+[cols="2,2"] 
+|===
+|Recipients List
+|comma separated recipients list, ex : nick@some.com,mairy@some.com . if empty no email will be triggered. Supports job variables.
+
+|Subject prefix 
+|prefix for email's subject. Supports job & env variables.
+
+|Columns
+|html & email report columns and the order of them, comma separated. Possible columns are : 
+  
+ Health, Job, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Description, Packages, Files, Classes, Methods, Lines, Conditions, Sonar, Build
+ 
+|Text Before body mail
+|plain text or html code to add before report table. Supports job & env variables , for example ${WORKSPACE} or ${myVariable}
+
+|Text After body mail
+|plain text or html code to add after report table. Supports also job & env variables , for example ${WORKSPACE} or ${myVariable}
+
+|Mail Theme 
+|mail theme : 
+
+Ligth or dark
+
+|Sort Results By 
+|report will be sorted accordingly. If there are Groups then sorting refers to jobs inside a group.
+
+|===
+ 
+ 
+**5. Outdated results **
+
+image::OutofDate.png[OutofDate,900,align="right"]
+
+Jobs with results more than X hours ago will be marked with 'red' color under 'Last Run' column report. Otherwise (if blank) column 'Last Run' will just have the timestamp of job completion.
+ 
+ 
+**6. Compare with previous run **
+
+image::CompareWithPrevious.png[CompareWithPrevious,900,align="right"]
+
+Compare next run with the previous regarding job statuses, tests results and code coverage metrics. If false then no differences are displayed in report , no signs + -
+ 
+ 
+**7. Ignore Jobs from report by status **
+
+image::IgnoreJobs.png[IgnoreJobs,900,align="right"]
+
+Ignore from report jobs with status NOT_FOUND, DISABLED or ABORTED.

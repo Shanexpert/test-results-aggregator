@@ -1,0 +1,72 @@
+= Test Results Aggregator
+:imagesdir: screenshots
+:icons:
+
+== Pipeline Syntax
+
+Example 1 : Minimum
+	
+	stage ("Report"){
+		testResultsAggregator jobs:[[jobName: 'My CI Job1'], [jobName: 'My CI Job2'], [jobName: 'My CI Job3']]}
+	}
+	
+
+Example 2 : Report and publish via html publisher plugin.
+
+    testResultsAggregator columns: 'Job, Build, Status, Percentage, Total, Pass, Fail',
+                          recipientsList: 'nick@some.com,mairy@some.com',
+                          outOfDateResults: '10', 
+                          sortresults: 'Job Name',
+                          subject: 'Test Results'
+                        	 jobs: [
+                                [jobName: 'My CI Job1', jobFriendlyName: 'Job 1', groupName: 'TeamA'],
+                                [jobName: 'My CI Job2', jobFriendlyName: 'Job 2', groupName: 'TeamA'],
+                                [jobName: 'My CI Job3', groupName: 'TeamB'], // jobFriendlyName is optional
+                                [jobName: 'My CI Job4'] // groupName is optional
+                            ]
+		
+	publishHTML(target: [allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: "html", reportFiles: 'index.html', reportName: "Results"])
+	
+				
+
+==  testResultsAggregator parameters & values :
+ 
+[cols="2,2"] 
+|===
+|columns
+|Comma separated with possible values : Health, Job, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Description, Packages, Files, Classes, Methods, Lines, Conditions, Sonar, Build
+
+|recipientsList
+|Comma separated recipients list , ex : 'nick@some.com,mairy@some.com' If empty or blank no email will be triggered. Supports job variables, for example '${my_parameter_for_mail}'.
+
+|subject
+|Mail Subject prefix. Supports job & env variables.
+
+|beforebody
+|Text before mail body. Static text or HTML code. Supports also job & env variables , for example ${WORKSPACE} or ${myVariable}
+
+|afterbody
+|Text after mail body. Static text or HTML code. Supports also job & env variables , for example ${WORKSPACE} or ${myVariable}
+
+|theme
+|Mail theme , possible values are: light, dark
+
+|sortresults
+|Sort Results using one of the following available options: Job Name, Job Status, Total Tests, Pass Tests, Failed Tests, Skipped Tests, Percentage, Commits, Time Stamp, Duration, Build Number
+
+|outOfDateResults
+|Completed Jenkins Jobs with results more than X hours ago will be marked with 'red' color under 'Last Run' column report. Otherwise if blank or empty then column 'Last Run' will just have the timestamp of job completion.
+
+|compareWithPreviousRun
+|Compare next run with the previous regarding job statuses, tests results and code coverage metrics. If false then no differences are displayed in report , no signs + - ,options true/false
+
+|ignoreAbortedJobs
+|Ignore from report jobs with status ABORTED. Options true/false
+
+|ignoreDisabledJobs
+|Ignore from report jobs with status DISABLED. Options true/false
+
+|ignoreNotFoundJobs
+|Ignore from report jobs with status NOT_FOUND. Options true/false
+
+|===
