@@ -86,8 +86,8 @@ In this section you can define :
 
 == Job Configuration
 
- * https://github.com/jenkinsci/test-results-aggregator-plugin/blob/master/README_FreeStyle.adoc[Free Style Job Configuration]
- * https://github.com/jenkinsci/test-results-aggregator-plugin/blob/master/README_Pipeline.adoc[Pipeline Syntax]
+ * link:README_FreeStyle.adoc[Free Style Job Configuration]
+ * link:README_Pipeline.adoc[Pipeline Syntax]
 
 == Release Notes
 
