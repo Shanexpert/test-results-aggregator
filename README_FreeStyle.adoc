@@ -22,7 +22,7 @@ image::FreeStyleProject_Jobs.png[Jobs Configuraion,900,align="right"]
 |===
 |Group/Team
 |optional
-|it's used in report to group Jenkins jobs. For example teams , products or testing types.
+| Group Jenkins jobs and results in reports. For example group by teams , products or testing types.
 
 |Job Name
 |mandatory
@@ -30,7 +30,7 @@ image::FreeStyleProject_Jobs.png[Jobs Configuraion,900,align="right"]
 
 |Job Friendly Name
 |optional
-|it in use only for reporting purposes, if null or empty then "Job Name" will be used in report.
+|if null or empty then "Job Name" will be used in reports.
 |===
  
  
