@@ -8,6 +8,7 @@ import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -36,6 +37,8 @@ public class Reporter {
 	private Boolean ignoreAbortedJobs;
 	private boolean foundAtLeastOneGroupName;
 	
+	private Set<Job> ignoredDataJobs = new HashSet<>();
+	
 	public Reporter(PrintStream logger, FilePath workspace, File rootDir, String mailNotificationFrom, Boolean ignoreDisabledJobs, Boolean ignoreNotFoundJobs, Boolean ignoreAbortedJobs) {
 		this.logger = logger;
 		this.workspace = workspace;
@@ -47,9 +50,8 @@ public class Reporter {
 	}
 	
 	public void publishResuts(Aggregated aggregated, Properties properties, List<LocalMessages> columns, File rootDirectory) throws Exception {
-		List<Data> dataJob = aggregated.getData();
 		foundAtLeastOneGroupName = false;
-		for (Data data : dataJob) {
+		for (Data data : aggregated.getData()) {
 			if (!Strings.isNullOrEmpty(data.getGroupName())) {
 				foundAtLeastOneGroupName = true;
 				break;
@@ -71,14 +73,17 @@ public class Reporter {
 		if (ignoreAbortedJobs != null && ignoreAbortedJobs) {
 			ignoreJobsFromReport(aggregatedCopy.getData(), JobStatus.ABORTED);
 		}
-		// Generate HTML Report
-		FilePath htmlReport = new HTMLReporter(logger, workspace).createOverview(aggregatedCopy, columns, properties.getProperty(AggregatorProperties.THEME.name()), foundAtLeastOneGroupName);
+		HTMLReporter htmlReporter = new HTMLReporter(logger, workspace);
+		// Generate HTML Reports
+		FilePath htmlReport = htmlReporter.createOverview(aggregatedCopy, columns, properties.getProperty(AggregatorProperties.THEME.name()), foundAtLeastOneGroupName);
+		FilePath htmlReportIgnoredDataJobs = htmlReporter.createIgnoredData(ignoredDataJobs, properties.getProperty(AggregatorProperties.THEME.name()));
 		// Generate Body message
 		String bodyText = generateMailBody(htmlReport.read());
 		// Calculate attachments
 		Map<String, ImageData> images = resolveImages(bodyText);
+		MailNotification mailNotification = new MailNotification(logger, aggregatedCopy.getData(), workspace, rootDirectory);
 		// Generate and Send Mail report
-		new MailNotification(logger, aggregatedCopy.getData(), workspace, rootDirectory).send(
+		mailNotification.send(
 				properties.getProperty(AggregatorProperties.RECIPIENTS_LIST.name()),
 				mailNotificationFrom,
 				generateMailSubject(properties.getProperty(AggregatorProperties.SUBJECT_PREFIX.name()), aggregatedCopy),
@@ -86,6 +91,17 @@ public class Reporter {
 				images,
 				properties.getProperty(AggregatorProperties.TEXT_BEFORE_MAIL_BODY.name()),
 				properties.getProperty(AggregatorProperties.TEXT_AFTER_MAIL_BODY.name()));
+		//
+		// TODO : Send mail with ignore jobs
+		/* : mailNotification.sendIgnoredData(
+				properties.getProperty(AggregatorProperties.RECIPIENTS_LIST.name()),
+				mailNotificationFrom,
+				generateMailSubject(properties.getProperty(AggregatorProperties.SUBJECT_PREFIX.name()), ignoredDataJobs),
+				bodyText,
+				images,
+				properties.getProperty(AggregatorProperties.TEXT_BEFORE_MAIL_BODY.name()),
+				properties.getProperty(AggregatorProperties.TEXT_AFTER_MAIL_BODY.name()));*/
+		
 	}
 	
 	private void ignoreJobsFromReport(List<Data> list, JobStatus status) {
@@ -94,6 +110,8 @@ public class Reporter {
 			for (Job temp : tempData.getJobs()) {
 				if (temp.getResults() != null && !status.name().equalsIgnoreCase(temp.getResults().getStatus())) {
 					tempList.add(temp);
+				} else {
+					ignoredDataJobs.add(temp);
 				}
 			}
 			tempData.setJobs(tempList);

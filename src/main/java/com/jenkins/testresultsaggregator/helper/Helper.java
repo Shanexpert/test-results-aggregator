@@ -187,16 +187,16 @@ public class Helper {
 		}
 	}
 	
-	public static FilePath createFolder(FilePath filePath, String folder) throws IOException, InterruptedException {
+	public static FilePath createFolder(FilePath filePath, String folder, boolean delete) throws IOException, InterruptedException {
 		FilePath fp;
 		if (filePath.isRemote()) {
 			VirtualChannel channel = filePath.getChannel();
-			if (filePath.child(folder).exists()) {
+			if (filePath.child(folder).exists() && delete) {
 				filePath.child(folder).deleteRecursive();
 			}
 			fp = new FilePath(channel, filePath.child(folder).getRemote());
 		} else {
-			if (filePath.child(folder).exists()) {
+			if (filePath.child(folder).exists() && delete) {
 				filePath.child(folder).deleteRecursive();
 			}
 			fp = new FilePath(new File(filePath.getRemote(), folder));
