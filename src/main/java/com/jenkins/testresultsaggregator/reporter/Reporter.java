@@ -79,12 +79,15 @@ public class Reporter {
 		FilePath htmlReportIgnoredDataJobs = htmlReporter.createIgnoredData(ignoredDataJobs, properties.getProperty(AggregatorProperties.THEME.name()));
 		// Generate Body message
 		String bodyText = generateMailBody(htmlReport.read());
+		String bodyTextIgnored = generateMailBody(htmlReportIgnoredDataJobs.read());
 		// Calculate attachments
 		Map<String, ImageData> images = resolveImages(bodyText);
 		MailNotification mailNotification = new MailNotification(logger, aggregatedCopy.getData(), workspace, rootDirectory);
 		// Generate and Send Mail report
 		mailNotification.send(
 				properties.getProperty(AggregatorProperties.RECIPIENTS_LIST.name()),
+				properties.getProperty(AggregatorProperties.RECIPIENTS_LIST_CC.name()),
+				properties.getProperty(AggregatorProperties.RECIPIENTS_LIST_BCC.name()),
 				mailNotificationFrom,
 				generateMailSubject(properties.getProperty(AggregatorProperties.SUBJECT_PREFIX.name()), aggregatedCopy),
 				bodyText,
@@ -92,15 +95,13 @@ public class Reporter {
 				properties.getProperty(AggregatorProperties.TEXT_BEFORE_MAIL_BODY.name()),
 				properties.getProperty(AggregatorProperties.TEXT_AFTER_MAIL_BODY.name()));
 		//
-		// TODO : Send mail with ignore jobs
-		/* : mailNotification.sendIgnoredData(
-				properties.getProperty(AggregatorProperties.RECIPIENTS_LIST.name()),
+		mailNotification.sendIgnoredData(
+				properties.getProperty(AggregatorProperties.RECIPIENTS_LIST_IGNORED.name()),
 				mailNotificationFrom,
-				generateMailSubject(properties.getProperty(AggregatorProperties.SUBJECT_PREFIX.name()), ignoredDataJobs),
-				bodyText,
-				images,
+				"Test Results Aggregator Ignored Jobs",
+				bodyTextIgnored,
 				properties.getProperty(AggregatorProperties.TEXT_BEFORE_MAIL_BODY.name()),
-				properties.getProperty(AggregatorProperties.TEXT_AFTER_MAIL_BODY.name()));*/
+				properties.getProperty(AggregatorProperties.TEXT_AFTER_MAIL_BODY.name()));
 		
 	}
 	

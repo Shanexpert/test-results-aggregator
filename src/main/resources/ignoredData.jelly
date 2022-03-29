@@ -20,8 +20,7 @@
 				</j:forEach>
 			</tr>
 			<j:forEach items="${ignoredDataJobs}" var="dataJob">
-				<j:set var="bgcolor" value="#DFDEDE"/>
-					<tr bgcolor='${bgcolor}' height='35'>
+					<tr height='35'>
 							<j:forEach items="${columns}" var="column">
 							<j:if test="${column.name() == 'COLUMN_JOB'}">
 								<td style='border-bottom:${line} solid ${lineSeperatorcolor}'>${dataJob.getJobNameFromFriendlyName(true)} ${dataJob.getUpdated()}</td>

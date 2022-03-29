@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Transport;
@@ -62,7 +63,7 @@ public class MailNotification {
 		return allJobsNotFound;
 	}
 	
-	public void send(String mailTo, String mailFrom, String subject, String body, Map<String, ImageData> images, String preBodyText, String afterBodyText)
+	public void send(String mailTo, String mailToCC, String mailToBCc, String mailFrom, String subject, String body, Map<String, ImageData> images, String preBodyText, String afterBodyText)
 			throws Exception {
 		logger.print(LocalMessages.GENERATE.toString() + " " + LocalMessages.EMAIL_REPORT.toString());
 		MimeMessageBuilder mimeMessageBuilder = new MimeMessageBuilder();
@@ -75,7 +76,15 @@ public class MailNotification {
 			try {// Add Recipients
 				String[] to = mailTo.split(",");
 				for (String recipient : to) {
-					mimeMessageBuilder.addRecipients(recipient);
+					mimeMessageBuilder.addRecipients(recipient, RecipientType.TO);
+				}
+				String[] toc = mailToCC.split(",");
+				for (String recipient : toc) {
+					mimeMessageBuilder.addRecipients(recipient, RecipientType.CC);
+				}
+				String[] tobc = mailToBCc.split(",");
+				for (String recipient : tobc) {
+					mimeMessageBuilder.addRecipients(recipient, RecipientType.BCC);
 				}
 				// Add Body before
 				StringBuffer messageBody = new StringBuffer();
@@ -103,6 +112,69 @@ public class MailNotification {
 				message = mimeMessageBuilder.buildMimeMessage();
 				message.setFrom(new InternetAddress(mailFrom));
 				useImages(messageBody, images, message);
+				// Save Message
+				message.saveChanges();
+				// Send Message
+				sendMessage(message);
+				logger.println(LocalMessages.SEND_MAIL_TO.toString());
+				logger.println("" + mailTo);
+			} catch (Exception ex) {
+				// Send Mail with no images
+				logger.printf(LocalMessages.ERROR_OCCURRED.toString() + ": " + ex.getMessage());
+				logger.println(LocalMessages.SEND_MAIL_TO.toString());
+				if (message != null) {
+					message = mimeMessageBuilder.buildMimeMessage();
+					message.setFrom(new InternetAddress(mailFrom));
+					// Save Message
+					message.saveChanges();
+					sendMessage(message);
+				}
+				ex.printStackTrace();
+				logger.println("");
+			}
+		}
+	}
+	
+	public void sendIgnoredData(String mailTo, String mailFrom, String subject, String body, String preBodyText, String afterBodyText)
+			throws Exception {
+		logger.print(LocalMessages.GENERATE.toString() + " " + LocalMessages.EMAIL_REPORT.toString());
+		MimeMessageBuilder mimeMessageBuilder = new MimeMessageBuilder();
+		MimeMessage message = null;
+		if (validateResults()) {
+			logger.println(LocalMessages.VALIDATION_MAIL_NOT_FOUND_JOBS.toString());
+		} else if (Strings.isNullOrEmpty(mailTo)) {
+			logger.println(LocalMessages.VALIDATION_MAIL_RECEIPIENTS_EMPTY.toString());
+		} else {
+			try {// Add Recipients
+				String[] to = mailTo.split(",");
+				for (String recipient : to) {
+					mimeMessageBuilder.addRecipients(recipient, RecipientType.TO);
+				}
+				// Add Body before
+				StringBuffer messageBody = new StringBuffer();
+				if (!Strings.isNullOrEmpty(preBodyText)) {
+					preBodyText = resolveVariables(preBodyText);
+					messageBody.append(preBodyText);
+					messageBody.append("<br></br>");
+				}
+				// Add Body
+				messageBody.append(body);
+				// Add Body before and after text
+				if (!Strings.isNullOrEmpty(afterBodyText)) {
+					afterBodyText = resolveVariables(afterBodyText);
+					messageBody.append("<br></br>");
+					messageBody.append(afterBodyText);
+				}
+				// Set Body
+				mimeMessageBuilder.setBody(messageBody.toString());
+				// Set Subject
+				mimeMessageBuilder.setSubject(subject);
+				// Set type
+				mimeMessageBuilder.setMimeType("text/html");
+				
+				// Build
+				message = mimeMessageBuilder.buildMimeMessage();
+				message.setFrom(new InternetAddress(mailFrom));
 				// Save Message
 				message.saveChanges();
 				// Send Message
