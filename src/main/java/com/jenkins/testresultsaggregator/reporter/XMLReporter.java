@@ -100,7 +100,7 @@ public class XMLReporter {
 	
 	private void jobStatus(PrintWriter writer, Job dataJob, java.net.URL url, boolean found) {
 		writer.println(TAB + TAB + TAB + xmlTag(URL, url));
-		if (found) {
+		if (found && dataJob.getResults() != null) {
 			writer.println(TAB + TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.TEST_TOTAL, dataJob.getResults().getTotal()));
 			writer.println(TAB + TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.TEST_SUCCESS, dataJob.getResults().getPass()));
 			writer.println(TAB + TAB + TAB + xmlTag(TestResultsAggregatorProjectAction.TEST_SKIPPED, dataJob.getResults().getSkip()));
