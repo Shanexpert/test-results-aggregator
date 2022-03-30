@@ -56,7 +56,16 @@ jobFriendlyName is optional, is in use only for reporting purposes, if null or e
 groupName is optional, it's used in report to group Jenkins jobs. For example teams , products or testing types. 
 
 |recipientsList
-|Comma separated recipients list , ex : 'nick@some.com,mairy@some.com' If empty or blank no email will be triggered. Supports job variables, for example '${my_parameter_for_mail}'.
+|Comma separated recipients list, ex : 'nick@some.com,mairy@some.com' If empty or blank no email will be triggered. Supports job variables, for example '${my_parameter_for_mail}'.
+
+|recipientsListCC
+|Comma separated recipients list CC, ex : 'nick@some.com,mairy@some.com' If empty or blank no email will be triggered. Supports job variables.
+
+|recipientsListBCC
+|Comma separated recipients list Bcc, ex : 'nick@some.com,mairy@some.com' If empty or blank no email will be triggered. Supports job variables.
+
+|recipientsListIgnored
+|Comma separated recipients list for ignored Jobs, ex : 'nick@some.com,mairy@some.com' If empty or blank no email will be triggered.
 
 |subject
 |Mail Subject prefix. Supports job & env variables.
@@ -87,5 +96,8 @@ groupName is optional, it's used in report to group Jenkins jobs. For example te
 
 |ignoreNotFoundJobs
 |Ignore from report jobs with status NOT_FOUND. Options true/false
+
+|ignoreRunningJobs
+|Ignore from report jobs with status RUNNING. Options true/false
 
 |===

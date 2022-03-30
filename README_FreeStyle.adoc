@@ -42,24 +42,33 @@ image::ReceipientsList.png[Recipients,900,align="right"]
 [cols="2,2"] 
 |===
 |Recipients List
-|comma separated recipients list, ex : nick@some.com,mairy@some.com . if empty no email will be triggered. Supports job variables.
+|Comma separated recipients list, ex : nick@some.com,mairy@some.com . if empty no email will be triggered. Supports job variables, for example '${my_parameter_for_mail}'.
+
+|Recipients List CC
+|Comma separated recipients list CC, ex : 'nick@some.com,mairy@some.com' If empty or blank no email will be triggered. Supports job variables.
+
+|Recipients list Bcc
+|Comma separated recipients list Bcc, ex : 'nick@some.com,mairy@some.com' If empty or blank no email will be triggered. Supports job variables.
+
+|Recipients list for Ignored Jobs
+|Comma separated recipients list for ignored Jobs, ex : 'nick@some.com,mairy@some.com' If empty or blank no email will be triggered. Supports job variables.
 
 |Subject prefix 
-|prefix for email's subject. Supports job & env variables.
+|Prefix for email's subject. Supports job & env variables.
 
 |Columns
-|html & email report columns and the order of them, comma separated. Possible columns are : 
+|Html & email report columns and the order of them, comma separated. Possible columns are : 
   
  Health, Job, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Description, Packages, Files, Classes, Methods, Lines, Conditions, Sonar, Build
  
 |Text Before body mail
-|plain text or html code to add before report table. Supports job & env variables , for example ${WORKSPACE} or ${myVariable}
+|Plain text or html code to add before report table. Supports job & env variables , for example ${WORKSPACE} or ${myVariable}
 
 |Text After body mail
-|plain text or html code to add after report table. Supports also job & env variables , for example ${WORKSPACE} or ${myVariable}
+|Plain text or html code to add after report table. Supports also job & env variables , for example ${WORKSPACE} or ${myVariable}
 
 |Mail Theme 
-|mail theme : 
+|Mail theme with values : 
 
 Ligth or dark
 
@@ -87,4 +96,4 @@ Compare next run with the previous regarding job statuses, tests results and cod
 
 image::IgnoreJobs.png[IgnoreJobs,900,align="right"]
 
-Ignore from report jobs with status NOT_FOUND, DISABLED or ABORTED.
+Ignore from report jobs with status NOT_FOUND, DISABLED, ABORTED or RUNNING.
