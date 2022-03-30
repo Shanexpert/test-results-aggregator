@@ -70,6 +70,7 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 	public Boolean ignoreNotFoundJobs;
 	public Boolean ignoreDisabledJobs;
 	public Boolean ignoreAbortedJobs;
+	public Boolean ignoreRunningJobs;
 	public String columns;
 	public List<Data> data;
 	public List<DataPipeline> jobs;
@@ -92,7 +93,11 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 		RECIPIENTS_LIST,
 		RECIPIENTS_LIST_CC,
 		RECIPIENTS_LIST_BCC,
-		RECIPIENTS_LIST_IGNORED
+		RECIPIENTS_LIST_IGNORED,
+		IGNORE_NOTFOUND_JOBS,
+		IGNORE_DISABLED_JOBS,
+		IGNORE_ABORTED_JOBS,
+		IGNORE_RUNNING_JOBS;
 	}
 	
 	public enum SortResultsBy {
@@ -125,7 +130,7 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 	public TestResultsAggregator(final String subject, final String recipientsList, final String recipientsListCC, final String recipientsListBCC, final String recipientsListIgnored, final String outOfDateResults,
 			final List<Data> data, final List<DataPipeline> jobs, String beforebody, String afterbody, String theme,
 			String sortresults,
-			String columns, Boolean compareWithPreviousRun, Boolean ignoreNotFoundJobs, Boolean ignoreDisabledJobs, Boolean ignoreAbortedJobs) {
+			String columns, Boolean compareWithPreviousRun, Boolean ignoreNotFoundJobs, Boolean ignoreDisabledJobs, Boolean ignoreAbortedJobs, Boolean ignoreRunningJobs) {
 		this.setRecipientsList(recipientsList);
 		this.setRecipientsListBCC(recipientsListBCC);
 		this.setRecipientsListCC(recipientsListCC);
@@ -142,6 +147,7 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 		this.setIgnoreDisabledJobs(ignoreDisabledJobs);
 		this.setIgnoreNotFoundJobs(ignoreNotFoundJobs);
 		this.setIgnoreAbortedJobs(ignoreAbortedJobs);
+		this.setIgnoreRunningJobs(ignoreRunningJobs);
 		this.setJobs(jobs);
 	}
 	
@@ -172,7 +178,7 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 			// Analyze Results
 			Aggregated aggregated = new Analyzer(logger).analyze(validatedData, properties);
 			// Reporter for HTML and mail
-			Reporter reporter = new Reporter(logger, workspace, run.getRootDir(), desc.getMailNotificationFrom(), ignoreDisabledJobs, ignoreNotFoundJobs, ignoreAbortedJobs);
+			Reporter reporter = new Reporter(logger, workspace, run.getRootDir(), desc.getMailNotificationFrom(), ignoreDisabledJobs, ignoreNotFoundJobs, ignoreAbortedJobs, ignoreRunningJobs);
 			reporter.publishResuts(aggregated, properties, localizedColumns, run.getRootDir());
 			// Add Build Action
 			run.addAction(new TestResultsAggregatorTestResultBuildAction(aggregated));
@@ -210,7 +216,8 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 			// Analyze Results
 			Aggregated aggregated = new Analyzer(logger).analyze(validatedData, properties);
 			// Reporter for HTML and mail
-			Reporter reporter = new Reporter(logger, build.getProject().getSomeWorkspace(), build.getRootDir(), desc.getMailNotificationFrom(), ignoreDisabledJobs, ignoreNotFoundJobs, ignoreAbortedJobs);
+			Reporter reporter = new Reporter(logger, build.getProject().getSomeWorkspace(), build.getRootDir(), desc.getMailNotificationFrom(), ignoreDisabledJobs, ignoreNotFoundJobs, ignoreAbortedJobs,
+					ignoreRunningJobs);
 			reporter.publishResuts(aggregated, properties, localizedColumns, build.getRootDir());
 			// Add Build Action
 			build.addAction(new TestResultsAggregatorTestResultBuildAction(aggregated));
@@ -236,6 +243,10 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 		properties.put(AggregatorProperties.RECIPIENTS_LIST_BCC.name(), getRecipientsListBcc() != null ? getRecipientsListBcc() : "");
 		properties.put(AggregatorProperties.RECIPIENTS_LIST_CC.name(), getRecipientsListCc() != null ? getRecipientsListCc() : "");
 		properties.put(AggregatorProperties.RECIPIENTS_LIST_IGNORED.name(), getRecipientsListIgnored() != null ? getRecipientsListIgnored() : "");
+		properties.put(AggregatorProperties.IGNORE_NOTFOUND_JOBS.name(), ignoreNotFoundJobs());
+		properties.put(AggregatorProperties.IGNORE_DISABLED_JOBS.name(), ignoreDisabledJobs());
+		properties.put(AggregatorProperties.IGNORE_ABORTED_JOBS.name(), ignoreAbortedJobs());
+		properties.put(AggregatorProperties.IGNORE_RUNNING_JOBS.name(), ignoreRunningJobs());
 		
 	}
 	
@@ -571,6 +582,11 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 		this.ignoreAbortedJobs = ignoreAbortedJobs;
 	}
 	
+	@DataBoundSetter
+	public void setIgnoreRunningJobs(Boolean ignoreRunningJobs) {
+		this.ignoreRunningJobs = ignoreRunningJobs;
+	}
+	
 	public String getRecipientsList() {
 		return recipientsList;
 	}
@@ -661,6 +677,13 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 			ignoreAbortedJobs = false;
 		}
 		return ignoreAbortedJobs.booleanValue();
+	}
+	
+	public boolean ignoreRunningJobs() {
+		if (ignoreRunningJobs == null) {
+			ignoreRunningJobs = false;
+		}
+		return ignoreRunningJobs.booleanValue();
 	}
 	
 	public List<DataPipeline> getJobs() {

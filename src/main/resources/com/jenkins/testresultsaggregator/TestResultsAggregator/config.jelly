@@ -54,6 +54,11 @@
   	
   	<f:entry title="${%recipientsList}" field="recipientsList"><f:textarea /></f:entry>
   	
+  	<f:entry title="${%recipientsListCC}" field="recipientsListCC"><f:textarea /></f:entry>
+  	<f:entry title="${%recipientsListBCC}" field="recipientsListBCC"><f:textarea /></f:entry>
+  	
+  	<f:entry title="${%recipientsListIgnored}" field="recipientsListIgnored"><f:textarea /></f:entry>
+  	
   	<f:entry title="${%subject}" field="subject"><f:textbox /></f:entry>
   	
   	<f:entry title="${%userSelectionColumns}" field="columns"><f:textbox default="Health, Job, Status, Percentage, Total, Pass, Fail, Skip, Commits, LastRun, Duration, Description, Packages, Files, Classes, Methods, Lines, Conditions, Sonar, Build"/></f:entry>
@@ -114,5 +119,13 @@
     		<option value="true" selected="${instance.ignoreAbortedJobs() == true? true :null}">true</option>
   		</select>
   	</f:entry>
+  	
+  	<f:entry name="ignoreRunningJobs" title="${%ignoreRunningJobs}" field="ignoreRunningJobs">
+ 		<select name="ignoreRunningJobs">
+    		<option value="false" selected="${instance.ignoreRunningJobs() == false? false :null}">false</option>
+    		<option value="true" selected="${instance.ignoreRunningJobs() == true? true :null}">true</option>
+  		</select>
+  	</f:entry>
+  	
 	</div>
 </j:jelly>

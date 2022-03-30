@@ -65,12 +65,12 @@ public class MailNotification {
 	
 	public void send(String mailTo, String mailToCC, String mailToBCc, String mailFrom, String subject, String body, Map<String, ImageData> images, String preBodyText, String afterBodyText)
 			throws Exception {
-		logger.print(LocalMessages.GENERATE.toString() + " " + LocalMessages.EMAIL_REPORT.toString());
+		logger.println(LocalMessages.GENERATE.toString() + " " + LocalMessages.EMAIL_REPORT.toString());
 		MimeMessageBuilder mimeMessageBuilder = new MimeMessageBuilder();
 		MimeMessage message = null;
 		if (validateResults()) {
 			logger.println(LocalMessages.VALIDATION_MAIL_NOT_FOUND_JOBS.toString());
-		} else if (Strings.isNullOrEmpty(mailTo)) {
+		} else if (Strings.isNullOrEmpty(mailTo) && Strings.isNullOrEmpty(mailToCC) && Strings.isNullOrEmpty(mailToBCc)) {
 			logger.println(LocalMessages.VALIDATION_MAIL_RECEIPIENTS_EMPTY.toString());
 		} else {
 			try {// Add Recipients
@@ -117,7 +117,15 @@ public class MailNotification {
 				// Send Message
 				sendMessage(message);
 				logger.println(LocalMessages.SEND_MAIL_TO.toString());
-				logger.println("" + mailTo);
+				if (!Strings.isNullOrEmpty(mailTo)) {
+					logger.println("" + mailTo);
+				}
+				if (!Strings.isNullOrEmpty(mailToCC)) {
+					logger.println("" + mailToCC);
+				}
+				if (!Strings.isNullOrEmpty(mailToBCc)) {
+					logger.println("" + mailToBCc);
+				}
 			} catch (Exception ex) {
 				// Send Mail with no images
 				logger.printf(LocalMessages.ERROR_OCCURRED.toString() + ": " + ex.getMessage());
@@ -137,7 +145,7 @@ public class MailNotification {
 	
 	public void sendIgnoredData(String mailTo, String mailFrom, String subject, String body, String preBodyText, String afterBodyText)
 			throws Exception {
-		logger.print(LocalMessages.GENERATE.toString() + " " + LocalMessages.EMAIL_REPORT.toString());
+		logger.println(LocalMessages.GENERATE.toString() + " " + LocalMessages.EMAIL_REPORT.toString());
 		MimeMessageBuilder mimeMessageBuilder = new MimeMessageBuilder();
 		MimeMessage message = null;
 		if (validateResults()) {
@@ -183,7 +191,7 @@ public class MailNotification {
 				logger.println("" + mailTo);
 			} catch (Exception ex) {
 				// Send Mail with no images
-				logger.printf(LocalMessages.ERROR_OCCURRED.toString() + ": " + ex.getMessage());
+				logger.println(LocalMessages.ERROR_OCCURRED.toString() + ": " + ex.getMessage());
 				logger.println(LocalMessages.SEND_MAIL_TO.toString());
 				if (message != null) {
 					message = mimeMessageBuilder.buildMimeMessage();

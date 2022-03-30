@@ -35,11 +35,12 @@ public class Reporter {
 	private Boolean ignoreNotFoundJobs;
 	private Boolean ignoreDisabledJobs;
 	private Boolean ignoreAbortedJobs;
+	private Boolean ignoreRunningJobs;
 	private boolean foundAtLeastOneGroupName;
 	
 	private Set<Job> ignoredDataJobs = new HashSet<>();
 	
-	public Reporter(PrintStream logger, FilePath workspace, File rootDir, String mailNotificationFrom, Boolean ignoreDisabledJobs, Boolean ignoreNotFoundJobs, Boolean ignoreAbortedJobs) {
+	public Reporter(PrintStream logger, FilePath workspace, File rootDir, String mailNotificationFrom, Boolean ignoreDisabledJobs, Boolean ignoreNotFoundJobs, Boolean ignoreAbortedJobs, Boolean ignoreRunningJobs) {
 		this.logger = logger;
 		this.workspace = workspace;
 		this.rootDir = rootDir;
@@ -47,6 +48,7 @@ public class Reporter {
 		this.ignoreDisabledJobs = ignoreDisabledJobs;
 		this.ignoreNotFoundJobs = ignoreNotFoundJobs;
 		this.ignoreAbortedJobs = ignoreAbortedJobs;
+		this.ignoreRunningJobs = ignoreRunningJobs;
 	}
 	
 	public void publishResuts(Aggregated aggregated, Properties properties, List<LocalMessages> columns, File rootDirectory) throws Exception {
@@ -72,6 +74,9 @@ public class Reporter {
 		}
 		if (ignoreAbortedJobs != null && ignoreAbortedJobs) {
 			ignoreJobsFromReport(aggregatedCopy.getData(), JobStatus.ABORTED);
+		}
+		if (ignoreRunningJobs != null && ignoreRunningJobs) {
+			ignoreJobsFromReport(aggregatedCopy.getData(), JobStatus.RUNNING);
 		}
 		HTMLReporter htmlReporter = new HTMLReporter(logger, workspace);
 		// Generate HTML Reports
@@ -150,7 +155,7 @@ public class Reporter {
 	
 	private String generateMailSubject(String subjectPrefix, Aggregated aggregated) {
 		String subject = subjectPrefix;
-		if (aggregated.getRunningJobs() > 0) {
+		if (aggregated.getRunningJobs() > 0 && !ignoreRunningJobs) {
 			subject += " " + LocalMessages.RESULTS_RUNNING.toString() + " : " + aggregated.getRunningJobs();
 		}
 		if (aggregated.getSuccessJobs() > 0 || aggregated.getFixedJobs() > 0) {
@@ -162,7 +167,7 @@ public class Reporter {
 		if (aggregated.getUnstableJobs() > 0 || aggregated.getKeepUnstableJobs() > 0) {
 			subject += " " + LocalMessages.RESULTS_UNSTABLE.toString() + " : " + (aggregated.getUnstableJobs() + aggregated.getKeepUnstableJobs());
 		}
-		if (aggregated.getAbortedJobs() > 0) {
+		if (aggregated.getAbortedJobs() > 0 && !ignoreAbortedJobs) {
 			subject += " " + LocalMessages.RESULTS_ABORTED.toString() + " : " + aggregated.getAbortedJobs();
 		}
 		return subject;

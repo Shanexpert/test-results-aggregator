@@ -8,6 +8,7 @@ import java.util.Properties;
 
 import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.TestResultsAggregator;
+import com.jenkins.testresultsaggregator.TestResultsAggregator.AggregatorProperties;
 import com.jenkins.testresultsaggregator.data.Aggregated;
 import com.jenkins.testresultsaggregator.data.Data;
 import com.jenkins.testresultsaggregator.data.Job;
@@ -109,7 +110,7 @@ public class Analyzer {
 						data.getReportGroup().setJobSuccess(data.getReportGroup().getJobSuccess() + 1);
 						aggregated.setFixedJobs(aggregated.getFixedJobs() + 1);
 						jobSuccess++;
-					} else if (JobStatus.RUNNING.name().equalsIgnoreCase(job.getReport().getStatus())) {
+					} else if (JobStatus.RUNNING.name().equalsIgnoreCase(job.getReport().getStatus()) && "true".equalsIgnoreCase((String) properties.get(AggregatorProperties.IGNORE_RUNNING_JOBS))) {
 						foundRunning = true;
 						data.getReportGroup().setJobRunning(data.getReportGroup().getJobRunning() + 1);
 						aggregated.setRunningJobs(aggregated.getRunningJobs() + 1);
@@ -134,12 +135,12 @@ public class Analyzer {
 						data.getReportGroup().setJobUnstable(data.getReportGroup().getJobUnstable() + 1);
 						aggregated.setKeepUnstableJobs(aggregated.getKeepUnstableJobs() + 1);
 						jobUnstable++;
-					} else if (JobStatus.ABORTED.name().equalsIgnoreCase(job.getReport().getStatus())) {
+					} else if (JobStatus.ABORTED.name().equalsIgnoreCase(job.getReport().getStatus()) && "true".equalsIgnoreCase((String) properties.get(AggregatorProperties.IGNORE_ABORTED_JOBS))) {
 						foundSkip = true;
 						data.getReportGroup().setJobAborted(data.getReportGroup().getJobAborted() + 1);
 						aggregated.setAbortedJobs(aggregated.getAbortedJobs() + 1);
 						jobAborted++;
-					} else if (JobStatus.DISABLED.name().equalsIgnoreCase(job.getReport().getStatus())) {
+					} else if (JobStatus.DISABLED.name().equalsIgnoreCase(job.getReport().getStatus()) && "true".equalsIgnoreCase((String) properties.get(AggregatorProperties.IGNORE_DISABLED_JOBS))) {
 						foundDisabled = true;
 						data.getReportGroup().setJobDisabled(data.getReportGroup().getJobDisabled() + 1);
 						aggregated.setDisabledJobs(aggregated.getDisabledJobs() + 1);

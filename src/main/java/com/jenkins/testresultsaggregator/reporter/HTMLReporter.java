@@ -94,7 +94,7 @@ public class HTMLReporter {
 		context.setVariable("name", "Test Result Aggregator");
 		// Themes light and dark
 		context.setVariable("theme", theme);
-		context.setVariable("columns", new ArrayList<LocalMessages>(Arrays.asList(LocalMessages.COLUMN_JOB, LocalMessages.COLUMN_JOB_STATUS, LocalMessages.COLUMN_HEALTH)));
+		context.setVariable("columns", new ArrayList<LocalMessages>(Arrays.asList(LocalMessages.COLUMN_JOB, LocalMessages.COLUMN_JOB_STATUS)));
 		context.setVariable("ignoredDataJobs", ignoredDataJobs);
 		// Header & footer color
 		context.setVariable("headerColor", Colors.htmlHEADER());
