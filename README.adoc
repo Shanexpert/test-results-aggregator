@@ -35,17 +35,17 @@ Samples:
 |===
 
 a|[#img-Untitled2] 
-.Job Results Aggregated per Build
+.Job results per build
 image::Untitled2.png[Main View,350,align="right"]
 a|[#img-MainView] 
-.Job Results Aggregated history
+.Job results history
 image::MainView.png[Main View,350,align="right"]
 
 a|[#img-Untitled1] 
-.Job Results Aggregated history main view
+.Job results history main view
 image::Untitled1.png[Html View,350,align="right"]
 a|[#img-htmlView2] 
-.Html/Email Report
+.Html/Email report
 image::htmlView2.png[Html View,350,align="right"]
 |=== 
 
