@@ -48,7 +48,8 @@ public enum LocalMessages {
 	COLUMN_CC_CONDITIONS ("columnCCConditions"),
 	COLUMN_SONAR_URL ("columnSonarURL"),
 	COLUMN_BUILD_NUMBER ("columnBuildNumber"),
-	XML_REPORT ("xmlReport");
+	XML_REPORT ("xmlReport"),
+	INFLUXDB ("influxdb");
 	
 	private final static ResourceBundle MESSAGES = ResourceBundle.getBundle("com.jenkins.testresultsaggregator.Messages");
 	private final String msgRef;
