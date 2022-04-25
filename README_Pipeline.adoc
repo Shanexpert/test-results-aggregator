@@ -7,7 +7,7 @@
 Example 1 : Minimum
 	
 	stage ("Report"){
-		testResultsAggregator jobs:[[jobName: 'My CI Job1'], [jobName: 'My CI Job2'], [jobName: 'My CI Job3']]}
+		testResultsAggregator jobs:[[jobName: 'My CI Job1'], [jobName: 'My CI Job2'], [jobName: 'My CI Job3']]
 	}
 	
 
