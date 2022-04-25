@@ -97,6 +97,6 @@ See the https://github.com/jenkinsci/test-results-aggregator-plugin/releases[Git
 * 1.2.x Requires Jenkins >= 2.277
 
   
-== Jenkins CI 
+== Misc
 
 https://ci.jenkins.io/job/Plugins/job/test-results-aggregator-plugin/
