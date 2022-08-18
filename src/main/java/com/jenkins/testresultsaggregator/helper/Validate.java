@@ -2,10 +2,10 @@ package com.jenkins.testresultsaggregator.helper;
 
 import java.util.Properties;
 
-import javax.mail.AuthenticationFailedException;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
+import jakarta.mail.AuthenticationFailedException;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
 
 public class Validate {
 	
