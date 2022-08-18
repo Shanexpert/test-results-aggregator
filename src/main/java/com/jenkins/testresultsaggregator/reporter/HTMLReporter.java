@@ -57,7 +57,7 @@ public class HTMLReporter {
 		context.setVariable("headerColor", Colors.htmlHEADER());
 		context.setVariable("footerColor", Colors.htmlFOOTER());
 		context.setVariable("footerTextColor", Colors.htmlFOOTERTEXT());
-		// Line Seperator color
+		// Line Separator color
 		context.setVariable("lineSeperatorcolor", Colors.htmlLINESEPERATOR());
 		XMLOutput xmlOutput = XMLOutput.createXMLOutput(file.write());
 		URL template = HTMLReporter.class.getResource("/" + OVERVIEW_JELLY_FILE);
