@@ -35,12 +35,11 @@ public class Reporter {
 	private Boolean ignoreNotFoundJobs;
 	private Boolean ignoreDisabledJobs;
 	private Boolean ignoreAbortedJobs;
-	private Boolean ignoreRunningJobs;
 	private boolean foundAtLeastOneGroupName;
 	
 	private Set<Job> ignoredDataJobs = new HashSet<>();
 	
-	public Reporter(PrintStream logger, FilePath workspace, File rootDir, String mailNotificationFrom, Boolean ignoreDisabledJobs, Boolean ignoreNotFoundJobs, Boolean ignoreAbortedJobs, Boolean ignoreRunningJobs) {
+	public Reporter(PrintStream logger, FilePath workspace, File rootDir, String mailNotificationFrom, Boolean ignoreDisabledJobs, Boolean ignoreNotFoundJobs, Boolean ignoreAbortedJobs) {
 		this.logger = logger;
 		this.workspace = workspace;
 		this.rootDir = rootDir;
@@ -48,7 +47,6 @@ public class Reporter {
 		this.ignoreDisabledJobs = ignoreDisabledJobs;
 		this.ignoreNotFoundJobs = ignoreNotFoundJobs;
 		this.ignoreAbortedJobs = ignoreAbortedJobs;
-		this.ignoreRunningJobs = ignoreRunningJobs;
 	}
 	
 	public void publishResuts(Aggregated aggregated, Properties properties, List<LocalMessages> columns, File rootDirectory) throws Exception {
@@ -75,9 +73,6 @@ public class Reporter {
 		if (ignoreAbortedJobs != null && ignoreAbortedJobs) {
 			ignoreJobsFromReport(aggregatedCopy.getData(), JobStatus.ABORTED);
 		}
-		if (ignoreRunningJobs != null && ignoreRunningJobs) {
-			ignoreJobsFromReport(aggregatedCopy.getData(), JobStatus.RUNNING);
-		}
 		HTMLReporter htmlReporter = new HTMLReporter(logger, workspace);
 		// Generate HTML Reports
 		FilePath htmlReport = htmlReporter.createOverview(aggregatedCopy, columns, properties.getProperty(AggregatorProperties.THEME.name()), foundAtLeastOneGroupName);
@@ -89,12 +84,13 @@ public class Reporter {
 		Map<String, ImageData> images = resolveImages(bodyText);
 		MailNotification mailNotification = new MailNotification(logger, aggregatedCopy.getData(), workspace, rootDirectory);
 		// Generate and Send Mail report
+		String subjectText = generateMailSubject(properties.getProperty(AggregatorProperties.SUBJECT_PREFIX.name()), aggregatedCopy);
 		mailNotification.send(
 				properties.getProperty(AggregatorProperties.RECIPIENTS_LIST.name()),
 				properties.getProperty(AggregatorProperties.RECIPIENTS_LIST_CC.name()),
 				properties.getProperty(AggregatorProperties.RECIPIENTS_LIST_BCC.name()),
 				mailNotificationFrom,
-				generateMailSubject(properties.getProperty(AggregatorProperties.SUBJECT_PREFIX.name()), aggregatedCopy),
+				subjectText,
 				bodyText,
 				images,
 				properties.getProperty(AggregatorProperties.TEXT_BEFORE_MAIL_BODY.name()),
@@ -107,7 +103,11 @@ public class Reporter {
 				bodyTextIgnored,
 				properties.getProperty(AggregatorProperties.TEXT_BEFORE_MAIL_BODY.name()),
 				properties.getProperty(AggregatorProperties.TEXT_AFTER_MAIL_BODY.name()));
-		
+		new InfluxdbReporter(logger).post(aggregatedCopy,
+				properties.getProperty(AggregatorProperties.INFLUXDB_URL.name()),
+				properties.getProperty(AggregatorProperties.INFLUXDB_TOKEN.name()),
+				properties.getProperty(AggregatorProperties.INFLUXDB_BUCKET.name()),
+				properties.getProperty(AggregatorProperties.INFLUXDB_ORG.name()));
 	}
 	
 	private void ignoreJobsFromReport(List<Data> list, JobStatus status) {
@@ -155,9 +155,6 @@ public class Reporter {
 	
 	private String generateMailSubject(String subjectPrefix, Aggregated aggregated) {
 		String subject = subjectPrefix;
-		if (aggregated.getRunningJobs() > 0 && !ignoreRunningJobs) {
-			subject += " " + LocalMessages.RESULTS_RUNNING.toString() + " : " + aggregated.getRunningJobs();
-		}
 		if (aggregated.getSuccessJobs() > 0 || aggregated.getFixedJobs() > 0) {
 			subject += " " + LocalMessages.RESULTS_SUCCESS.toString() + " : " + (aggregated.getSuccessJobs() + aggregated.getFixedJobs());
 		}
@@ -169,6 +166,9 @@ public class Reporter {
 		}
 		if (aggregated.getAbortedJobs() > 0 && !ignoreAbortedJobs) {
 			subject += " " + LocalMessages.RESULTS_ABORTED.toString() + " : " + aggregated.getAbortedJobs();
+		}
+		if (aggregated.getRunningJobs() > 0 || aggregated.getRunningJobs() > 0) {
+			subject += " " + LocalMessages.RESULTS_RUNNING.toString() + " : " + aggregated.getRunningJobs();
 		}
 		return subject;
 	}

@@ -9,8 +9,10 @@ public class BuildInfo implements Serializable {
 	private static final long serialVersionUID = 3491196L;
 	
 	private Boolean building;
+	private boolean ignore;
 	private String description;
 	private Long duration;
+	private Long estimatedDuration;
 	private int number;
 	private String result;
 	private PreviousBuildInfo previousBuild;
@@ -128,6 +130,25 @@ public class BuildInfo implements Serializable {
 	
 	public String getBuildNumberUrl() {
 		return "<a href='" + url + "' style='text-decoration:none;'>" + number + "</a>";
+	}
+	
+	public Long getEstimatedDuration() {
+		if (building) {
+			return estimatedDuration;
+		}
+		return 0L;
+	}
+	
+	public void setEstimatedDuration(Long estimatedDuration) {
+		this.estimatedDuration = estimatedDuration;
+	}
+	
+	public boolean getIgnore() {
+		return ignore;
+	}
+	
+	public void setIgnore(boolean ignore) {
+		this.ignore = ignore;
 	}
 	
 }

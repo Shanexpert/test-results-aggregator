@@ -11,6 +11,7 @@ public enum LocalMessages {
 	VALIDATION_INTEGER_NUMBER ("validationIntegerNumber"),
 	SUCCESS ("success"),
 	GENERATE ("generate"),
+	POST ("post"),
 	ANALYZE ("analyze"),
 	FINISHED ("finished"),
 	HTML_REPORT ("htmlReport"),

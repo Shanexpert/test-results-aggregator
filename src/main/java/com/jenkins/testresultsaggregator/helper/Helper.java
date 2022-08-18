@@ -90,23 +90,26 @@ public class Helper {
 	}
 	
 	public static String colorizeResultStatus(String result) {
-		if (JobStatus.SUCCESS.name().equals(result)) {
-			return colorize(result, Colors.SUCCESS);
-		} else if (JobStatus.FAILURE.name().equals(result)) {
-			return colorize(result, Colors.FAILED);
-		} else if (JobStatus.STILL_FAILING.name().equals(result)) {
-			return colorize(result, Colors.FAILED);
-		} else if (JobStatus.FIXED.name().equals(result)) {
-			return colorize(result, Colors.SUCCESS);
-		} else if (JobStatus.UNSTABLE.name().equals(result)) {
-			return colorize(result, Colors.UNSTABLE);
-		} else if (JobStatus.ABORTED.name().equals(result)) {
-			return colorize(result, Colors.ABORTED);
-		} else if (JobStatus.STILL_UNSTABLE.name().equals(result)) {
-			return colorize(result, Colors.UNSTABLE);
-		} else if (JobStatus.RUNNING.name().equals(result)) {
-			return colorize(result, Colors.RUNNING);
+		if (result != null) {
+			if (result.startsWith(JobStatus.SUCCESS.name())) {
+				return colorize(result, Colors.SUCCESS);
+			} else if (result.startsWith(JobStatus.FAILURE.name())) {
+				return colorize(result, Colors.FAILED);
+			} else if (result.startsWith(JobStatus.STILL_FAILING.name())) {
+				return colorize(result, Colors.FAILED);
+			} else if (result.startsWith(JobStatus.FIXED.name())) {
+				return colorize(result, Colors.SUCCESS);
+			} else if (result.startsWith(JobStatus.UNSTABLE.name())) {
+				return colorize(result, Colors.UNSTABLE);
+			} else if (result.startsWith(JobStatus.ABORTED.name())) {
+				return colorize(result, Colors.ABORTED);
+			} else if (result.startsWith(JobStatus.STILL_UNSTABLE.name())) {
+				return colorize(result, Colors.UNSTABLE);
+			} else if (result.startsWith(JobStatus.RUNNING.name())) {
+				return colorize(result, Colors.RUNNING);
+			}
 		}
+		
 		return result;
 	}
 	

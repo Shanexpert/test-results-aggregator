@@ -98,6 +98,6 @@ groupName is optional, it's used in report to group Jenkins jobs. For example te
 |Ignore from report jobs with status NOT_FOUND. Options true/false
 
 |ignoreRunningJobs
-|Ignore from report jobs with status RUNNING. Options true/false
+|Ignore from report jobs with status RUNNING. Options true/false. If false then jobs are reported with status RUNNING. If true then jobs are reported with the previous status and results. Moreover an asterisk at the side of status declares that the job is still running.
 
 |===

@@ -75,6 +75,11 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 	public List<Data> data;
 	public List<DataPipeline> jobs;
 	
+	public String influxdbUrl;
+	public String influxdbToken;
+	public String influxdbBucket;
+	public String influxdbOrg;
+	
 	private Properties properties;
 	public static final String DISPLAY_NAME = "Job Results Aggregated";
 	public static final String GRAPH_NAME_JOBS = "Job Results Trend";
@@ -97,7 +102,11 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 		IGNORE_NOTFOUND_JOBS,
 		IGNORE_DISABLED_JOBS,
 		IGNORE_ABORTED_JOBS,
-		IGNORE_RUNNING_JOBS;
+		IGNORE_RUNNING_JOBS,
+		INFLUXDB_URL,
+		INFLUXDB_TOKEN,
+		INFLUXDB_BUCKET,
+		INFLUXDB_ORG;
 	}
 	
 	public enum SortResultsBy {
@@ -130,7 +139,8 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 	public TestResultsAggregator(final String subject, final String recipientsList, final String recipientsListCC, final String recipientsListBCC, final String recipientsListIgnored, final String outOfDateResults,
 			final List<Data> data, final List<DataPipeline> jobs, String beforebody, String afterbody, String theme,
 			String sortresults,
-			String columns, Boolean compareWithPreviousRun, Boolean ignoreNotFoundJobs, Boolean ignoreDisabledJobs, Boolean ignoreAbortedJobs, Boolean ignoreRunningJobs) {
+			String columns, Boolean compareWithPreviousRun, Boolean ignoreNotFoundJobs, Boolean ignoreDisabledJobs, Boolean ignoreAbortedJobs, Boolean ignoreRunningJobs,
+			String influxdbUrl, String influxdbToken, String influxdbBucket, String influxdbOrg) {
 		this.setRecipientsList(recipientsList);
 		this.setRecipientsListBCC(recipientsListBCC);
 		this.setRecipientsListCC(recipientsListCC);
@@ -149,6 +159,10 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 		this.setIgnoreAbortedJobs(ignoreAbortedJobs);
 		this.setIgnoreRunningJobs(ignoreRunningJobs);
 		this.setJobs(jobs);
+		this.setInfluxdbUrl(influxdbUrl);
+		this.setInfluxdbToken(influxdbToken);
+		this.setInfluxdbBucket(influxdbBucket);
+		this.setInfluxdbOrg(influxdbOrg);
 	}
 	
 	/* In use from Pipeline Syntax */
@@ -174,11 +188,11 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 			}
 			// Collect Data
 			Collector collector = new Collector(logger, desc.getUsername(), desc.getPassword(), desc.getJenkinsUrl());
-			collector.collectResults(validatedData, compareWithPrevious());
+			collector.collectResults(validatedData, compareWithPrevious(), ignoreRunningJobs());
 			// Analyze Results
 			Aggregated aggregated = new Analyzer(logger).analyze(validatedData, properties);
 			// Reporter for HTML and mail
-			Reporter reporter = new Reporter(logger, workspace, run.getRootDir(), desc.getMailNotificationFrom(), ignoreDisabledJobs, ignoreNotFoundJobs, ignoreAbortedJobs, ignoreRunningJobs);
+			Reporter reporter = new Reporter(logger, workspace, run.getRootDir(), desc.getMailNotificationFrom(), ignoreDisabledJobs, ignoreNotFoundJobs, ignoreAbortedJobs);
 			reporter.publishResuts(aggregated, properties, localizedColumns, run.getRootDir());
 			// Add Build Action
 			run.addAction(new TestResultsAggregatorTestResultBuildAction(aggregated));
@@ -212,12 +226,11 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 			}
 			// Collect Data
 			Collector collector = new Collector(logger, desc.getUsername(), desc.getPassword(), desc.getJenkinsUrl());
-			collector.collectResults(validatedData, compareWithPrevious());
+			collector.collectResults(validatedData, compareWithPrevious(), ignoreRunningJobs());
 			// Analyze Results
 			Aggregated aggregated = new Analyzer(logger).analyze(validatedData, properties);
 			// Reporter for HTML and mail
-			Reporter reporter = new Reporter(logger, build.getProject().getSomeWorkspace(), build.getRootDir(), desc.getMailNotificationFrom(), ignoreDisabledJobs, ignoreNotFoundJobs, ignoreAbortedJobs,
-					ignoreRunningJobs);
+			Reporter reporter = new Reporter(logger, build.getProject().getSomeWorkspace(), build.getRootDir(), desc.getMailNotificationFrom(), ignoreDisabledJobs, ignoreNotFoundJobs, ignoreAbortedJobs);
 			reporter.publishResuts(aggregated, properties, localizedColumns, build.getRootDir());
 			// Add Build Action
 			build.addAction(new TestResultsAggregatorTestResultBuildAction(aggregated));
@@ -247,7 +260,10 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 		properties.put(AggregatorProperties.IGNORE_DISABLED_JOBS.name(), ignoreDisabledJobs());
 		properties.put(AggregatorProperties.IGNORE_ABORTED_JOBS.name(), ignoreAbortedJobs());
 		properties.put(AggregatorProperties.IGNORE_RUNNING_JOBS.name(), ignoreRunningJobs());
-		
+		properties.put(AggregatorProperties.INFLUXDB_URL.name(), getInfluxdbUrl() != null ? getInfluxdbUrl() : "");
+		properties.put(AggregatorProperties.INFLUXDB_TOKEN.name(), getInfluxdbToken() != null ? getInfluxdbToken() : "");
+		properties.put(AggregatorProperties.INFLUXDB_BUCKET.name(), getInfluxdbBucket() != null ? getInfluxdbBucket() : "");
+		properties.put(AggregatorProperties.INFLUXDB_ORG.name(), getInfluxdbOrg() != null ? getInfluxdbOrg() : "");
 	}
 	
 	@Override
@@ -721,4 +737,37 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 		}
 		throw new Exception("No data");
 	}
+	
+	public String getInfluxdbUrl() {
+		return influxdbUrl;
+	}
+	
+	public void setInfluxdbUrl(String influxdbUrl) {
+		this.influxdbUrl = influxdbUrl;
+	}
+	
+	public String getInfluxdbToken() {
+		return influxdbToken;
+	}
+	
+	public void setInfluxdbToken(String influxdbToken) {
+		this.influxdbToken = influxdbToken;
+	}
+	
+	public String getInfluxdbBucket() {
+		return influxdbBucket;
+	}
+	
+	public void setInfluxdbBucket(String influxdbBucket) {
+		this.influxdbBucket = influxdbBucket;
+	}
+	
+	public String getInfluxdbOrg() {
+		return influxdbOrg;
+	}
+	
+	public void setInfluxdbOrg(String influxdbOrg) {
+		this.influxdbOrg = influxdbOrg;
+	}
+	
 }

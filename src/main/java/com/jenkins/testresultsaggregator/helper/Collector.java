@@ -17,15 +17,16 @@ import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.data.BuildInfo;
 import com.jenkins.testresultsaggregator.data.ChangeSet;
 import com.jenkins.testresultsaggregator.data.CoberturaCoverage;
-import com.jenkins.testresultsaggregator.data.CoberturaCoverage.Element;
 import com.jenkins.testresultsaggregator.data.Data;
 import com.jenkins.testresultsaggregator.data.Job;
 import com.jenkins.testresultsaggregator.data.JobInfo;
 import com.jenkins.testresultsaggregator.data.JobListDTO;
-import com.jenkins.testresultsaggregator.data.JobListDTO.JobDTO;
 import com.jenkins.testresultsaggregator.data.JobStatus;
 import com.jenkins.testresultsaggregator.data.ReportJob;
 import com.jenkins.testresultsaggregator.data.Results;
+import com.jenkins.testresultsaggregator.data.CoberturaCoverage.Element;
+import com.jenkins.testresultsaggregator.data.JobListDTO.JobDTO;
+import com.jenkins.testresultsaggregator.helper.Collector.ReportThread;
 
 import hudson.util.Secret;
 
@@ -63,7 +64,7 @@ public class Collector {
 		this.logger = logger;
 	}
 	
-	public void collectResults(List<Data> dataJob, boolean compareWithPreviousRun) throws InterruptedException {
+	public void collectResults(List<Data> dataJob, boolean compareWithPreviousRun, Boolean ignoreRunningJobs) throws InterruptedException {
 		List<Job> allDataJobDTO = new ArrayList<>();
 		for (Data temp : dataJob) {
 			if (temp.getJobs() != null && !temp.getJobs().isEmpty()) {
@@ -73,7 +74,7 @@ public class Collector {
 		ReportThread[] threads = new ReportThread[allDataJobDTO.size()];
 		int index = 0;
 		for (Job tempDataJobDTO : allDataJobDTO) {
-			threads[index] = new ReportThread(tempDataJobDTO, compareWithPreviousRun);
+			threads[index] = new ReportThread(tempDataJobDTO, compareWithPreviousRun, ignoreRunningJobs);
 			index++;
 		}
 		index = 0;
@@ -201,6 +202,10 @@ public class Collector {
 		return getJobInfoWithUrl(dataJobDTO.getJobInfo().getUrl() + "/" + LASTBUILD + "/" + API_JSON_JACOCO);
 	}
 	
+	public BuildInfo getJobInfoPreviousBuild(BuildInfo buildInfo) {
+		return getJobInfoWithUrl(buildInfo.getPreviousBuild().getUrl() + "/" + API_JSON_JACOCO);
+	}
+	
 	public BuildInfo getJobInfo(String url) {
 		return getJobInfoWithUrl(url + "/" + API_JSON_JACOCO);
 	}
@@ -258,7 +263,7 @@ public class Collector {
 			}
 			boolean foundJacocoResults = false;
 			boolean foundCoberturaResults = false;
-			if (results.isBuilding()) {
+			if (results.isBuilding() && !job.getBuildInfo().getIgnore()) {
 				results.setCurrentResult(JobStatus.RUNNING.name());
 			} else {
 				if (results.getCurrentResult() != null) {
@@ -469,10 +474,12 @@ public class Collector {
 		
 		Job job;
 		boolean compareWithPreviousRun;
+		boolean ignoreRunningJobs;
 		
-		public ReportThread(Job job, boolean compareWithPreviousRun) {
+		public ReportThread(Job job, boolean compareWithPreviousRun, boolean ignoreRunningJobs) {
 			this.job = job;
 			this.compareWithPreviousRun = compareWithPreviousRun;
+			this.ignoreRunningJobs = ignoreRunningJobs;
 		}
 		
 		@Override
@@ -496,8 +503,16 @@ public class Collector {
 				logger.println(LocalMessages.COLLECT_DATA.toString() + " '" + job.getJobName() + "' " + LocalMessages.JOB_IS_DISABLED.toString());
 			} else if (job.getJobInfo() != null) {
 				// Job Found and is Buildable
-				// Get Job Results
-				job.setBuildInfo(getJobInfoLastBuild(job));
+				BuildInfo foundJob = getJobInfoLastBuild(job);
+				job.setBuildInfo(foundJob);
+				if (ignoreRunningJobs && job.getBuildInfo().getBuilding()) {
+					foundJob = getJobInfoPreviousBuild(foundJob);
+					foundJob.setBuilding(true);
+					foundJob.setIgnore(true);
+					job.setBuildInfo(foundJob);
+				} else if (job.getBuildInfo().getBuilding()) {
+					job.getBuildInfo().setResult(JobStatus.RUNNING.name());
+				}
 				// Get Actual Results
 				job.setResults(calculateResults(job, compareWithPreviousRun));
 				logger.println(LocalMessages.COLLECT_DATA.toString() + " '" + job.getJobName() + "' " + LocalMessages.FINISHED.toString());

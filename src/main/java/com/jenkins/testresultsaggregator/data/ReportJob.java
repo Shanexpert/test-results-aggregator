@@ -12,6 +12,7 @@ public class ReportJob implements Serializable {
 	private static final long serialVersionUID = 3491366L;
 	
 	private String status;
+	private String originalStatus;
 	private String timestamp;
 	private String total;
 	private String pass;
@@ -37,8 +38,14 @@ public class ReportJob implements Serializable {
 		
 	}
 	
-	public String calculateStatus(Results resultsDTO) {
-		setStatus(Helper.calculateStatus(resultsDTO.getCurrentResult(), resultsDTO.getPreviousResult()));
+	public String calculateStatus(Job job) {
+		if (job.getBuildInfo() != null && job.getBuildInfo().getBuilding() && job.getBuildInfo().getIgnore()) {
+			setStatus(Helper.calculateStatus(job.getResults().getPreviousResult(), null) + " *");
+			setOriginalStatus(JobStatus.RUNNING.name());
+		} else {
+			setStatus(Helper.calculateStatus(job.getResults().getCurrentResult(), job.getResults().getPreviousResult()));
+			setOriginalStatus(job.getResults().getCurrentResult());
+		}
 		return getStatus();
 	}
 	
@@ -410,6 +417,14 @@ public class ReportJob implements Serializable {
 	
 	public void setCcConditions(String ccConditions) {
 		this.ccConditions = ccConditions;
+	}
+	
+	public String getOriginalStatus() {
+		return originalStatus;
+	}
+	
+	public void setOriginalStatus(String originalStatus) {
+		this.originalStatus = originalStatus;
 	}
 	
 }
