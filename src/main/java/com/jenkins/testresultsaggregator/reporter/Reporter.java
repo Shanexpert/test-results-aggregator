@@ -167,7 +167,7 @@ public class Reporter {
 		if (aggregated.getAbortedJobs() > 0 && !ignoreAbortedJobs) {
 			subject += " " + LocalMessages.RESULTS_ABORTED.toString() + " : " + aggregated.getAbortedJobs();
 		}
-		if (aggregated.getRunningJobs() > 0 || aggregated.getRunningJobs() > 0) {
+		if (aggregated.getRunningJobs() > 0) {
 			subject += " " + LocalMessages.RESULTS_RUNNING.toString() + " : " + aggregated.getRunningJobs();
 		}
 		return subject;
