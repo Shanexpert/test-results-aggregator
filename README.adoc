@@ -12,12 +12,13 @@ It's a jenkins plugin that collects jobs and test results and reports them in :
 
 Test Results Aggregator can collect test results for : 
 
-* https://plugins.jenkins.io/junit[Junit], 
-* https://plugins.jenkins.io/testng-plugin[TestNG]
+* https://plugins.jenkins.io/junit[Junit] 
+* https://plugins.jenkins.io/testng-plugin[TestNG] 
+* https://plugins.jenkins.io/nunit/[Nunit]
 
 and code coverage results for : 
 
-* https://plugins.jenkins.io/cobertura[Cobertura], 
+* https://plugins.jenkins.io/cobertura[Cobertura] 
 * https://plugins.jenkins.io/jacoco[JaCoCo]
 
 image:https://img.shields.io/jenkins/plugin/v/test-results-aggregator.svg[Jenkins Plugin,link=https://plugins.jenkins.io/test-results-aggregator]
