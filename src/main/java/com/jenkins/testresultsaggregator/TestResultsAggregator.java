@@ -178,8 +178,16 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 			resolveVariables(properties, null, run.getEnvironment(listener));
 			// Resolve Columns
 			List<LocalMessages> localizedColumns = calculateColumns(getColumns());
+			//
+			String jenkinsUrl = desc.getJenkinsUrl();
+			if (Strings.isNullOrEmpty(jenkinsUrl)) {
+				// Resolve default url
+				jenkinsUrl = env.get("JENKINS_URL");
+				// build.getEnvironment(listener).get("JENKINS_URL");
+				logger.println("Fallback Jenkins url : " + jenkinsUrl);
+			}
 			// Validate Input Data
-			List<Data> validatedData = validateInputData(getDataFromDataPipeline(), desc.getJenkinsUrl());
+			List<Data> validatedData = validateInputData(getDataFromDataPipeline(), jenkinsUrl);
 			if (compareWithPrevious()) {
 				// Get Previous Saved Results
 				Aggregated previousSavedAggregatedResults = TestResultHistoryUtil.getTestResults(run.getPreviousSuccessfulBuild());
@@ -187,7 +195,7 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 				previousSavedResults(validatedData, previousSavedAggregatedResults);
 			}
 			// Collect Data
-			Collector collector = new Collector(logger, desc.getUsername(), desc.getPassword(), desc.getJenkinsUrl());
+			Collector collector = new Collector(logger, desc.getUsername(), desc.getPassword(), jenkinsUrl);
 			collector.collectResults(validatedData, compareWithPrevious(), ignoreRunningJobs());
 			// Analyze Results
 			Aggregated aggregated = new Analyzer(logger).analyze(validatedData, properties);
@@ -216,8 +224,16 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 			resolveVariables(properties, build.getBuildVariableResolver(), build.getEnvironment(listener));
 			// Resolve Columns
 			List<LocalMessages> localizedColumns = calculateColumns(getColumns());
+			//
+			String jenkinsUrl = desc.getJenkinsUrl();
+			if (Strings.isNullOrEmpty(jenkinsUrl)) {
+				// Resolve default url
+				jenkinsUrl = build.getEnvironment(listener).get("JENKINS_URL");
+				build.getEnvironment(listener).get("JENKINS_URL");
+				logger.println("Fallback Jenkins url : " + jenkinsUrl);
+			}
 			// Validate Input Data
-			List<Data> validatedData = validateInputData(getData(), desc.getJenkinsUrl());
+			List<Data> validatedData = validateInputData(getData(), jenkinsUrl);
 			if (compareWithPrevious()) {
 				// Get Previous Saved Results
 				Aggregated previousSavedAggregatedResults = TestResultHistoryUtil.getTestResults(build.getPreviousSuccessfulBuild());
@@ -225,7 +241,7 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 				previousSavedResults(validatedData, previousSavedAggregatedResults);
 			}
 			// Collect Data
-			Collector collector = new Collector(logger, desc.getUsername(), desc.getPassword(), desc.getJenkinsUrl());
+			Collector collector = new Collector(logger, desc.getUsername(), desc.getPassword(), jenkinsUrl);
 			collector.collectResults(validatedData, compareWithPrevious(), ignoreRunningJobs());
 			// Analyze Results
 			Aggregated aggregated = new Analyzer(logger).analyze(validatedData, properties);
