@@ -50,7 +50,8 @@ public enum LocalMessages {
 	COLUMN_SONAR_URL ("columnSonarURL"),
 	COLUMN_BUILD_NUMBER ("columnBuildNumber"),
 	XML_REPORT ("xmlReport"),
-	INFLUXDB ("influxdb");
+	INFLUXDB ("influxdb"),
+	IGNORE ("ignore");
 	
 	private final static ResourceBundle MESSAGES = ResourceBundle.getBundle("com.jenkins.testresultsaggregator.Messages");
 	private final String msgRef;

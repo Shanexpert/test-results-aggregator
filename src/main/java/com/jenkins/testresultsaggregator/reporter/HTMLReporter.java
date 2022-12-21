@@ -86,7 +86,7 @@ public class HTMLReporter {
 	}
 	
 	public FilePath createIgnoredData(Set<Job> ignoredDataJobs, String theme) throws IOException, InterruptedException, JellyException, SAXException {
-		logger.print(LocalMessages.GENERATE.toString() + " " + LocalMessages.HTML_REPORT.toString());
+		logger.print(LocalMessages.GENERATE.toString() + " " + LocalMessages.HTML_REPORT.toString() + " " + LocalMessages.IGNORE.toString());
 		FilePath directory = Helper.createFolder(workspace, FOLDER, false);
 		FilePath file = Helper.createFile(directory, IGNORED_DATA_HTML_FILE);
 		JellyContext context = new JellyContext();

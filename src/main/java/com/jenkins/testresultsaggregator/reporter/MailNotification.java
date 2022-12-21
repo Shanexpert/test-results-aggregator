@@ -14,15 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import jakarta.mail.Message.RecipientType;
-import jakarta.mail.MessagingException;
-import jakarta.mail.Multipart;
-import jakarta.mail.Transport;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeBodyPart;
-import jakarta.mail.internet.MimeMessage;
-import jakarta.mail.internet.MimeMultipart;
-
 import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.data.Data;
 import com.jenkins.testresultsaggregator.data.ImagesMap;
@@ -33,6 +24,14 @@ import com.jenkins.testresultsaggregator.helper.Helper;
 import com.jenkins.testresultsaggregator.helper.LocalMessages;
 
 import hudson.FilePath;
+import jakarta.mail.Message.RecipientType;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Multipart;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 import jenkins.plugins.mailer.tasks.MimeMessageBuilder;
 
 public class MailNotification {
@@ -145,7 +144,7 @@ public class MailNotification {
 	
 	public void sendIgnoredData(String mailTo, String mailFrom, String subject, String body, String preBodyText, String afterBodyText)
 			throws Exception {
-		logger.println(LocalMessages.GENERATE.toString() + " " + LocalMessages.EMAIL_REPORT.toString());
+		logger.println(LocalMessages.GENERATE.toString() + " " + LocalMessages.EMAIL_REPORT.toString() + " " + LocalMessages.IGNORE.toString());
 		MimeMessageBuilder mimeMessageBuilder = new MimeMessageBuilder();
 		MimeMessage message = null;
 		if (validateResults()) {
