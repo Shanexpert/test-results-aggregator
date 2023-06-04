@@ -114,7 +114,9 @@ public class Reporter {
 		for (Data tempData : list) {
 			List<Job> tempList = new ArrayList<>();
 			for (Job temp : tempData.getJobs()) {
-				if (temp.getResults() != null && !status.name().equalsIgnoreCase(temp.getResults().getStatus())) {
+				if (temp.getBuildInfo() != null && temp.getBuildInfo().getBuilding()) {
+					tempList.add(temp);
+				} else if (temp.getResults() != null && !status.name().equalsIgnoreCase(temp.getResults().getStatus())) {
 					tempList.add(temp);
 				} else {
 					ignoredDataJobs.add(temp);
