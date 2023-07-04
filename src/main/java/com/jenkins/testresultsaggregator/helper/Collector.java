@@ -17,16 +17,15 @@ import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.data.BuildInfo;
 import com.jenkins.testresultsaggregator.data.ChangeSet;
 import com.jenkins.testresultsaggregator.data.CoberturaCoverage;
+import com.jenkins.testresultsaggregator.data.CoberturaCoverage.Element;
 import com.jenkins.testresultsaggregator.data.Data;
 import com.jenkins.testresultsaggregator.data.Job;
 import com.jenkins.testresultsaggregator.data.JobInfo;
 import com.jenkins.testresultsaggregator.data.JobListDTO;
+import com.jenkins.testresultsaggregator.data.JobListDTO.JobDTO;
 import com.jenkins.testresultsaggregator.data.JobStatus;
 import com.jenkins.testresultsaggregator.data.ReportJob;
 import com.jenkins.testresultsaggregator.data.Results;
-import com.jenkins.testresultsaggregator.data.CoberturaCoverage.Element;
-import com.jenkins.testresultsaggregator.data.JobListDTO.JobDTO;
-import com.jenkins.testresultsaggregator.helper.Collector.ReportThread;
 
 import hudson.util.Secret;
 
@@ -512,6 +511,9 @@ public class Collector {
 					job.setBuildInfo(foundJob);
 				} else if (job.getBuildInfo().getBuilding()) {
 					job.getBuildInfo().setResult(JobStatus.RUNNING.name());
+				} else {
+					foundJob = getJobInfoPreviousBuild(foundJob);
+					job.setBuildInfo(foundJob);
 				}
 				// Get Actual Results
 				job.setResults(calculateResults(job, compareWithPreviousRun));
