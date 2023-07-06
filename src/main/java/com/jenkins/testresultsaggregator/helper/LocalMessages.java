@@ -14,6 +14,7 @@ public enum LocalMessages {
 	POST ("post"),
 	ANALYZE ("analyze"),
 	FINISHED ("finished"),
+	FINISHED_NOT_FOUND_RESULTS ("finished_but_there_is_no_lastBuild_data"),
 	HTML_REPORT ("htmlReport"),
 	EMAIL_REPORT ("emailReport"),
 	VALIDATION_MAIL_NOT_FOUND_JOBS ("validation_mail_not_found_jobs"),

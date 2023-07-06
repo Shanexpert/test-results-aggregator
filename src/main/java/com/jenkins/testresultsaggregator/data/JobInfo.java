@@ -14,6 +14,7 @@ public class JobInfo implements Serializable {
 	private BuildDTO lastBuild;
 	private BuildDTO lastCompletedBuild;
 	private List<HealthReport> healthReport;
+	private Integer nextBuildNumber;
 	
 	public JobInfo() {
 	}
@@ -81,6 +82,14 @@ public class JobInfo implements Serializable {
 		this.healthReport = healthReport;
 	}
 	
+	public Integer getNextBuildNumber() {
+		return nextBuildNumber;
+	}
+
+	public void setNextBuildNumber(Integer nextBuildNumber) {
+		this.nextBuildNumber = nextBuildNumber;
+	}
+
 	public static class HealthReport implements Serializable {
 		
 		private static final long serialVersionUID = 742123666L;

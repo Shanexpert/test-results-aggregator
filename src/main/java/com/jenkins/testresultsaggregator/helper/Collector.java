@@ -198,21 +198,28 @@ public class Collector {
 	}
 	
 	public BuildInfo getJobInfoLastBuild(Job dataJobDTO) {
-		return getJobInfoWithUrl(dataJobDTO.getJobInfo().getUrl() + "/" + LASTBUILD + "/" + API_JSON_JACOCO);
+		int maxRetries = 3;
+		if (dataJobDTO.getJobInfo().getNextBuildNumber() == 1) {
+			maxRetries = 1;
+		}
+		return getJobInfoWithUrl(dataJobDTO.getJobInfo().getUrl() + "/" + LASTBUILD + "/" + API_JSON_JACOCO, maxRetries);
 	}
 	
 	public BuildInfo getJobInfoPreviousBuild(BuildInfo buildInfo) {
-		return getJobInfoWithUrl(buildInfo.getPreviousBuild().getUrl() + "/" + API_JSON_JACOCO);
+		return getJobInfoWithUrl(buildInfo.getPreviousBuild().getUrl() + "/" + API_JSON_JACOCO, null);
 	}
 	
 	public BuildInfo getJobInfo(String url) {
-		return getJobInfoWithUrl(url + "/" + API_JSON_JACOCO);
+		return getJobInfoWithUrl(url + "/" + API_JSON_JACOCO, null);
 	}
 	
-	private BuildInfo getJobInfoWithUrl(String url) {
+	private BuildInfo getJobInfoWithUrl(String url, Integer customMaxRetries) {
 		BuildInfo buildInfo = null;
 		int retries = 1;
-		while (buildInfo == null && retries <= MAXRETRIES) {
+		if (customMaxRetries == null) {
+			customMaxRetries = MAXRETRIES;
+		}
+		while (buildInfo == null && retries <= customMaxRetries) {
 			try {
 				URL jobUrlAPILastBuild = new URL(url);
 				buildInfo = Deserialize.initializeObjectMapper().readValue(Http.get(jobUrlAPILastBuild, authenticationString()), BuildInfo.class);
@@ -503,21 +510,29 @@ public class Collector {
 			} else if (job.getJobInfo() != null) {
 				// Job Found and is Buildable
 				BuildInfo foundJob = getJobInfoLastBuild(job);
-				job.setBuildInfo(foundJob);
-				if (ignoreRunningJobs && job.getBuildInfo().getBuilding()) {
-					foundJob = getJobInfoPreviousBuild(foundJob);
-					foundJob.setBuilding(true);
-					foundJob.setIgnore(true);
-					job.setBuildInfo(foundJob);
-				} else if (job.getBuildInfo().getBuilding()) {
-					job.getBuildInfo().setResult(JobStatus.RUNNING.name());
+				if (foundJob == null) {
+					// no run for this job
+					logger.println(LocalMessages.COLLECT_DATA.toString() + " '" + job.getJobName() + "' " + LocalMessages.FINISHED_NOT_FOUND_RESULTS.toString() + " url " + job.getJobInfo().getUrl() + LASTBUILD
+							+ "/" + API_JSON_JACOCO + " has no data");
+					// job.setBuildInfo(new BuildInfo(JobStatus.NO_LAST_BUILD_DATA.name()));
 				} else {
-					foundJob = getJobInfoPreviousBuild(foundJob);
 					job.setBuildInfo(foundJob);
+					if (ignoreRunningJobs && job.getBuildInfo().getBuilding()) {
+						// Replace foundJob with previous run
+						foundJob = getJobInfoPreviousBuild(foundJob);
+						foundJob.setBuilding(true);
+						foundJob.setIgnore(true);
+						job.setBuildInfo(foundJob);
+					} else if (!ignoreRunningJobs && job.getBuildInfo().getBuilding()) {
+						foundJob.setBuilding(true);
+						foundJob.setIgnore(false);
+						job.getBuildInfo().setResult(JobStatus.RUNNING.name());
+						job.setBuildInfo(foundJob);
+					}
+					// Get Actual Results
+					job.setResults(calculateResults(job, compareWithPreviousRun));
+					logger.println(LocalMessages.COLLECT_DATA.toString() + " '" + job.getJobName() + "' " + LocalMessages.FINISHED.toString());
 				}
-				// Get Actual Results
-				job.setResults(calculateResults(job, compareWithPreviousRun));
-				logger.println(LocalMessages.COLLECT_DATA.toString() + " '" + job.getJobName() + "' " + LocalMessages.FINISHED.toString());
 			} else {
 				logger.println("...");
 			}

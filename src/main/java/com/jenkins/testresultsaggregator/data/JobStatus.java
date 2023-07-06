@@ -11,7 +11,8 @@ public enum JobStatus {
 	FIXED ("7"),
 	SUCCESS ("8"),
 	DISABLED ("9"),
-	NOT_FOUND ("10");
+	NOT_FOUND ("10"),
+	NO_LAST_BUILD_DATA ("11");
 	
 	private String myLocator;
 	
