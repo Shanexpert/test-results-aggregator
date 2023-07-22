@@ -59,7 +59,9 @@ public class MailNotification {
 				}
 			}
 		}
-		return allJobsNotFound;
+		// return allJobsNotFound;
+		// Return always false to check if issue has been resolved
+		return false;
 	}
 	
 	public void send(String mailTo, String mailToCC, String mailToBCc, String mailFrom, String subject, String body, Map<String, ImageData> images, String preBodyText, String afterBodyText)
