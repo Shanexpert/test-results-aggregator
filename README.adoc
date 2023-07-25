@@ -4,7 +4,7 @@
 
 == Description
 
-It's a jenkins plugin that collects jobs and test results and reports them in :
+It's a Jenkins plugin that collects jobs and test results and reports them in :
 
 * html,
 * email, 
@@ -14,7 +14,7 @@ Test Results Aggregator can collect test results for :
 
 * https://plugins.jenkins.io/junit[Junit] 
 * https://plugins.jenkins.io/testng-plugin[TestNG] 
-* https://plugins.jenkins.io/nunit/[Nunit]
+* https://plugins.jenkins.io/nunit[Nunit]
 
 and code coverage results for : 
 
@@ -84,6 +84,8 @@ In this section you can define :
 |sender for the mail Notification. Default is "Jenkins".
 
 |=== 
+
+Mail notification requires also the Jenkins Global Configuration setting for https://plugins.jenkins.io/mailer/[SMTP server]
 
 == Job Configuration
 
