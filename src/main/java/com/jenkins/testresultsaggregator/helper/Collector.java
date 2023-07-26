@@ -274,39 +274,43 @@ public class Collector {
 			} else {
 				if (results.getCurrentResult() != null) {
 					for (HashMap<Object, Object> temp : job.getBuildInfo().getActions()) {
-						// Calculate FAIL,SKIP and TOTAL Test Results
-						if (temp.containsKey(FAILCOUNT)) {
-							results.setFail((Integer) temp.get(FAILCOUNT));
-						}
-						if (temp.containsKey(SKIPCOUNT)) {
-							results.setSkip((Integer) temp.get(SKIPCOUNT));
-						}
-						if (temp.containsKey(TOTALCOUNT)) {
-							results.setTotal((Integer) temp.get(TOTALCOUNT));
-						}
-						// Jacoco Coverage data exists on Default api url
-						if (temp.containsKey(JACOCO_BRANCH)) {
-							Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_BRANCH);
-							results.setCcConditions((Integer) tempMap.get("percentage"));
-							foundJacocoResults = true;
-						}
-						if (temp.containsKey(JACOCO_CLASS)) {
-							Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_CLASS);
-							results.setCcClasses((Integer) tempMap.get("percentage"));
-							foundJacocoResults = true;
-						}
-						if (temp.containsKey(JACOCO_LINES)) {
-							Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_LINES);
-							results.setCcLines((Integer) tempMap.get("percentage"));
-							foundJacocoResults = true;
-						}
-						if (temp.containsKey(JACOCO_METHODS)) {
-							Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_METHODS);
-							results.setCcMethods((Integer) tempMap.get("percentage"));
-							foundJacocoResults = true;
-						}
-						if (temp.containsKey(SONAR_URL)) {
-							results.setSonarUrl((String) temp.get(SONAR_URL));
+						// FIX : Job running tests and this plugin in the same groovy file :)
+						if (temp.containsKey("_class") && !temp.get("_class").equals("com.jenkins.testresultsaggregator.TestResultsAggregatorTestResultBuildAction")) {
+							// Calculate FAIL,SKIP and TOTAL Test Results
+							if (temp.containsKey(FAILCOUNT)) {
+								results.setFail((Integer) temp.get(FAILCOUNT));
+							}
+							if (temp.containsKey(SKIPCOUNT)) {
+								results.setSkip((Integer) temp.get(SKIPCOUNT));
+							}
+							if (temp.containsKey(TOTALCOUNT)) {
+								results.setTotal((Integer) temp.get(TOTALCOUNT));
+							}
+						} else {
+							// Jacoco Coverage data exists on Default api url
+							if (temp.containsKey(JACOCO_BRANCH)) {
+								Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_BRANCH);
+								results.setCcConditions((Integer) tempMap.get("percentage"));
+								foundJacocoResults = true;
+							}
+							if (temp.containsKey(JACOCO_CLASS)) {
+								Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_CLASS);
+								results.setCcClasses((Integer) tempMap.get("percentage"));
+								foundJacocoResults = true;
+							}
+							if (temp.containsKey(JACOCO_LINES)) {
+								Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_LINES);
+								results.setCcLines((Integer) tempMap.get("percentage"));
+								foundJacocoResults = true;
+							}
+							if (temp.containsKey(JACOCO_METHODS)) {
+								Map<String, Object> tempMap = (Map<String, Object>) temp.get(JACOCO_METHODS);
+								results.setCcMethods((Integer) tempMap.get("percentage"));
+								foundJacocoResults = true;
+							}
+							if (temp.containsKey(SONAR_URL)) {
+								results.setSonarUrl((String) temp.get(SONAR_URL));
+							}
 						}
 					}
 					if (!foundJacocoResults) {
@@ -349,19 +353,22 @@ public class Collector {
 						int previouslySkip = 0;
 						if (jenkinsPreviousBuildDTO != null) {
 							results.setPreviousResult(jenkinsPreviousBuildDTO.getResult());
+							// Calculate FAIL,SKIP and TOTAL of the Previous Test
 							for (HashMap<Object, Object> temp : jenkinsPreviousBuildDTO.getActions()) {
-								// Calculate FAIL,SKIP and TOTAL of the Previous Test
-								if (temp.containsKey(FAILCOUNT)) {
-									results.setFailDif((Integer) temp.get(FAILCOUNT));
-									previouslyFail += (Integer) temp.get(FAILCOUNT);
-								}
-								if (temp.containsKey(SKIPCOUNT)) {
-									results.setSkipDif((Integer) temp.get(SKIPCOUNT));
-									previouslySkip += (Integer) temp.get(SKIPCOUNT);
-								}
-								if (temp.containsKey(TOTALCOUNT)) {
-									results.setTotalDif((Integer) temp.get(TOTALCOUNT));
-									previouslyPass += (Integer) temp.get(TOTALCOUNT);
+								// FIX : Job running tests and this plugin in the same groovy file :)
+								if (temp.containsKey("_class") && !temp.get("_class").equals("com.jenkins.testresultsaggregator.TestResultsAggregatorTestResultBuildAction")) {
+									if (temp.containsKey(FAILCOUNT)) {
+										results.setFailDif((Integer) temp.get(FAILCOUNT));
+										previouslyFail += (Integer) temp.get(FAILCOUNT);
+									}
+									if (temp.containsKey(SKIPCOUNT)) {
+										results.setSkipDif((Integer) temp.get(SKIPCOUNT));
+										previouslySkip += (Integer) temp.get(SKIPCOUNT);
+									}
+									if (temp.containsKey(TOTALCOUNT)) {
+										results.setTotalDif((Integer) temp.get(TOTALCOUNT));
+										previouslyPass += (Integer) temp.get(TOTALCOUNT);
+									}
 								}
 								if (foundJacocoResults) {
 									// Jacoco Coverage
