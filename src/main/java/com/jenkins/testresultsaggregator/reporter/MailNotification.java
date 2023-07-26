@@ -208,7 +208,17 @@ public class MailNotification {
 	}
 	
 	private void sendMessage(MimeMessage message) throws Exception {
-		Transport.send(message);
+		try {
+			Transport.send(message);
+		} catch (Exception ex) {
+			if (ex.getMessage().startsWith("Couldn't connect to host, port: localhost, 25; timeout 60000")) {
+				ex.printStackTrace();
+				logger.println(LocalMessages.ERROR_OCCURRED.toString() + ": Not found configuration for SMTP mail server into Jenkins global configuration");
+				
+			} else {
+				throw ex;
+			}
+		}
 	}
 	
 	private void useImages(StringBuffer messageBody, Map<String, ImageData> images, MimeMessage message) throws MessagingException, IOException, InterruptedException, URISyntaxException {
