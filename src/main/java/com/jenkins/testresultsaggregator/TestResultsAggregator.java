@@ -188,6 +188,7 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 			}
 			// Validate Input Data
 			List<Data> validatedData = validateInputData(getDataFromDataPipeline(), jenkinsUrl);
+			validatedData = checkUserInputForInjection(validatedData);
 			if (compareWithPrevious()) {
 				// Get Previous Saved Results
 				Aggregated previousSavedAggregatedResults = TestResultHistoryUtil.getTestResults(run.getPreviousSuccessfulBuild());
@@ -209,6 +210,24 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 			e.printStackTrace(logger);
 		}
 		logger.println(LocalMessages.FINISHED_AGGREGATE.toString());
+	}
+	
+	private List<Data> checkUserInputForInjection(List<Data> validatedData) {
+		for (Data tempData : validatedData) {
+			if (!Strings.isNullOrEmpty(tempData.getGroupName())) {
+				if (tempData.getGroupName().contains("<") || tempData.getGroupName().contains(">")) {
+					tempData.setGroupName(tempData.getGroupName().replaceAll(">", "").replace("<", ""));
+				}
+			}
+			for (Job tempJob : tempData.getJobs()) {
+				if (!Strings.isNullOrEmpty(tempJob.getJobNameFromFriendlyName())) {
+					if (tempJob.getJobNameFromFriendlyName().contains("<") || tempJob.getJobNameFromFriendlyName().contains(">")) {
+						tempJob.setJobFriendlyName(tempJob.getJobNameFromFriendlyName().replaceAll("<", "").replaceAll(">", ""));
+					}
+				}
+			}
+		}
+		return validatedData;
 	}
 	
 	/* In use from Free Style Project */
@@ -234,6 +253,7 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 			}
 			// Validate Input Data
 			List<Data> validatedData = validateInputData(getData(), jenkinsUrl);
+			validatedData = checkUserInputForInjection(validatedData);
 			if (compareWithPrevious()) {
 				// Get Previous Saved Results
 				Aggregated previousSavedAggregatedResults = TestResultHistoryUtil.getTestResults(build.getPreviousSuccessfulBuild());
