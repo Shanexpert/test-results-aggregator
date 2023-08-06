@@ -85,7 +85,10 @@ In this section you can define :
 
 |=== 
 
-Mail notification requires also the Jenkins Global Configuration setting for https://plugins.jenkins.io/mailer/[SMTP server]
+Extra Notes : 
+
+- Mail notification requires also the Jenkins Global Configuration setting for https://plugins.jenkins.io/mailer/[SMTP server]
+- All Jobs that running tests should publish their own test results (Junit, testNG, Nunit). The same stands for coverage results (Cobertura, Jacoco).
 
 == Job Configuration
 
