@@ -54,9 +54,9 @@ image::htmlView2.png[Html View,350,align="right"]
 
 == Important
 
-Can be used as the last step in a CI/CD pipeline.
+It is advisable to be used as the last step in a CI/CD pipeline.
 
-Supports 'https://github.com/jenkinsci/test-results-aggregator-plugin/blob/master/README_FreeStyle.adoc[free style project]' and 'https://github.com/jenkinsci/test-results-aggregator-plugin/blob/master/README_Pipeline.adoc[pipeline]' (after https://github.com/jenkinsci/test-results-aggregator-plugin/releases/1.2.7[1.2.7]).
+Supports 'https://github.com/jenkinsci/test-results-aggregator-plugin/blob/master/README_FreeStyle.adoc[free style project]' and 'https://github.com/jenkinsci/test-results-aggregator-plugin/blob/master/README_Pipeline.adoc[pipeline]'
 
 Requires both ** global ** and ** job configuration ** .
  
