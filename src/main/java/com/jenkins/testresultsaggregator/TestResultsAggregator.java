@@ -20,6 +20,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.interceptor.RequirePOST;
 
 import com.google.common.base.Strings;
 import com.jenkins.testresultsaggregator.data.Aggregated;
@@ -386,6 +387,7 @@ public class TestResultsAggregator extends Notifier implements SimpleBuildStep {
 			}
 		}
 		
+		@RequirePOST
 		public FormValidation doTestApiConnection(@QueryParameter final String jenkinsUrl, @QueryParameter final String username, @QueryParameter final Secret password) {
 			// https://www.jenkins.io/doc/developer/security/form-validation/
 			Jenkins.get().checkPermission(Jenkins.ADMINISTER);
